@@ -3,6 +3,7 @@
     // Class tổng chứa toàn bộ dữ liệu của trang Dashboard của sinh viên
     public class StudentDashboardViewModel
     {
+        // 4 ô thống kê dữ liệu động của giao diện Thí Sinh
         public int TotalExams { get; set; }
         public double AverageScore { get; set; }
         public int CompletedExams { get; set; }

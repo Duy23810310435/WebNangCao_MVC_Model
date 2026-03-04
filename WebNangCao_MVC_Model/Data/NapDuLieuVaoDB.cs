@@ -57,7 +57,7 @@ namespace WebNangCao_MVC_Model.Data
             // 4. Tạo danh sách câu hỏi và đáp án (Giữ nguyên của bạn)
             var q1 = new Question
             {
-                Content = "What does 'MVC' stand for in web d   evelopment?",
+                Content = "What does 'MVC' stand for in web development?",
                 Difficulty = "Trung bình",
                 Answers = new List<Answer>()
                 {
