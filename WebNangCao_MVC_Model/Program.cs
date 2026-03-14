@@ -54,7 +54,7 @@ using (var scope = app.Services.CreateScope())
     {
         // Log lỗi nếu có
         // THÊM DÒNG NÀY ĐỂ ÉP WEB CRASH VÀ SHOW LỖI LÊN TRÌNH DUYỆT:
-        throw new Exception("LỖI NẠP DỮ LIỆU SEED: " + ex.Message, ex);
+        //throw new Exception("LỖI NẠP DỮ LIỆU SEED: " + ex.Message, ex);
     }
 }
     // Configure the HTTP request pipeline.
