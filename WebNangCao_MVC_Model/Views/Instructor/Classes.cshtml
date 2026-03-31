@@ -1,0 +1,61 @@
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model List<ClassItemViewModel>
+
+@{
+    ViewData["Title"] = "Quản Lý Lớp Học";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-users"></i> Quản Lý Lớp Học</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="@Url.Action("CreateClass")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Thêm Lớp Mới
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Tên Lớp</th>
+                        <th>Mô Tả</th>
+                        <th>Số Sinh Viên</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cls in Model)
+                    {
+                        <tr>
+                            <td><strong>@cls.GroupName</strong></td>
+                            <td>@cls.Description</td>
+                            <td><span class="badge bg-info">@cls.StudentCount</span></td>
+                            <td>
+                                <a href="@Url.Action("EditClass", new { id = cls.Id })" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <form method="post" action="@Url.Action("DeleteClass", new { id = cls.Id })" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p>Chưa có lớp học nào. <a href="@Url.Action("CreateClass")">Tạo lớp mới</a></p>
+        </div>
+    }
+</div>

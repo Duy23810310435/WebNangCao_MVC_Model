@@ -1,0 +1,69 @@
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model ExamCreateViewModel
+
+@{
+    ViewData["Title"] = "Tạo Bài Thi Mới";
+}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <h2><i class="fas fa-plus-circle"></i> Tạo Bài Thi Mới</h2>
+            <hr />
+
+            <form method="post">
+                <div class="mb-3">
+                    <label asp-for="Title" class="form-label">Tên Bài Thi</label>
+                    <input asp-for="Title" class="form-control" placeholder="Ví dụ: Kiểm tra Toán Học Kỳ 1">
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="IdGroup" class="form-label">Chọn Lớp Học</label>
+                    <select asp-for="IdGroup" class="form-control">
+                        <option value="">-- Chọn lớp --</option>
+                        @if (ViewBag.Groups != null)
+                        {
+                            @foreach (var group in ViewBag.Groups)
+                            {
+                                <option value="@group.Id">@group.GroupName</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="IdGroup" class="text-danger"></span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartTime" class="form-label">Thời Gian Bắt Đầu</label>
+                        <input asp-for="StartTime" type="datetime-local" class="form-control">
+                        <span asp-validation-for="StartTime" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndTime" class="form-label">Thời Gian Kết Thúc</label>
+                        <input asp-for="EndTime" type="datetime-local" class="form-control">
+                        <span asp-validation-for="EndTime" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Duration" class="form-label">Thời Lượng (phút)</label>
+                    <input asp-for="Duration" type="number" class="form-control" placeholder="60">
+                    <span asp-validation-for="Duration" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input asp-for="IsActive" type="checkbox" class="form-check-input">
+                    <label asp-for="IsActive" class="form-check-label">Kích Hoạt Bài Thi</label>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="@Url.Action("Exams")" class="btn btn-secondary">Hủy</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Tạo Bài Thi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

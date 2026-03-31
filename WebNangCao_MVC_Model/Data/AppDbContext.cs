@@ -4,10 +4,10 @@ using WebNangCao_MVC_Model.Data.Fluent_API; // Import namespace chứa UserConfi
 using WebNangCao_MVC_Model.Models;
 namespace WebNangCao_MVC_Model.Data
 {
-    public class AppDbContext:DbContext
+    public class AppDbContext : DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-        {   
+        {
         }
         // --- KHAI BÁO CÁC BẢNG (TABLES) ---
         //Đang xem trên Code trên Mermaid Diagram
@@ -50,6 +50,14 @@ namespace WebNangCao_MVC_Model.Data
             ///
             // Dòng thần thánh này sẽ tự động tìm tất cả các class kế thừa IEntityTypeConfiguration
             // trong assembly hiện tại (bao gồm 3 file trong thư mục Fluent_API của bạn) và áp dụng chúng.
+            modelBuilder.Entity<Exam>()
+                .HasMany(e => e.Questions)
+                .WithMany(q => q.Exams)
+                .UsingEntity<Dictionary<string, object>>(
+                    "ExamQuestion", // Phải khớp với tên bảng trung gian dưới PostgreSQL
+                    j => j.HasOne<Question>().WithMany().HasForeignKey("QuestionId"),
+                    j => j.HasOne<Exam>().WithMany().HasForeignKey("ExamId")
+                );
         }
     }
 }

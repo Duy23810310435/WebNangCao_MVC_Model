@@ -17,7 +17,7 @@
     public class ExamItemViewModel
     {
         public int Id { get; set; }
-        public string Title { get; set; }= string.Empty;
+        public string Title { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
         public int Duration { get; set; }
         public int TotalQuestions { get; set; }
@@ -28,5 +28,7 @@
         public string Difficulty { get; set; } = "Cơ bản";
         public string GroupName { get; set; } = "Lớp của tôi";
         public int? IdGroup { get; set; }
+        public DateTime EndTime { get; set; }  // Add this if needed
+        public int SubmittedCount { get; set; }  // Add this for instructor dashboard
     }
 }

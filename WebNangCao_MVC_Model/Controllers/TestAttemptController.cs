@@ -47,11 +47,12 @@ public class TestAttemptController : Controller
         // Include(q => q.Answers): lấy luôn dữ liệu liên quan từ bảng Answers để so sánh đáp án
         // Where(q => q.ExamId == model.ExamId): lọc ra các câu hỏi thuộc bài thi đang làm
         // ToListAsync(): thực thi truy vấn và trả về kết quả dưới dạng danh sách bất đồng bộ
-        
+
         //1. lấy dữ liệu bài thi từ DB
         var questions = await _context.Questions
             .Include(q => q.Answers)
-            .Where(q => q.ExamId == model.ExamId)
+            //.Where(q => q.ExamId == model.ExamId)
+            .Where(q => q.Exams.Any(e => e.Id == model.ExamId))
             .ToListAsync();
 
         int correctCount = 0; //số câu đúng
@@ -83,7 +84,7 @@ public class TestAttemptController : Controller
                     {
                         correctEasy++;
                     }
-                    else if(question.Difficulty=="Trung bình")
+                    else if (question.Difficulty == "Trung bình")
                     {
                         correctMedium++;
                     }
@@ -159,7 +160,8 @@ public class TestAttemptController : Controller
         // 3. Lấy danh sách câu hỏi và đáp án của đề thi
         var questions = await _context.Questions
             .Include(q => q.Answers)
-            .Where(q => q.ExamId == result.ExamId)
+            //.Where(q => q.ExamId == result.ExamId)
+            .Where(q => q.Exams.Any(e => e.Id == result.ExamId))
             .ToListAsync();
 
         // 4. Đổ dữ liệu vào ViewModel

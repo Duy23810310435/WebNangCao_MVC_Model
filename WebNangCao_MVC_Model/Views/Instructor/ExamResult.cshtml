@@ -1,0 +1,102 @@
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model ExamResultSummaryViewModel
+
+@{
+    ViewData["Title"] = "Kết Quả Bài Thi";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-chart-bar"></i> Kết Quả: @Model.ExamTitle</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="@Url.Action("Exams")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay Lại
+            </a>
+        </div>
+    </div>
+
+    @if (Model.StudentResults.Any())
+    {
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-primary">
+                            <tr>
+                                <th>Tên Sinh Viên</th>
+                                <th>Điểm</th>
+                                <th>Thời Gian Nộp Bài</th>
+                                <th>Kết Quả</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var result in Model.StudentResults.OrderByDescending(r => r.Score))
+                            {
+                                <tr>
+                                    <td>@result.StudentName</td>
+                                    <td>
+                                        <strong class="@(result.Score >= 5 ? "text-success" : "text-danger")">
+                                            @result.Score.ToString("F1")
+                                        </strong>
+                                    </td>
+                                    <td>@result.SubmitTime.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                    <td>
+                                        <span class="badge @(result.Score >= 5 ? "bg-success" : "bg-danger")">
+                                            @result.Status
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h5>Thống Kê</h5>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-success">Số Sinh Viên Hoàn Thành</div>
+                            <div class="h3">@Model.StudentResults.Count</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-info">Điểm Trung Bình</div>
+                            <div class="h3">@Model.StudentResults.Average(r => r.Score).ToString("F1")</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-success">Đạt</div>
+                            <div class="h3">@Model.StudentResults.Count(r => r.Score >= 5)</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="text-danger">Không Đạt</div>
+                            <div class="h3">@Model.StudentResults.Count(r => r.Score < 5)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p>Chưa có sinh viên nào hoàn thành bài thi này.</p>
+        </div>
+    }
+</div>

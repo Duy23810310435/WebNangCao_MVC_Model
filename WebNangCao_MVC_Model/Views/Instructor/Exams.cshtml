@@ -1,0 +1,79 @@
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model List<ExamManagementViewModel>
+
+@{
+    ViewData["Title"] = "Quản Lý Bài Thi";
+}
+
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-file-alt"></i> Quản Lý Bài Thi</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="@Url.Action("CreateExam")" class="btn btn-success">
+                <i class="fas fa-plus"></i> Tạo Bài Thi Mới
+            </a>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Tên Bài Thi</th>
+                        <th>Lớp Học</th>
+                        <th>Thời Gian Bắt Đầu</th>
+                        <th>Số Câu</th>
+                        <th>Hoàn Thành</th>
+                        <th>Trạng Thái</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var exam in Model)
+                    {
+                        <tr>
+                            <td><strong>@exam.Title</strong></td>
+                            <td>@exam.GroupName</td>
+                            <td>@exam.StartTime.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td><span class="badge bg-secondary">@exam.TotalQuestions</span></td>
+                            <td>@exam.CompletedCount</td>
+                            <td>
+                                @if (exam.IsActive)
+                                {
+                                    <span class="badge bg-success">Kích Hoạt</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">Vô Hiệu</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("ExamResults", new { examId = exam.Id })" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i> Xem Kết Quả
+                                </a>
+                                <a href="@Url.Action("EditExam", new { id = exam.Id })" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-edit"></i> Sửa
+                                </a>
+                                <form method="post" action="@Url.Action("DeleteExam", new { id = exam.Id })" style="display:inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?')">
+                                        <i class="fas fa-trash"></i> Xóa
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <p>Chưa có bài thi nào. <a href="@Url.Action("CreateExam")">Tạo bài thi mới</a></p>
+        </div>
+    }
+</div>

@@ -1,0 +1,912 @@
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model InstructorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard Giảng Viên";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --surface-2: #f8f9fb;
+            --border: #e8eaed;
+            --text: #1a1d23;
+            --text-2: #6b7280;
+            --text-3: #9ca3af;
+            --green: #16a34a;
+            --green-light: #dcfce7;
+            --green-text: #15803d;
+            --blue: #2563eb;
+            --blue-light: #dbeafe;
+            --orange: #ea580c;
+            --orange-light: #ffedd5;
+            --purple: #7c3aed;
+            --purple-light: #ede9fe;
+            --red: #dc2626;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Be Vietnam Pro', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* NAVBAR */
+        nav {
+            height: 64px;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-2);
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+        .nav-left:hover {
+            color: var(--text);
+        }
+
+        .nav-left-arrow {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-greeting { 
+            color: var(--text-2); 
+            font-size: 13px; 
+        }
+
+        .nav-name { 
+            color: var(--text); 
+            font-weight: 600; 
+            font-size: 13px; 
+        }
+
+        .avatar-container {
+            position: relative;
+        }
+
+        .avatar-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--blue);
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .15s;
+        }
+
+        .avatar-btn:hover {
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            min-width: 260px;
+            margin-top: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.active {
+            display: flex;
+        }
+
+        .dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface-2);
+        }
+
+        .dropdown-user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .dropdown-user-email {
+            font-size: 12px;
+            color: var(--text-2);
+        }
+
+        .dropdown-items {
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .dropdown-item {
+            padding: 12px 16px;
+            color: var(--text-2);
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+            text-align: left;
+            transition: all .15s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-item:hover {
+            background: var(--surface-2);
+            color: var(--text);
+        }
+
+        .dropdown-item.logout {
+            color: var(--red);
+            border-top: 1px solid var(--border);
+        }
+
+        .dropdown-item.logout:hover {
+            background: #fee2e2;
+        }
+
+        .dropdown-icon {
+            font-size: 16px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 24px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title { font-size: 22px; font-weight: 700; color: var(--text); }
+        .page-sub { color: var(--text-2); font-size: 13px; margin-top: 2px; }
+
+        .header-actions { display: flex; gap: 10px; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            transition: all .15s;
+            text-decoration: none;
+        }
+
+        .btn-outline { background: var(--surface); border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: var(--bg); }
+        .btn-primary { background: var(--green); color: #fff; }
+        .btn-primary:hover { background: #15803d; }
+
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: box-shadow .2s;
+        }
+
+        .stat-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.06); }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            width: 36px; height: 36px;
+            border-radius: 8px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue { background: var(--blue-light); color: var(--blue); }
+        .stat-icon.green { background: var(--green-light); color: var(--green); }
+        .stat-icon.orange { background: var(--orange-light); color: var(--orange); }
+        .stat-icon.purple { background: var(--purple-light); color: var(--purple); }
+
+        .stat-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 20px;
+        }
+
+        .stat-badge.pos { background: var(--green-light); color: var(--green-text); }
+        .stat-badge.neg { background: #fee2e2; color: #dc2626; }
+
+        .stat-label { color: var(--text-2); font-size: 12px; }
+        .stat-value { font-size: 26px; font-weight: 700; color: var(--text); line-height: 1; }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 260px;
+            gap: 16px;
+        }
+
+        .left-col { display: flex; flex-direction: column; gap: 16px; }
+        .right-col { display: flex; flex-direction: column; gap: 16px; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px 18px 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .card-title-wrap { display: flex; align-items: center; gap: 8px; }
+        .card-title { font-size: 14px; font-weight: 600; }
+        .card-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+
+        .add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            font-family: inherit;
+            transition: all .15s;
+            text-decoration: none;
+        }
+
+        .add-btn:hover { color: var(--text); background: var(--bg); }
+
+        .class-list { display: flex; flex-direction: column; }
+
+        .class-item {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+            transition: background .15s;
+        }
+
+        .class-item:hover { background: var(--surface-2); }
+
+        .class-item:first-child { border-top: none; }
+
+        .class-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .class-name { font-size: 14px; font-weight: 600; }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 500;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .badge.student { background: #dbeafe; color: #1d4ed8; }
+        .badge.status-live { background: var(--green-light); color: var(--green-text); }
+        .badge.status-done { background: #f3f4f6; color: #6b7280; }
+
+        .class-desc { font-size: 12px; color: var(--text-2); margin-bottom: 10px; }
+
+        .class-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px 12px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .15s;
+            text-decoration: none;
+        }
+
+        .action-btn:hover { background: var(--bg); border-color: #d1d5db; }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            padding: 0 18px;
+            gap: 2px;
+        }
+
+        .tab {
+            padding: 9px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            transition: all .15s;
+            background: none;
+            border: none;
+            font-family: inherit;
+        }
+
+        .tab.active {
+            color: var(--text);
+            border-bottom-color: var(--green);
+        }
+
+        .tab:hover:not(.active) { color: var(--text); }
+
+        .exam-list { display: flex; flex-direction: column; }
+
+        .exam-item {
+            padding: 14px 18px;
+            border-top: 1px solid var(--border);
+            transition: background .15s;
+        }
+
+        .exam-item:hover { background: var(--surface-2); }
+
+        .exam-item:first-child { border-top: none; }
+
+        .exam-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .exam-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .exam-name { font-size: 14px; font-weight: 600; }
+
+        .exam-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .exam-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: var(--text-2);
+        }
+
+        .exam-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .exam-progress-label { font-size: 12px; color: var(--text-2); }
+        .exam-progress-label span { color: var(--text); font-weight: 600; }
+
+        .exam-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .exam-icon-btn {
+            width: 28px; height: 28px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-3);
+            transition: all .15s;
+            background: transparent;
+            border: none;
+            font-family: inherit;
+        }
+
+        .exam-icon-btn:hover { color: var(--text); background: var(--bg); }
+        .exam-icon-btn.red:hover { color: var(--red); background: #fee2e2; }
+
+        .grade-list { display: flex; flex-direction: column; }
+
+        .grade-item {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border);
+            transition: background .15s;
+            cursor: pointer;
+        }
+
+        .grade-item:hover { background: var(--surface-2); }
+
+        .grade-item:first-child { border-top: none; }
+
+        .grade-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 3px;
+        }
+
+        .grade-name { font-size: 13px; font-weight: 600; }
+
+        .grade-score {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 1px 8px;
+            border-radius: 20px;
+        }
+
+        .grade-score.high { background: var(--green-light); color: var(--green-text); }
+        .grade-score.pending { background: #fff7ed; color: #c2410c; }
+
+        .grade-sub { font-size: 11px; color: var(--text-2); margin-bottom: 2px; }
+        .grade-time { font-size: 11px; color: var(--text-3); }
+
+        .view-all-btn {
+            display: block;
+            width: calc(100% - 32px);
+            margin: 12px 16px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            cursor: pointer;
+            font-family: inherit;
+            text-align: center;
+            transition: all .15s;
+        }
+
+        .view-all-btn:hover { background: var(--bg); color: var(--text); }
+
+        .quick-stats { padding: 0 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-row-label { font-size: 13px; color: var(--text-2); }
+        .stat-row-value { font-size: 14px; font-weight: 700; color: var(--text); }
+        .stat-row-value.green { color: var(--green); }
+
+        .empty-state {
+            padding: 24px 18px;
+            text-align: center;
+        }
+
+        .empty-state p { color: var(--text-2); margin-bottom: 12px; }
+        .empty-state a { color: var(--green); text-decoration: none; font-weight: 500; }
+        .empty-state a:hover { text-decoration: underline; }
+
+        @@media (max-width: 768px) {
+            .stats { grid-template-columns: repeat(2, 1fr); }
+            .main-grid { grid-template-columns: 1fr; }
+            nav { padding: 0 16px; }
+            .nav-greeting { display: none; }
+            .dropdown-menu { min-width: 220px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <a href="@Url.Action("Index", "Home")" class="nav-left">
+        <span class="nav-left-arrow">←</span>
+        <span>Quay lại</span>
+    </a>
+    <div class="nav-right">
+        <div>
+            <span class="nav-greeting">Xin chào,</span>
+            <span class="nav-name">@User.Identity?.Name ?? "Giảng Viên"</span>
+        </div>
+        <div class="avatar-container">
+            <button class="avatar-btn" id="avatarBtn" title="Tài khoản">
+                @(User.Identity?.Name?.First() ?? 'U')
+            </button>
+            <div class="dropdown-menu" id="dropdownMenu">
+                <div class="dropdown-header">
+                    <div class="dropdown-user-name">@User.Identity?.Name ?? "Giảng Viên"</div>
+                    <div class="dropdown-user-email">instructor@example.com</div>
+                </div>
+                <div class="dropdown-items">
+                    <a href="@Url.Action("Profile", "Instructor")" class="dropdown-item">
+                        <span class="dropdown-icon">👤</span>
+                        <span>Hồ sơ cá nhân</span>
+                    </a>
+                    <a href="@Url.Action("Settings", "Instructor")" class="dropdown-item">
+                        <span class="dropdown-icon">⚙️</span>
+                        <span>Cài đặt</span>
+                    </a>
+                    <form method="post" action="@Url.Action("Logout", "Account")" style="display: contents;">
+                        <button type="submit" class="dropdown-item logout">
+                            <span class="dropdown-icon">↪️</span>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="page">
+
+    <div class="page-header">
+        <div>
+            <h1 class="page-title">Dashboard Giảng Viên</h1>
+            <p class="page-sub">Quản lý lớp học, đề thi và đánh giá kết quả</p>
+        </div>
+        <div class="header-actions">
+            <a href="@Url.Action("CreateClass")" class="btn btn-outline">
+                ➕ Tạo lớp học
+            </a>
+            <a href="@Url.Action("CreateExam")" class="btn btn-primary">
+                ➕ Tạo đề thi
+            </a>
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon blue">📄</div>
+                <span class="stat-badge pos">+12%</span>
+            </div>
+            <div>
+                <div class="stat-label">Tổng đề thi</div>
+                <div class="stat-value">@Model.TotalExams</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon green">👥</div>
+                <span class="stat-badge pos">+8%</span>
+            </div>
+            <div>
+                <div class="stat-label">Học sinh</div>
+                <div class="stat-value">@Model.TotalStudents</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon orange">⏳</div>
+                <span class="stat-badge neg">-5%</span>
+            </div>
+            <div>
+                <div class="stat-label">Lớp học</div>
+                <div class="stat-value">@Model.TotalClasses</div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon purple">✓</div>
+                <span class="stat-badge pos">+15%</span>
+            </div>
+            <div>
+                <div class="stat-label">Điểm TB</div>
+                <div class="stat-value">@Model.AverageStudentScore</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-grid">
+        <div class="left-col">
+
+            <!-- CLASSES -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title-wrap">
+                            <span class="card-title">👥 Lớp học của tôi</span>
+                        </div>
+                        <div class="card-sub">Quản lý các lớp học bạn đã tạo</div>
+                    </div>
+                    <a href="@Url.Action("CreateClass")" class="add-btn">
+                        ➕ Tạo lớp mới
+                    </a>
+                </div>
+
+                @if (Model.Classes.Any())
+                {
+                    <div class="class-list">
+                        @foreach (var cls in Model.Classes.Take(5))
+                        {
+                            <div class="class-item">
+                                <div class="class-name-row">
+                                    <span class="class-name">@cls.GroupName</span>
+                                    <span class="badge student">@cls.StudentCount HS</span>
+                                </div>
+                                <div class="class-desc">@cls.StudentCount sinh viên đang học</div>
+                                <div class="class-actions">
+                                    <a href="@Url.Action("ManageStudents", new { classId = cls.Id })" class="action-btn">
+                                        👥 Quản lý HS
+                                    </a>
+                                    <a href="@Url.Action("AssignExams", new { classId = cls.Id })" class="action-btn">
+                                        📝 Giao đề thi
+                                    </a>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <p>Chưa có lớp học nào</p>
+                        <a href="@Url.Action("CreateClass")">Tạo lớp mới</a>
+                    </div>
+                }
+            </div>
+
+            <!-- EXAM MANAGEMENT -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title-wrap">
+                            <span class="card-title">📄 Quản lý đề thi</span>
+                        </div>
+                        <div class="card-sub">Danh sách các đề thi bạn đã tạo</div>
+                    </div>
+                    <a href="@Url.Action("CreateExam")" class="add-btn">
+                        ➕ Tạo đề mới
+                    </a>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" data-tab="all">Tất cả</button>
+                    <button class="tab" data-tab="active">Đang diễn ra</button>
+                    <button class="tab" data-tab="scheduled">Đã lên lịch</button>
+                </div>
+
+                @if (Model.RecentExams.Any())
+                {
+                    <div class="exam-list">
+                        @foreach (var exam in Model.RecentExams.Take(5))
+                        {
+                            <div class="exam-item">
+                                <div class="exam-top">
+                                    <div class="exam-name-row">
+                                        <span class="exam-name">@exam.Title</span>
+                                        <span class="badge @(exam.Status == "Đã hoàn thành" ? "status-done" : "status-live")">
+                                            @exam.Status
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="exam-meta">
+                                    <span class="exam-meta-item">📚 @exam.TotalQuestions câu</span>
+                                    <span class="exam-meta-item">⏱️ @exam.Duration phút</span>
+                                </div>
+                                <div class="exam-bottom">
+                                    <div class="exam-progress-label">Bài nộp: <span>@exam.TotalQuestions</span></div>
+                                    <div class="exam-actions">
+                                        <a href="@Url.Action("ViewExam", new { examId = exam.Id })" class="exam-icon-btn" title="Xem">
+                                            👁️
+                                        </a>
+                                        <a href="@Url.Action("EditExam", new { examId = exam.Id })" class="exam-icon-btn" title="Chỉnh sửa">
+                                            ✏️
+                                        </a>
+                                        <button class="exam-icon-btn red" title="Xóa">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="empty-state">
+                        <p>Chưa có bài thi nào</p>
+                        <a href="@Url.Action("CreateExam")">Tạo bài thi mới</a>
+                    </div>
+                }
+            </div>
+
+        </div><!-- /left -->
+
+        <!-- RIGHT -->
+        <div class="right-col">
+
+            <!-- GRADING -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title-wrap">
+                            <span class="card-title">📊 Chấm điểm gần đây</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grade-list">
+                    @if (Model.RecentExams.Any())
+                    {
+                        @foreach (var exam in Model.RecentExams.Take(3))
+                        {
+                            <div class="grade-item">
+                                <div class="grade-top">
+                                    <span class="grade-name">@exam.Title</span>
+                                    <span class="grade-score high">@exam.TotalQuestions Q</span>
+                                </div>
+                                <div class="grade-sub">@exam.Duration phút</div>
+                                <div class="grade-time">Vừa tạo</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div style="padding: 16px; text-align: center; color: var(--text-2); font-size: 12px;">
+                            Chưa có dữ liệu chấm điểm
+                        </div>
+                    }
+                </div>
+
+                <button class="view-all-btn">Xem tất cả</button>
+            </div>
+
+            <!-- QUICK STATS -->
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title-wrap">
+                            <span class="card-title">📈 Thống kê nhanh</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-row">
+                        <span class="stat-row-label">Tổng lớp</span>
+                        <span class="stat-row-value">@Model.TotalClasses</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-row-label">Tổng sinh viên</span>
+                        <span class="stat-row-value green">@Model.TotalStudents</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-row-label">Tổng đề thi</span>
+                        <span class="stat-row-value">@Model.TotalExams</span>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /right -->
+    </div><!-- /main-grid -->
+
+</div><!-- /page -->
+
+<script>
+    // Avatar dropdown toggle
+    const avatarBtn = document.getElementById('avatarBtn');
+    const dropdownMenu = document.getElementById('dropdownMenu');
+
+    avatarBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMenu.classList.toggle('active');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', () => {
+        dropdownMenu.classList.remove('active');
+    });
+
+    // Prevent dropdown from closing when clicking inside
+    dropdownMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+    });
+
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            tab.closest('.tabs').querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+        });
+    });
+</script>
+
+</body>
+</html>

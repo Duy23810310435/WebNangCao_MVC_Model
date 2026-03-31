@@ -20,17 +20,17 @@ namespace WebNangCao_MVC_Model.Data.Fluent_API
                    .IsRequired()
                    .HasMaxLength(50);
 
-            builder.Property(q => q.ExamId)
-                   .IsRequired();
+            //builder.Property(q => q.ExamId)
+            //       .IsRequired();
 
-            // Index cho FK
-            builder.HasIndex(q => q.ExamId);
+            //// Index cho FK
+            //builder.HasIndex(q => q.ExamId);
 
-            // Quan hệ 1-N: Exam -> Questions
-            builder.HasOne(q => q.Exam)
-                   .WithMany(e => e.Questions)
-                   .HasForeignKey(q => q.ExamId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            //// Quan hệ 1-N: Exam -> Questions
+            //builder.HasOne(q => q.Exam)
+            //       .WithMany(e => e.Questions)
+            //       .HasForeignKey(q => q.ExamId)
+            //       .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

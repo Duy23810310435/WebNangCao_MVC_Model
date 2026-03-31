@@ -11,11 +11,12 @@ namespace WebNangCao_MVC_Model.Models
         public string Difficulty { get; set; } = string.Empty;
 
         // Foreign key
-        public int ExamId { get; set; }
+        //public int ExamId { get; set; }
 
         // Navigation property
-        public Exam? Exam { get; set; }
+        //public Exam? Exam { get; set; }
 
         public ICollection<Answer> Answers { get; set; } = new List<Answer>();
+        public ICollection<Exam> Exams { get; set; } = new List<Exam>();
     }
 }
