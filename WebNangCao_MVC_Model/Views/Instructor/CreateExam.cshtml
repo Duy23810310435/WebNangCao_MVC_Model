@@ -5,22 +5,371 @@
     ViewData["Title"] = "Tạo Bài Thi Mới";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h2><i class="fas fa-plus-circle"></i> Tạo Bài Thi Mới</h2>
-            <hr />
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-            <form method="post">
-                <div class="mb-3">
-                    <label asp-for="Title" class="form-label">Tên Bài Thi</label>
-                    <input asp-for="Title" class="form-control" placeholder="Ví dụ: Kiểm tra Toán Học Kỳ 1">
-                    <span asp-validation-for="Title" class="text-danger"></span>
-                </div>
+        :root {
+            --bg: #f0f2f5;
+            --surface: #ffffff;
+            --surface-2: #f8f9fb;
+            --border: #e8eaed;
+            --text: #1a1d23;
+            --text-2: #6b7280;
+            --text-3: #9ca3af;
+            --green: #16a34a;
+            --green-light: #dcfce7;
+            --green-dark: #15803d;
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-mid: #dbeafe;
+            --red: #ef4444;
+            --orange: #f97316;
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
 
-                <div class="mb-3">
-                    <label asp-for="IdGroup" class="form-label">Chọn Lớp Học</label>
-                    <select asp-for="IdGroup" class="form-control">
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            padding: 24px;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,.12), 0 4px 16px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 22px 24px 18px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+
+        .header-icon {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            background: var(--green);
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+        }
+
+        .header-icon svg { width: 22px; height: 22px; color: #fff; }
+        .header-title { font-size: 18px; font-weight: 700; color: var(--text); }
+        .header-sub { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+
+        .close-btn {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface-2);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            color: var(--text-2);
+            transition: all .15s;
+            flex-shrink: 0;
+            text-decoration: none;
+        }
+
+        .close-btn:hover { background: #fee2e2; color: var(--red); border-color: #fecaca; }
+        .close-btn svg { width: 16px; height: 16px; }
+
+        .modal-body { padding: 24px; display: flex; flex-direction: column; gap: 18px; max-height: 70vh; overflow-y: auto; }
+
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .form-col { display: flex; flex-direction: column; gap: 6px; }
+        .form-col.full { grid-column: 1 / -1; }
+
+        .form-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .required { color: var(--red); }
+
+        .form-input, textarea.form-input {
+            padding: 10px 13px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--surface);
+            outline: none;
+            transition: border-color .15s, box-shadow .15s;
+            width: 100%;
+        }
+
+        textarea.form-input { resize: vertical; min-height: 70px; }
+
+        .form-input::placeholder { color: var(--text-3); }
+
+        .form-input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(22,163,74,.1);
+        }
+
+        .form-input.error {
+            border-color: var(--red);
+            box-shadow: 0 0 0 3px rgba(239,68,68,.1);
+        }
+
+        .select-wrap { position: relative; }
+
+        .select-wrap::after {
+            content: '';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0; height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 5px solid var(--text-3);
+            pointer-events: none;
+        }
+
+        select.form-input { appearance: none; cursor: pointer; padding-right: 32px; }
+
+        .input-icon-wrap { position: relative; }
+        .input-icon-wrap .icon {
+            position: absolute;
+            left: 11px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-3);
+            display: flex;
+        }
+        .input-icon-wrap .icon svg { width: 15px; height: 15px; }
+        .input-icon-wrap .form-input { padding-left: 34px; }
+
+        .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid var(--border);
+            background: var(--surface-2);
+        }
+
+        .toggle-info { display: flex; flex-direction: column; gap: 2px; }
+        .toggle-name { font-size: 13px; font-weight: 500; color: var(--text); }
+        .toggle-desc { font-size: 11px; color: var(--text-2); }
+
+        .toggle {
+            width: 40px; height: 22px;
+            border-radius: 99px;
+            background: var(--border);
+            position: relative;
+            cursor: pointer;
+            transition: background .2s;
+            flex-shrink: 0;
+        }
+
+        .toggle.on { background: var(--green); }
+
+        .toggle::after {
+            content: '';
+            position: absolute;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: #fff;
+            top: 3px; left: 3px;
+            transition: transform .2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,.2);
+        }
+
+        .toggle.on::after { transform: translateX(18px); }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 11px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all .15s;
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn svg { width: 16px; height: 16px; }
+        .btn-cancel { flex: 1; background: var(--surface-2); border: 1.5px solid var(--border); color: var(--text-2); }
+        .btn-cancel:hover { background: var(--bg); color: var(--text); }
+        .btn-submit { flex: 2; background: var(--green); color: #fff; border: none; }
+        .btn-submit:hover { background: var(--green-dark); }
+        .btn-submit:active { transform: scale(.98); }
+        .btn-sm { padding: 8px 14px; font-size: 12px; gap: 5px; }
+        .btn-sm svg { width: 14px; height: 14px; }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-3);
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .validation-error {
+            font-size: 11px;
+            color: var(--red);
+            margin-top: 4px;
+        }
+
+        .question-card {
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            background: var(--surface-2);
+            transition: all .2s;
+        }
+
+        .question-card:hover { border-color: var(--blue); }
+
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .btn-remove {
+            flex-shrink: 0;
+            background: #fee2e2;
+            color: var(--red);
+            border: 1px solid #fecaca;
+        }
+
+        .btn-remove:hover { background: #fecaca; }
+
+        .answers-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+        .answer-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-2);
+            min-width: 24px;
+        }
+
+        .add-question-btn {
+            align-self: flex-start;
+            background: var(--blue-light);
+            border: 1.5px solid var(--blue-mid);
+            color: var(--blue);
+        }
+
+        .add-question-btn:hover {
+            background: var(--blue-mid);
+            border-color: var(--blue);
+        }
+
+        .question-count {
+            display: inline-block;
+            background: var(--blue);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: var(--red);
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+        }
+
+        @@media (max-width: 640px) {
+            .form-row, .date-row, .answers-grid { grid-template-columns: 1fr; }
+            .modal { max-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="modal">
+
+    <!-- HEADER -->
+    <div class="modal-header">
+        <div class="header-left">
+            <div class="header-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+            </div>
+            <div>
+                <div class="header-title">Tạo đề thi mới</div>
+                <div class="header-sub">Thiết lập thông tin và câu hỏi cho đề thi</div>
+            </div>
+        </div>
+        <a href="@Url.Action("Exams")" class="close-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </a>
+    </div>
+
+    <!-- BODY -->
+    <form method="post" id="create-exam-form" class="modal-body">
+
+        <div id="error-container"></div>
+
+        <div class="section-label">Thông tin cơ bản</div>
+
+        <!-- Row 1: Tên Bài Thi + Lớp Học -->
+        <div class="form-row">
+            <div class="form-col">
+                <label for="exam-title" class="form-label">Tên đề thi <span class="required">*</span></label>
+                    <input asp-for="Title" class="form-input" id="exam-title" placeholder="VD: Kiểm tra giữa kỳ" required>
+                    <span asp-validation-for="Title" class="validation-error"></span>
+            </div>
+            <div class="form-col">
+                <label for="exam-group" class="form-label">Chọn lớp học <span class="required">*</span></label>
+                <div class="select-wrap">
+                    <select asp-for="IdGroup" class="form-input" id="exam-group" required>
                         <option value="">-- Chọn lớp --</option>
                         @if (ViewBag.Groups != null)
                         {
@@ -30,40 +379,332 @@
                             }
                         }
                     </select>
-                    <span asp-validation-for="IdGroup" class="text-danger"></span>
                 </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="StartTime" class="form-label">Thời Gian Bắt Đầu</label>
-                        <input asp-for="StartTime" type="datetime-local" class="form-control">
-                        <span asp-validation-for="StartTime" class="text-danger"></span>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="EndTime" class="form-label">Thời Gian Kết Thúc</label>
-                        <input asp-for="EndTime" type="datetime-local" class="form-control">
-                        <span asp-validation-for="EndTime" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3">
-                    <label asp-for="Duration" class="form-label">Thời Lượng (phút)</label>
-                    <input asp-for="Duration" type="number" class="form-control" placeholder="60">
-                    <span asp-validation-for="Duration" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input asp-for="IsActive" type="checkbox" class="form-check-input">
-                    <label asp-for="IsActive" class="form-check-label">Kích Hoạt Bài Thi</label>
-                </div>
-
-                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="@Url.Action("Exams")" class="btn btn-secondary">Hủy</a>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Tạo Bài Thi
-                    </button>
-                </div>
-            </form>
+                <span asp-validation-for="IdGroup" class="validation-error"></span>
+            </div>
         </div>
+
+        <!-- Row 2: Thời gian bắt đầu + Thời gian kết thúc -->
+        <div class="date-row">
+            <div class="form-col">
+                <label for="exam-start" class="form-label">Thời gian bắt đầu <span class="required">*</span></label>
+                <input asp-for="StartTime" type="datetime-local" class="form-input" id="exam-start" required>
+                <span asp-validation-for="StartTime" class="validation-error"></span>
+            </div>
+            <div class="form-col">
+                <label for="exam-end" class="form-label">Thời gian kết thúc <span class="required">*</span></label>
+                <input asp-for="EndTime" type="datetime-local" class="form-input" id="exam-end" required>
+                <span asp-validation-for="EndTime" class="validation-error"></span>
+            </div>
+        </div>
+
+        <!-- Row 3: Thời lượng -->
+        <div class="form-col full">
+            <label for="exam-duration" class="form-label">Thời lượng làm bài (phút) <span class="required">*</span></label>
+            <div class="input-icon-wrap">
+                <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </span>
+                <input asp-for="Duration" type="number" class="form-input" id="exam-duration" placeholder="60" min="1" required>
+            </div>
+            <span asp-validation-for="Duration" class="validation-error"></span>
+        </div>
+
+        <div class="section-label">Cài đặt thêm</div>
+
+        <!-- Active Toggle -->
+        <div class="toggle-row">
+            <div class="toggle-info">
+                <div class="toggle-name">Kích hoạt đề thi</div>
+                <div class="toggle-desc">Học sinh có thể bắt đầu làm bài thi</div>
+            </div>
+            <div class="toggle" id="toggle-active" role="switch" aria-checked="false"></div>
+            <input type="hidden" id="is-active-input" name="IsActive" value="false">
+        </div>
+
+        <!-- Questions Section -->
+        <div class="section-label">
+            <span>Câu hỏi (<span id="question-count" class="question-count">0</span>)</span>
+        </div>
+
+        <div id="questions-container" style="display: flex; flex-direction: column; gap: 16px;"></div>
+
+        <button type="button" id="add-question-btn" class="btn btn-sm add-question-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Thêm Câu Hỏi
+        </button>
+
+    </form>
+
+    <!-- FOOTER -->
+    <div class="modal-footer">
+        <a href="@Url.Action("Exams")" class="btn btn-cancel">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+            Hủy
+        </a>
+        <button type="submit" form="create-exam-form" class="btn btn-submit" id="submit-btn">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+            Tạo Đề Thi
+        </button>
     </div>
+
 </div>
+
+<script>
+    let questionIndex = 0;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✓ DOM Loaded - Initializing form...');
+        initializeForm();
+    });
+
+    function initializeForm() {
+        const form = document.getElementById('create-exam-form');
+        const toggleActive = document.getElementById('toggle-active');
+        const isActiveInput = document.getElementById('is-active-input');
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        const questionsContainer = document.getElementById('questions-container');
+        const questionCountEl = document.getElementById('question-count');
+
+        // Toggle handler
+        toggleActive.addEventListener('click', () => {
+            toggleActive.classList.toggle('on');
+            isActiveInput.value = toggleActive.classList.contains('on') ? 'true' : 'false';
+            toggleActive.setAttribute('aria-checked', toggleActive.classList.contains('on'));
+            console.log('Toggle changed to:', isActiveInput.value);
+        });
+
+        // Add question button
+        addQuestionBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('✓ Adding question...');
+            const card = createQuestionCard(questionIndex++);
+            questionsContainer.appendChild(card);
+            updateQuestionCount();
+        });
+
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            console.log('✓ Form submit event triggered');
+            
+            // Validate basic fields
+            const title = document.getElementById('exam-title').value.trim();
+            const group = document.getElementById('exam-group').value;
+            const startTime = document.getElementById('exam-start').value;
+            const endTime = document.getElementById('exam-end').value;
+            const duration = document.getElementById('exam-duration').value;
+
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = '';
+
+            // Check required fields
+            if (!title) {
+                e.preventDefault();
+                showError('Vui lòng nhập tên đề thi');
+                return;
+            }
+            if (!group) {
+                e.preventDefault();
+                showError('Vui lòng chọn lớp học');
+                return;
+            }
+            if (!startTime) {
+                e.preventDefault();
+                showError('Vui lòng chọn thời gian bắt đầu');
+                return;
+            }
+            if (!endTime) {
+                e.preventDefault();
+                showError('Vui lòng chọn thời gian kết thúc');
+                return;
+            }
+            if (!duration || duration <= 0) {
+                e.preventDefault();
+                showError('Vui lòng nhập thời lượng hợp lệ');
+                return;
+            }
+
+            // Collect questions data
+            const questions = [];
+            const cards = questionsContainer.querySelectorAll('.question-card');
+
+            if (cards.length === 0) {
+                e.preventDefault();
+                showError('Vui lòng thêm ít nhất một câu hỏi');
+                return;
+            }
+
+            try {
+                cards.forEach((card, idx) => {
+                    const content = card.querySelector('.question-content').value.trim();
+                    const difficulty = card.querySelector('.question-difficulty').value;
+                    const correctAnswerIndex = parseInt(card.querySelector('.question-correct-answer').value);
+                    
+                    if (!content) {
+                        throw new Error(`Câu hỏi ${idx + 1}: Vui lòng nhập nội dung câu hỏi`);
+                    }
+
+                    const answers = [];
+                    card.querySelectorAll('.question-answer').forEach((input, ansIdx) => {
+                        const ansText = input.value.trim();
+                        if (!ansText) {
+                            throw new Error(`Câu hỏi ${idx + 1}: Vui lòng nhập tất cả đáp án`);
+                        }
+                        answers.push({
+                            text: ansText,
+                            isCorrect: ansIdx === correctAnswerIndex
+                        });
+                    });
+
+                    questions.push({
+                        content: content,
+                        difficulty: difficulty,
+                        correctAnswerIndex: correctAnswerIndex,
+                        answers: answers
+                    });
+                });
+            } catch (error) {
+                e.preventDefault();
+                showError(error.message);
+                return;
+            }
+
+            // Clear existing question inputs
+            document.querySelectorAll('input[name^="Questions"]').forEach(el => el.remove());
+
+            // Add question data as hidden inputs
+            questions.forEach((q, idx) => {
+                addHiddenInput(`Questions[${idx}].Content`, q.content);
+                addHiddenInput(`Questions[${idx}].Difficulty`, q.difficulty);
+                addHiddenInput(`Questions[${idx}].CorrectAnswerIndex`, q.correctAnswerIndex);
+
+                q.answers.forEach((ans, ansIdx) => {
+                    addHiddenInput(`Questions[${idx}].Answers[${ansIdx}].Text`, ans.text);
+                    addHiddenInput(`Questions[${idx}].Answers[${ansIdx}].IsCorrect`, ans.isCorrect);
+                });
+            });
+
+            console.log('✓ Form data prepared, submitting...');
+            console.log('✓ Questions count:', questions.length);
+            console.log('✓ Exam title:', title);
+            console.log('✓ Group ID:', group);
+            // Form will submit naturally
+        });
+
+        function showError(message) {
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.innerHTML = `<div class="error-message">⚠️ ${message}</div>`;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function addHiddenInput(name, value) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        }
+
+        function updateQuestionCount() {
+            const count = questionsContainer.querySelectorAll('.question-card').length;
+            questionCountEl.textContent = count;
+        }
+    }
+
+    function createQuestionCard(index) {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.innerHTML = `
+            <div class="question-header">
+                <label class="form-label">Câu hỏi ${index + 1}</label>
+                <button type="button" class="btn btn-sm btn-remove" aria-label="Xóa câu hỏi ${index + 1}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Xóa
+                </button>
+            </div>
+
+            <div class="form-col full">
+                <label for="q-${index}-content" class="form-label">Nội dung câu hỏi <span class="required">*</span></label>
+                <textarea class="form-input question-content" id="q-${index}-content" name="Questions[${index}].Content" placeholder="Nhập nội dung câu hỏi..." required></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-col">
+                    <label for="q-${index}-difficulty" class="form-label">Mức độ khó <span class="required">*</span></label>
+                    <div class="select-wrap">
+                        <select class="form-input question-difficulty" id="q-${index}-difficulty" name="Questions[${index}].Difficulty" required>
+                            <option value="easy">Dễ</option>
+                            <option value="medium" selected>Trung bình</option>
+                            <option value="hard">Khó</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-col">
+                    <label for="q-${index}-correct" class="form-label">Đáp án đúng <span class="required">*</span></label>
+                    <div class="select-wrap">
+                        <select class="form-input question-correct-answer" id="q-${index}-correct" name="Questions[${index}].CorrectAnswerIndex" required>
+                            <option value="0">Đáp án A</option>
+                            <option value="1">Đáp án B</option>
+                            <option value="2">Đáp án C</option>
+                            <option value="3">Đáp án D</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <label class="form-label" style="margin-top: 8px;">Các đáp án <span class="required">*</span></label>
+            <div class="answers-grid">
+                <div>
+                    <label for="q-${index}-ans-0" class="answer-label">A</label>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-0" name="Questions[${index}].Answers[0].Text" placeholder="Nhập đáp án A" required>
+                </div>
+                <div>
+                    <label for="q-${index}-ans-1" class="answer-label">B</label>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-1" name="Questions[${index}].Answers[1].Text" placeholder="Nhập đáp án B" required>
+                </div>
+                <div>
+                    <label for="q-${index}-ans-2" class="answer-label">C</label>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-2" name="Questions[${index}].Answers[2].Text" placeholder="Nhập đáp án C" required>
+                </div>
+                <div>
+                    <label for="q-${index}-ans-3" class="answer-label">D</label>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-3" name="Questions[${index}].Answers[3].Text" placeholder="Nhập đáp án D" required>
+                </div>
+            </div>
+        `;
+
+        // Add remove button handler
+        card.querySelector('.btn-remove').addEventListener('click', (e) => {
+            e.preventDefault();
+            card.remove();
+            const container = document.getElementById('questions-container');
+            const count = container.querySelectorAll('.question-card').length;
+            document.getElementById('question-count').textContent = count;
+            renumberQuestions();
+        });
+
+        return card;
+    }
+
+    function renumberQuestions() {
+        const container = document.getElementById('questions-container');
+        const cards = container.querySelectorAll('.question-card');
+        cards.forEach((card, idx) => {
+            const label = card.querySelector('label.form-label');
+            label.textContent = `Câu hỏi ${idx + 1}`;
+        });
+    }
+</script>
+
+</body>
+</html>
