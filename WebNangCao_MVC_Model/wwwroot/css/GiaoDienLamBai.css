@@ -809,8 +809,70 @@ ul {
     animation: pageFadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s forwards;
 }
 
-/* (Tuỳ chọn) Nếu bạn muốn Sidebar hiện ra muộn hơn phần câu hỏi một chút nữa để tăng độ "deep" */
+/* (Tuỳ chọn) Nếu muốn Sidebar hiện ra muộn hơn phần câu hỏi một chút nữa để tăng độ "deep" */
 .sidebar {
     opacity: 0;
     animation: pageFadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+}
+/*
+   FOOTER HƯỚNG DẪN PHÍM TẮT
+ */
+.exam-footer {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    padding: 12px 20px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
+    /* Tận dụng luôn hiệu ứng Fade-in từ yêu cầu trước của bạn */
+    opacity: 0;
+    animation: pageFadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) 0.4s forwards;
+}
+
+.shortcut-hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    color: #64748b;
+    font-size: 13.5px;
+}
+
+    .shortcut-hints i {
+        vertical-align: text-bottom;
+        margin-right: 4px;
+    }
+
+.key-hint kbd {
+    background-color: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-bottom-width: 2px; /* Tạo độ dày cho phím */
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0 2px;
+}
+/*Căn chuẩn bằng Display flex*/
+.shortcut-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transform:translateY(1px) /*chỉnh độ lệch cao của icon*/
+}
+/* Đẩy nhẹ trang web lên một chút để không bị Footer che mất nội dung */
+body {
+    padding-bottom: 60px;
+}
+.shortCutIconText {
+    /*position: relative;
+    top: 5px;*/ /* chỉnh số này nếu cần */
+    
 }

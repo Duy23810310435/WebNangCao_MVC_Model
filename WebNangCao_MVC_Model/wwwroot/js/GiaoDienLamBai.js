@@ -462,7 +462,53 @@ document.addEventListener('keydown', function (event) {
             }
         }
     }
-    // 4. Phím Enter: Mở nhanh popup Nộp bài
+        // 4. Phím '0': Xóa sạch lựa chọn của câu hỏi hiện tại
+        //bỏ dấu chấm tròn trên thẻ radio
+        //rút lại thanh màu xanh tiến độ,
+        //trừ đi số câu đã làm, 
+        //cộng lại số câu chưa làm,
+        //và xoá luôn màu ở cái ô số tương ứng bên thanh Sidebar
+    else if (event.key === '0') {
+        // Tìm radio đang được chọn trong câu hiện tại
+        const checkedRadio = currentBlock.querySelector('.answer-option input[type="radio"]:checked');
+
+        if (checkedRadio) {
+            checkedRadio.checked = false; // Hủy check radio button
+
+            // Xóa hiệu ứng màu nền của đáp án (nếu có)
+            const labelElement = checkedRadio.closest('.answer-option');
+            if (labelElement) {
+                labelElement.classList.remove('flash-effect');
+            }
+
+            // --- ĐỒNG BỘ LẠI VỚI BẢNG SIDEBAR ---
+            const gridIndex = currentQuestionIndex - 1;
+            const gridItems = document.querySelectorAll('.grid-item');
+
+            if (gridItems[gridIndex]) {
+                gridItems[gridIndex].classList.remove('answered'); // Xóa màu xanh ở ô bên phải
+            }
+
+            // --- TÍNH TOÁN LẠI THANH TIẾN ĐỘ ---
+            const totalQuestions = gridItems.length;
+            const answeredCount = document.querySelectorAll('.grid-item.answered').length;
+
+            const progressFill = document.querySelector('.progress-fill');
+            const progressText = document.querySelector('.progress-header span:first-child');
+            const percentText = document.querySelector('.progress-header .percent');
+            const answeredLegendCount = document.querySelectorAll('.legend-count')[0];
+            const unansweredLegendCount = document.querySelectorAll('.legend-count')[1];
+
+            progressText.textContent = `Tiến độ: ${answeredCount}/${totalQuestions} câu`;
+            const percent = Math.round((answeredCount / totalQuestions) * 100);
+            percentText.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+
+            answeredLegendCount.textContent = answeredCount;
+            unansweredLegendCount.textContent = totalQuestions - answeredCount;
+        }
+    }
+    // 5. Phím Enter: Mở nhanh popup Nộp bài
     else if (event.key === 'Enter') {
         submitExam(false);
     }
