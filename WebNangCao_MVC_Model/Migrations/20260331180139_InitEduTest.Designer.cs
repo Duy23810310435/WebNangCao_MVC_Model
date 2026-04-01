@@ -12,8 +12,8 @@ using WebNangCao_MVC_Model.Data;
 namespace WebNangCao_MVC_Model.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260227142445_NapDuLieuVaoBangDB")]
-    partial class NapDuLieuVaoBangDB
+    [Migration("20260331180139_InitEduTest")]
+    partial class InitEduTest
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace WebNangCao_MVC_Model.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ExamQuestion", b =>
+                {
+                    b.Property<int>("ExamId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("ExamId", "QuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("ExamQuestion");
+                });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Answer", b =>
                 {
@@ -62,6 +77,13 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("IdGroup")
+                        .HasColumnType("integer")
+                        .HasColumnName("GroupId");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -76,6 +98,8 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("IdGroup");
 
                     b.ToTable("Exams", (string)null);
                 });
@@ -97,9 +121,61 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
 
+                    b.Property<DateTime>("SubmitTime")
+                        .HasColumnType("timestamp with time zone");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("ExamId");
+
+                    b.HasIndex("StudentId");
+
                     b.ToTable("ExamResults");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ExamResultDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ExamResultId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("SelectedAnswerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExamResultId");
+
+                    b.ToTable("ExamResultDetails");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Group", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Question", b =>
@@ -120,12 +196,7 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<int>("ExamId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("ExamId");
 
                     b.ToTable("Questions", (string)null);
                 });
@@ -180,6 +251,39 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.UserGroup", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("UserId", "GroupId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("UserGroups");
+                });
+
+            modelBuilder.Entity("ExamQuestion", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.Exam", null)
+                        .WithMany()
+                        .HasForeignKey("ExamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebNangCao_MVC_Model.Models.Question", null)
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Answer", b =>
                 {
                     b.HasOne("WebNangCao_MVC_Model.Models.Question", "Question")
@@ -191,25 +295,84 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Question", b =>
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Exam", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("IdGroup")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ExamResult", b =>
                 {
                     b.HasOne("WebNangCao_MVC_Model.Models.Exam", "Exam")
-                        .WithMany("Questions")
+                        .WithMany()
                         .HasForeignKey("ExamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Exam");
+
+                    b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Exam", b =>
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ExamResultDetail", b =>
                 {
-                    b.Navigation("Questions");
+                    b.HasOne("WebNangCao_MVC_Model.Models.ExamResult", "ExamResult")
+                        .WithMany("ExamResultDetails")
+                        .HasForeignKey("ExamResultId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExamResult");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.UserGroup", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.Group", "Group")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "User")
+                        .WithMany("UserGroups")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ExamResult", b =>
+                {
+                    b.Navigation("ExamResultDetails");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Group", b =>
+                {
+                    b.Navigation("UserGroups");
                 });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Question", b =>
                 {
                     b.Navigation("Answers");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.User", b =>
+                {
+                    b.Navigation("UserGroups");
                 });
 #pragma warning restore 612, 618
         }

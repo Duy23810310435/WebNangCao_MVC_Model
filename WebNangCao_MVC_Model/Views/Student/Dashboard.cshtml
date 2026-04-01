@@ -1,131 +1,151 @@
 ﻿@{
-    Layout = null;
-    //Truy cập ...localhost:XXXX/Student/Dashboard
+    Layout = null; // Truy cập ...localhost:XXXX/Student/Dashboard
 }
 @model WebNangCao_MVC_Model.ViewModels.StudentDashboardViewModel
-<!DOCTYPE html>
-    <html>
-    <head>
-        <title>Dashboard Thí Sinh</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="~/css/student-dashboard.css" />
-        <script src="https://unpkg.com/lucide@latest"></script>
-    </head>
-    <body class="dashboard-body">
-    
-        <header class="top-header">
-        <a asp-controller="Home" asp-action="Index" class="btn-back">
-                <i data-lucide="arrow-left" class="back-icon"></i>
-            Quay lại
-            </a>
-            <div class="user-info">
-                <span class="greeting">Xin chào, </span>
-                <!--sử dụng tên là tên Username-->
-                @if (User.Identity!=null &&User.Identity.IsAuthenticated)
-                {
-                <span class="user-name">@User.Identity.Name</span>
-                }
-                
-                <!--Sử avater là avatar của username--></>
-                <div class="avatar-container">
-                    <div class="avatar" id="userAvatar">N</div>
 
-                    <div class="avatar-dropdown" id="avatarDropdown">
-                        <div class="dropdown-header">
-                            <strong>Nguyễn Văn A</strong>
-                            <span>student@example.com</span>
-                        </div>
-                        <ul class="dropdown-list">
-                            <li><a href="#"><i data-lucide="user"></i> Hồ sơ cá nhân</a></li>
-                            <li><a href="#"><i data-lucide="settings"></i> Cài đặt</a></li>
-                            <li class="divider"></li>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard Thí Sinh</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/student-dashboard.css" />
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="dashboard-body">
+
+    <header class="top-header">
+        <a asp-controller="Account" asp-action="Index" class="btn-back">
+            <i data-lucide="arrow-left" class="back-icon"></i>
+            Quay lại
+        </a>
+        <div class="user-info">
+            <span class="greeting">Xin chào, </span>
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <span class="user-name">@User.Identity.Name</span>
+            }
+
+            <div class="avatar-container">
+                <div class="avatar" id="userAvatar">N</div>
+
+                <div class="avatar-dropdown" id="avatarDropdown">
+                    <div class="dropdown-header">
+                        <strong>Nguyễn Văn A</strong>
+                        <span>student@example.com</span>
+                    </div>
+                    <ul class="dropdown-list">
+                        <li><a href="#"><i data-lucide="user"></i> Hồ sơ cá nhân</a></li>
+                        <li><a href="#"><i data-lucide="settings"></i> Cài đặt</a></li>
+                        <li class="divider"></li>
                         <li>
-                            <a href="/Account/Logout" 
-                               onclick="return confirm('Bạn có chắc chắn muốn đăng xuất?');" 
+                            <a href="/Account/Logout"
+                               onclick="return confirm('Bạn có chắc chắn muốn đăng xuất?');"
                                class="text-danger">
                                 <i data-lucide="log-out"></i> Đăng xuất
                             </a>
                         </li>
-                        </ul>
-                    </div>
+                    </ul>
                 </div>
             </div>
-        </header>
-        <main class="dashboard-container">
-            
-            <section class="page-title">
-            <h1>Dashboard Thí Sinh</h1>
-            <p>Tìm kiếm và tham gia các bài thi</p>
-            </section>
+        </div>
+    </header>
 
-            <section class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat_info">
-                        <span class="stat-label">Tổng bài thi</span>
-                        <span class="stat-value">@Model.TotalExams</span>
-                    </div>
-                    <div class="stat-icon bg-blue"><i data-lucide="file-text"></i></div>
+    <main class="dashboard-container">
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="custom-alert alert-success" id="successAlert">
+                <i data-lucide="check-circle"></i> <span>@TempData["SuccessMessage"]</span>
+                <button type="button" class="btn-close-alert"><i data-lucide="x"></i></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="custom-alert alert-danger" id="errorAlert">
+                <i data-lucide="alert-circle"></i> <span>@TempData["ErrorMessage"]</span>
+                <button type="button" class="btn-close-alert"><i data-lucide="x"></i></button>
+            </div>
+        }
+
+        <section class="page-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1>Dashboard Thí Sinh</h1>
+                <p>Tìm kiếm và tham gia các bài thi</p>
+            </div>
+            <button type="button" id="btnOpenJoinModal" class="btn-join-class">
+                <i data-lucide="plus-circle"></i> Tham gia lớp học
+            </button>
+        </section>
+
+        <section class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Tổng bài thi</span>
+                    <span class="stat-value">@Model.TotalExams</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <span class="stat-label">Điểm trung bình</span>
-                        <span class="stat-value">@Model.AverageScore</span>
-                    </div>
+                <div class="stat-icon bg-blue"><i data-lucide="file-text"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Điểm trung bình</span>
+                    <span class="stat-value">@Model.AverageScore</span>
+                </div>
                 <div class="stat-icon bg-green"><i data-lucide="trophy"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Hoàn thành</span>
+                    <span class="stat-value">@Model.CompletedExams/@Model.TotalExams</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <span class="stat-label">Hoàn thành</span>
-                        <span class="stat-value">@Model.CompletedExams/@Model.TotalExams</span>
-                    </div>
-                    <div class="stat-icon bg-purple"><i data-lucide="check-circle"></i></div>
+                <div class="stat-icon bg-purple"><i data-lucide="check-circle"></i></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-info">
+                    <span class="stat-label">Sắp tới</span>
+                    <span class="stat-value">@Model.UpcomingExams</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-info">
-                        <span class="stat-label">Sắp tới</span>
-                        <span class="stat-value">@Model.UpcomingExams</span>
-                    </div>
-                    <div class="stat-icon bg-orange"><i data-lucide="clock"></i></div>
-                </div>
-            </section>
+                <div class="stat-icon bg-orange"><i data-lucide="clock"></i></div>
+            </div>
+        </section>
 
-            <section class="exam-section">
-                <div class="exam-header">
-                    <h2><i data-lucide="list"></i> Danh sách các bài thi</h2>
-                    <p>Tìm thấy 8 bài thi</p>
-                </div>
+        <section class="exam-section">
+            <div class="exam-header">
+                <h2><i data-lucide="list"></i> Danh sách các bài thi</h2>
+                <p>Tìm thấy @(Model.Exams != null ? Model.Exams.Count : 0) bài thi</p>
+            </div>
 
-                <div class="search-filter-bar">
-                    <div class="search-box">
-                        <i data-lucide="search"></i>
+            <div class="search-filter-bar">
+                <div class="search-box">
+                    <i data-lucide="search"></i>
                     <input type="text" placeholder="Tìm kiếm bài thi theo tên hoặc môn học..." />
-                    </div>
-                    <button class="btn-toggle-filter" id="btnToggleFilter">
-                        <i data-lucide="filter"></i> Bộ lọc
-                    </button>
                 </div>
-                <div class="advanced-filter" id="advancedFilter">
-                    <div class="filter-group">
-                        <label></label>
-                        <select><option>Tất cả môn học</option></select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Trạng thái</label>
-                        <select><option>Tất cả trạng thái</option></select>
-                    </div>
-                    <div class="filter-group">
-                        <label>Độ khó</label>
-                        <select><option>Tất cả độ khó</option></select>
-                    </div>
+                <button class="btn-toggle-filter" id="btnToggleFilter">
+                    <i data-lucide="filter"></i> Bộ lọc
+                </button>
+            </div>
+
+            <div class="advanced-filter" id="advancedFilter">
+                <div class="filter-group">
+                    <label></label>
+                    <select><option>Tất cả môn học</option></select>
                 </div>
-                
-                <div class="status-tabs">
-                    <button class="tab-btn active">Tất cả (8)</button>
-                    <button class="tab-btn">Có thể làm (4)</button>
-                    <button class="tab-btn">Sắp tới (3)</button>
-                    <button class="tab-btn">Đã hoàn thành (1)</button>
+                <div class="filter-group">
+                    <label>Trạng thái</label>
+                    <select><option>Tất cả trạng thái</option></select>
                 </div>
+                <div class="filter-group">
+                    <label>Độ khó</label>
+                    <select><option>Tất cả độ khó</option></select>
+                </div>
+            </div>
+
+            <div class="status-tabs">
+                <button class="tab-btn active">Tất cả</button>
+                <button class="tab-btn">Có thể làm</button>
+                <button class="tab-btn">Sắp tới</button>
+                <button class="tab-btn">Đã hoàn thành</button>
+            </div>
 
             <div class="exam-grid">
                 @if (Model.Exams != null && Model.Exams.Count > 0)
@@ -188,8 +208,34 @@
                     </div>
                 }
             </div>
-            </section>
-        </main>
-        <script src="~/js/student-dashboard.js"></script>
-    </body>
-    </html>
+        </section>
+
+    </main>
+
+    <div class="custom-modal-overlay" id="joinClassModal">
+        <div class="custom-modal">
+            <div class="modal-header">
+                <h3>Gia nhập lớp học mới</h3>
+                <button type="button" id="btnCloseJoinModal" class="btn-icon-close"><i data-lucide="x"></i></button>
+            </div>
+            <form action="/Student/JoinClass" method="post">
+                <div class="modal-body">
+                    <label for="groupId" style="display:block; margin-bottom:8px; font-weight:600;">Mã Lớp Học (ID):</label>
+                    <input type="number" id="groupId" name="groupId" placeholder="Nhập mã lớp..." required min="1" class="form-control-custom">
+                    <small style="color:#64748b; display:block; margin-top:8px;">Ví dụ: 1, 2, 3...</small>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnCancelJoinModal" class="btn-cancel">Hủy</button>
+                    <button type="submit" class="btn-submit">Xác nhận tham gia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="~/js/student-dashboard.js"></script>
+    <script>
+        // Kích hoạt icon Lucide
+        lucide.createIcons();
+    </script>
+</body>
+</html>

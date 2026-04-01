@@ -55,3 +55,37 @@
         });
     }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    // --- XỬ LÝ MODAL THAM GIA LỚP ---
+    const btnOpenModal = document.getElementById('btnOpenJoinModal');
+    const btnCloseModal = document.getElementById('btnCloseJoinModal');
+    const btnCancelModal = document.getElementById('btnCancelJoinModal');
+    const modalOverlay = document.getElementById('joinClassModal');
+
+    function toggleModal(e) {
+        if (e) e.preventDefault();
+        modalOverlay.classList.toggle('active');
+    }
+
+    if (btnOpenModal) btnOpenModal.addEventListener('click', toggleModal);
+    if (btnCloseModal) btnCloseModal.addEventListener('click', toggleModal);
+    if (btnCancelModal) btnCancelModal.addEventListener('click', toggleModal);
+
+    // Bấm ra ngoài vùng xám để đóng modal
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', function (e) {
+            if (e.target === modalOverlay) toggleModal();
+        });
+    }
+
+    // --- XỬ LÝ TẮT THÔNG BÁO (ALERTS) ---
+    const alertCloseBtns = document.querySelectorAll('.btn-close-alert');
+    alertCloseBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const alertBox = this.closest('.custom-alert');
+            if (alertBox) {
+                alertBox.style.display = 'none';
+            }
+        });
+    });
+});

@@ -13,6 +13,10 @@ namespace WebNangCao_MVC_Model.Models
         public int Duration { get; set; }
         [Column("GroupId")]
         public int IdGroup { get; set; }
+
+        // Bổ sung thêm dòng này để EF Core hiểu IdGroup dùng để móc nối với bảng Group
+        [ForeignKey("IdGroup")]
+        public Group? Group { get; set; }
         public ICollection<Question> Questions { get; set; } = new List<Question>();
         // ... các thuộc tính khác
     }

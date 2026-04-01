@@ -198,6 +198,7 @@ namespace WebNangCao_MVC_Model.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateClass(ClassCreateViewModel model)
         {
+            //try { } catch { ErrorEventArgs("...Lỗi")}
             if (!ModelState.IsValid)
             {
                 return View(model);

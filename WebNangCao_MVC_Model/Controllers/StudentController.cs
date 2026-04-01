@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // Bắt buộc phải có để dùng Include() và ToListAsync()
+using Microsoft.EntityFrameworkCore;
 using WebNangCao_MVC_Model.Data;
 using WebNangCao_MVC_Model.Models;
 using WebNangCao_MVC_Model.ViewModels;
@@ -22,12 +22,11 @@ namespace WebNangCao_MVC_Model.Controllers
             _context = context;
         }
 
-        // Đổi thành async Task<IActionResult> để truy vấn Database mượt hơn
+        // ==========================================
+        // 1. DASHBOARD - HIỂN THỊ TRANG CHỦ THÍ SINH
+        // ==========================================
         public async Task<IActionResult> Dashboard()
         {
-            // ==========================================
-            // 1. LẤY ID CỦA SINH VIÊN ĐANG ĐĂNG NHẬP
-            // ==========================================
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
             {
@@ -35,59 +34,43 @@ namespace WebNangCao_MVC_Model.Controllers
             }
             int studentId = int.Parse(userIdString);
 
-            // ==========================================
-            // 2. TÌM CÁC LỚP (GROUP) MÀ SINH VIÊN ĐANG THAM GIA
-            // ==========================================
-            // (Lấy ID các lớp mà sinh viên đang học thật trong Database):
             var studentGroupIds = await _context.UserGroups
                 .Where(ug => ug.UserId == studentId)
                 .Select(ug => ug.GroupId)
                 .ToListAsync();
 
-            // ==========================================
-            // 3. LẤY BÀI THI & KẾT QUẢ TỪ DATABASE
-            // ==========================================
-            // Chỉ lấy các bài thi đang Active và thuộc về Group của sinh viên này
             var rawExams = await _context.Exams
-                .Include(e => e.Questions) // Include để đếm tổng số câu hỏi
+                .Include(e => e.Questions)
                 .Where(e => e.IsActive && studentGroupIds.Contains(e.IdGroup))
                 .ToListAsync();
 
-            // Lấy kết quả thi của sinh viên này để biết bài nào đã làm rồi
             var userResults = await _context.ExamResults
                 .Where(r => r.StudentId == studentId)
                 .ToListAsync();
             var completedExamIds = userResults.Select(r => r.ExamId).ToList();
 
-            // ==========================================
-            // 4. MAP DỮ LIỆU SANG VIEW MODEL VÀ TÍNH TRẠNG THÁI
-            // ==========================================
             var examListVM = new List<ExamItemViewModel>();
-
-            // BẮT BUỘC: Dùng UtcNow để đồng bộ với thời gian PostgreSQL đang lưu
             var currentTime = DateTime.UtcNow;
 
             foreach (var exam in rawExams)
             {
                 string status = "";
 
-                // Logic phân loại trạng thái bài thi MỚI NHẤT
                 if (completedExamIds.Contains(exam.Id))
                 {
-                    status = "Đã hoàn thành"; // Đã có điểm trong DB
+                    status = "Đã hoàn thành";
                 }
                 else if (currentTime < exam.StartTime)
                 {
-                    status = "Sắp tới"; // Chưa tới giờ mở đề
+                    status = "Sắp tới";
                 }
-                // SỬ DỤNG exam.EndTime THAY VÌ CỘNG DURATION
                 else if (currentTime >= exam.StartTime && currentTime <= exam.EndTime)
                 {
-                    status = "Có thể làm"; // Đang trong khung giờ cho phép thi
+                    status = "Có thể làm";
                 }
                 else
                 {
-                    status = "Đã hoàn thành"; // Đã qua hạn chót (EndTime)
+                    status = "Đã hoàn thành";
                 }
 
                 examListVM.Add(new ExamItemViewModel
@@ -99,64 +82,106 @@ namespace WebNangCao_MVC_Model.Controllers
                     TotalQuestions = exam.Questions?.Count ?? 0,
                     Status = status,
                     IdGroup = exam.IdGroup,
-                    SubjectName = "Môn học " + exam.IdGroup, // Giả lập tên môn
-                    Difficulty = "Trung bình" // Giả lập độ khó
+                    SubjectName = "Môn học " + exam.IdGroup,
+                    Difficulty = "Trung bình"
                 });
             }
 
-            // ==========================================
-            // 5. TỔNG HỢP VÀ GỬI RA VIEW
-            // ==========================================
             var model = new StudentDashboardViewModel
             {
                 TotalExams = rawExams.Count,
                 CompletedExams = userResults.Count,
                 UpcomingExams = examListVM.Count(e => e.Status == "Sắp tới"),
                 AverageScore = userResults.Any() ? Math.Round(userResults.Average(r => r.Score), 1) : 0,
-                Exams = examListVM.OrderBy(e => e.StartTime).ToList() // Sắp xếp bài thi theo thời gian
+                Exams = examListVM.OrderBy(e => e.StartTime).ToList()
             };
 
             return View(model);
         }
+
         // ==========================================
-        // HÀM BƠM DỮ LIỆU MẪU ĐÃ ĐƯỢC CẬP NHẬT CHUẨN XÁC
+        // 2. JOIN CLASS - XỬ LÝ KHI BẤM "THAM GIA LỚP"
+        // ==========================================
+        [HttpPost]
+        public async Task<IActionResult> JoinClass(int groupId)
+        {
+            // Lấy ID sinh viên hiện tại
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return RedirectToAction("Index", "Account");
+            }
+            int studentId = int.Parse(userIdString);
+
+            // Kiểm tra xem lớp học (Group) có tồn tại không
+            var groupExists = await _context.Groups.AnyAsync(g => g.Id == groupId);
+            if (!groupExists)
+            {
+                // Truyền thông báo lỗi sang View
+                TempData["ErrorMessage"] = $"Không tìm thấy lớp học với mã '{groupId}'. Vui lòng kiểm tra lại!";
+                return RedirectToAction(nameof(Dashboard));
+            }
+
+            // Kiểm tra xem sinh viên đã tham gia lớp này chưa
+            var alreadyJoined = await _context.UserGroups
+                .AnyAsync(ug => ug.UserId == studentId && ug.GroupId == groupId);
+
+            if (alreadyJoined)
+            {
+                TempData["ErrorMessage"] = $"Bạn đã tham gia lớp học (Mã: {groupId}) này rồi!";
+                return RedirectToAction(nameof(Dashboard));
+            }
+
+            // Thêm sinh viên vào lớp
+            var newUserGroup = new UserGroup
+            {
+                UserId = studentId,
+                GroupId = groupId,
+                JoinedAt = DateTime.UtcNow // Lưu lại thời gian tham gia
+            };
+
+            _context.UserGroups.Add(newUserGroup);
+            await _context.SaveChangesAsync();
+
+            // Gửi thông báo thành công
+            TempData["SuccessMessage"] = $"Chúc mừng! Bạn đã tham gia lớp học (Mã: {groupId}) thành công.";
+            return RedirectToAction(nameof(Dashboard));
+        }
+
+        // ==========================================
+        // 3. SEED DATA - DỮ LIỆU MẪU
         // ==========================================
         public IActionResult SeedData()
         {
             if (!_context.Exams.Any())
             {
-                var now = DateTime.UtcNow; // BẮT BUỘC DÙNG UTC
+                var now = DateTime.UtcNow;
 
                 _context.Exams.AddRange(
-                    // Đang diễn ra (Có thể làm) - Thuộc Lớp 1
                     new Exam
                     {
                         Title = "Kiểm tra Toán học Học kỳ 1",
                         IsActive = true,
                         StartTime = now.AddMinutes(-10),
-                        EndTime = now.AddDays(1), // THÊM ENDTIME VÀO ĐÂY
+                        EndTime = now.AddDays(1),
                         Duration = 60,
                         IdGroup = 1
                     },
-
-                    // Sắp tới - Thuộc Lớp 2
                     new Exam
                     {
                         Title = "Tiếng Anh giữa kỳ",
                         IsActive = true,
                         StartTime = now.AddDays(2),
-                        EndTime = now.AddDays(3), // THÊM ENDTIME VÀO ĐÂY
+                        EndTime = now.AddDays(3),
                         Duration = 90,
                         IdGroup = 2
                     },
-
-                    // Đã làm xong (Quá hạn) - Thuộc Lớp 1
                     new Exam
                     {
                         Title = "Vật lý 15 phút",
                         IsActive = true,
                         StartTime = now.AddDays(-5),
-                        EndTime = now.AddDays(-4), // THÊM ENDTIME VÀO ĐÂY
+                        EndTime = now.AddDays(-4),
                         Duration = 15,
                         IdGroup = 1
                     }
