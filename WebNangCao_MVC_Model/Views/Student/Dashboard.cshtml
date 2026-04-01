@@ -188,10 +188,10 @@
             </div>
 
             <div class="status-tabs">
-                <button class="tab-btn active" data-tab="all">Tất cả</button>
-                <button class="tab-btn" data-tab="Có thể làm">Có thể làm</button>
-                <button class="tab-btn" data-tab="Sắp tới">Sắp tới</button>
-                <button class="tab-btn" data-tab="Đã hoàn thành">Đã hoàn thành</button>
+                <button class="tab-btn active" data-tab="all">Tất cả (@Model.TotalExams)</button>
+                <button class="tab-btn" data-tab="Có thể làm">Có thể làm (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Sắp tới">Sắp tới (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Đã hoàn thành">Đã hoàn thành (@Model.CompletedExams)</button>
             </div>
 
             <div class="exam-grid">
@@ -299,7 +299,7 @@
                     <p style="margin: 0; font-size: 14px;">Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</p>
                 </div>
             </div>
-            </div>
+            
         </section>
 
     </main>

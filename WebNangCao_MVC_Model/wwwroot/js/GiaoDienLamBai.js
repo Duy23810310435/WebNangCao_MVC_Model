@@ -345,20 +345,128 @@ function resetSubmitBtn(btn) {
     lucide.createIcons();
 }
 // ==========================================
-// 7. ẩn hiện Active khi ấn nút vào bộ lọc Tất cả/ Đã làm/ Đánh dấu
+// 7. BỘ LỌC: TẤT CẢ / ĐÃ LÀM / ĐÁNH DẤU
 // ==========================================
 
-const tabs = document.querySelectorAll(".filter-tab");
-tabs.forEach(tab => {
-    tab.addEventListener("click", function () {
-        //xoa class= "active"" o tat ca button thuộc class="filter-tab"
-        tabs.forEach(t => t.classList.remove("active"));
-        //them class="active" o tat ca cac button thuoc class="filter-tab"
-        this.classList.add("active");
+function initFilterLogic() {
+    const tabs = document.querySelectorAll(".filter-tab");
+    const gridItems = document.querySelectorAll('.grid-item');
+
+    tabs.forEach(tab => {
+        tab.addEventListener("click", function () {
+            // 1. Xóa class "active" ở tất cả các tab và thêm vào tab đang được click
+            tabs.forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+
+            // 2. Lấy tên của tab để làm điều kiện lọc
+            const filterType = this.textContent.trim();
+
+            // 3. Lặp qua tất cả các ô số câu hỏi để ẩn/hiện
+            gridItems.forEach(item => {
+                // Reset về hiển thị mặc định trước
+                item.style.display = "";
+
+                if (filterType === "Đã làm") {
+                    // Nếu tab là "Đã làm", chỉ hiện những câu có class 'answered'
+                    if (!item.classList.contains("answered")) {
+                        item.style.display = "none";
+                    }
+                }
+                else if (filterType === "Đánh dấu") {
+                    // Nếu tab là "Đánh dấu", chỉ hiện những câu có class 'flagged'
+                    if (!item.classList.contains("flagged")) {
+                        item.style.display = "none";
+                    }
+                }
+                // Nếu là tab "Tất cả", thì mọi item.style.display = "" đã làm nó hiện lên hết rồi
+            });
+        });
     });
+}
+// ==========================================
+// 8. LOGIC PHÍM TẮT (KEYBOARD SHORTCUTS)
+// ==========================================
+document.addEventListener('keydown', function (event) {
+    // Bỏ qua nếu người dùng đang mở Modal (ví dụ modal Xác nhận nộp bài)
+    // Để tránh việc lỡ tay bấm phím chuyển câu hay đổi đáp án khi đang xem popup
+    const submitModal = document.getElementById('submitModal');
+    const resultModal = document.getElementById('resultModal');
+    if ((submitModal && submitModal.style.display === 'flex') ||
+        (resultModal && resultModal.style.display === 'flex')) {
+
+        // Phím Esc: Đóng modal nộp bài
+        if (event.key === 'Escape' && submitModal.style.display === 'flex') {
+            closeSubmitModal();
+        }
+        return;
+    }
+
+    // Lấy Block câu hỏi đang hiển thị hiện tại
+    const currentBlock = document.getElementById(`question-block-${currentQuestionIndex}`);
+    if (!currentBlock) return;
+
+    // 1. Phím Mũi tên: Chuyển câu hỏi
+    if (event.key === 'ArrowLeft') {
+        prevQuestion();
+    }
+    else if (event.key === 'ArrowRight') {
+        nextQuestion();
+    }
+    // 2. Phím 'f' hoặc 'F': Cắm cờ (Đánh dấu)
+    else if (event.key.toLowerCase() === 'f') {
+        const flagBtn = currentBlock.querySelector('.btn-flag');
+        if (flagBtn) {
+            flagBtn.click(); // Giả lập hành động click vào nút cờ
+
+            //HIỆU ỨNG PHẢN HỒI XÚC GIÁC CHO NÚT CỜ
+            // Xoá class cũ đi (đề phòng bấm liên tục)
+            flagBtn.classList.remove('flash-flag-effect');
+
+            // Trigger reflow để reset lại animation của CSS
+            void flagBtn.offsetWidth;
+
+            // Thêm class hiệu ứng vào
+            flagBtn.classList.add('flash-flag-effect');
+
+            // Tự động gỡ class sau 400ms
+            setTimeout(() => {
+                flagBtn.classList.remove('flash-flag-effect');
+            }, 400);
+        }
+    }
+    // 3. Phím số 1, 2, 3, 4, 5...: Chọn đáp án tương ứng
+    else if (event.key >= '1' && event.key <= '9') {
+        const answerIndex = parseInt(event.key) - 1;
+        const radios = currentBlock.querySelectorAll('.answer-option input[type="radio"]');
+
+        if (radios && radios.length > answerIndex) {
+            radios[answerIndex].checked = true;
+            radios[answerIndex].dispatchEvent(new Event('change'));
+
+            // HIỆU ỨNG PHẢN HỒI XÚC GIÁC (VISUAL FEEDBACK) ---
+            const labelElement = radios[answerIndex].closest('.answer-option');
+            if (labelElement) {
+                // Xoá class cũ đi (đề phòng người dùng bấm liên tục 2 lần)
+                labelElement.classList.remove('flash-effect');
+
+                // Trigger reflow để reset lại animation của CSS
+                void labelElement.offsetWidth;
+
+                // Thêm class hiệu ứng vào
+                labelElement.classList.add('flash-effect');
+
+                // Tự động gỡ class chớp nhoáng khi nhấn phím tắt sau 400ms (vừa đúng lúc animation chạy xong)
+                setTimeout(() => {
+                    labelElement.classList.remove('flash-effect');
+                }, 400);
+            }
+        }
+    }
+    // 4. Phím Enter: Mở nhanh popup Nộp bài
+    else if (event.key === 'Enter') {
+        submitExam(false);
+    }
 });
-
-
 
 // ==========================================
 // XXX. KHỞI CHẠY KHI TRANG VỪA LOAD XONG
@@ -367,5 +475,6 @@ window.onload = function () {
     startTimer();
     initQuestionLogic();
     initFlagLogic();
+    initFilterLogic();//hàm lọc Tất cả/ Đã làm/ Đánh dấu
     showQuestion(1);
 };

@@ -715,3 +715,102 @@ ul {
 .btn-primary:hover {
     background-color: #2563eb;
 }
+/* 
+   HIỆU ỨNG CAO CẤP CHO ĐÁP ÁN (PREMIUM UI)*/
+
+/* Chuyển động mượt mà cho các đáp án */
+.answer-option {
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid transparent;
+    border-radius: 8px; /* Bo góc hiện đại */
+    padding: 12px 16px; /* Tạo không gian thở cho text */
+}
+
+    /* Hiệu ứng trượt nhẹ khi di chuột vào (Hover) */
+    .answer-option:hover {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        transform: translateX(6px); /* Đẩy nhẹ sang phải */
+    }
+
+/* Hiệu ứng chớp sáng khi chọn bằng phím tắt */
+@keyframes premiumPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+        background-color: transparent;
+    }
+
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 8px rgba(59, 130, 246, 0);
+        background-color: rgba(59, 130, 246, 0.08);
+        border-color: #3b82f6;
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+        background-color: transparent;
+    }
+}
+
+/* Class này sẽ được JS thêm vào và gỡ ra chớp nhoáng */
+.answer-option.flash-effect {
+    animation: premiumPulse 0.4s ease-out;
+    border-color: #3b82f6;
+}
+/* Hiệu ứng chớp sáng màu vàng cam cho nút Cờ (Flag) */
+@keyframes flagPulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); /* Màu cam (Amber) */
+    }
+
+    50% {
+        transform: scale(1.15); /* Phình to hơn một chút so với đáp án để gây chú ý */
+        box-shadow: 0 0 0 10px rgba(245, 158, 11, 0);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+    }
+}
+
+.btn-flag.flash-flag-effect {
+    animation: flagPulse 0.4s ease-out;
+}
+/*
+   HIỆU ỨNG FADE-IN KHI LOAD TRANG
+ */
+
+/* Định nghĩa chuyển động: Từ mờ ảo và hơi thấp -> Rõ nét và đúng vị trí */
+@keyframes pageFadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 1. Phần Header hiện ra ngay lập tức một cách mượt mà */
+.test-header {
+    animation: pageFadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* 2. Phần Nội dung chính (Câu hỏi + Sidebar) hiện ra sau Header 0.15s */
+.test-container {
+    opacity: 0; /* Ẩn trước khi hoạt ảnh bắt đầu */
+    animation: pageFadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.15s forwards;
+}
+
+/* (Tuỳ chọn) Nếu bạn muốn Sidebar hiện ra muộn hơn phần câu hỏi một chút nữa để tăng độ "deep" */
+.sidebar {
+    opacity: 0;
+    animation: pageFadeInUp 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s forwards;
+}
