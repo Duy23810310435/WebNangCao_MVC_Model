@@ -200,7 +200,9 @@ namespace WebNangCao_MVC_Model.Controllers
         {
             //try { } catch { ErrorEventArgs("...Lỗi")}
             if (!ModelState.IsValid)
+            {
                 return View(model);
+            }
 
             int instructorId = GetInstructorId();
             if (instructorId == 0)
@@ -353,6 +355,7 @@ namespace WebNangCao_MVC_Model.Controllers
         {
             if (!ModelState.IsValid)
             {
+                // Reload groups for re-display
                 int instructorId = GetInstructorId();
                 var instructorGroups = await _context.UserGroups
                     .Where(ug => ug.UserId == instructorId)
@@ -371,9 +374,10 @@ namespace WebNangCao_MVC_Model.Controllers
             var exam = new Exam
             {
                 Title = model.Title,
+                SubjectName = model.Title,  // or retrieve the actual subject name from the group
                 IdGroup = model.IdGroup,
-                StartTime = model.StartTime,
-                EndTime = model.EndTime,
+                StartTime = DateTime.SpecifyKind(model.StartTime, DateTimeKind.Utc),
+                EndTime = DateTime.SpecifyKind(model.EndTime, DateTimeKind.Utc),
                 Duration = model.Duration,
                 IsActive = model.IsActive
             };
@@ -381,6 +385,35 @@ namespace WebNangCao_MVC_Model.Controllers
             _context.Exams.Add(exam);
             await _context.SaveChangesAsync();
 
+            // Add questions
+            foreach (var questionVm in model.Questions)
+            {
+                var question = new Question
+                {
+                    Content = questionVm.Content,
+                    Difficulty = questionVm.Difficulty
+                };
+
+                _context.Questions.Add(question);
+                await _context.SaveChangesAsync();
+
+                // Add answers
+                foreach (var answerVm in questionVm.Answers)
+                {
+                    var answer = new Answer
+                    {
+                        Content = answerVm.Text,
+                        IsCorrect = answerVm.IsCorrect,
+                        QuestionId = question.Id
+                    };
+                    _context.Answers.Add(answer);
+                }
+
+                // Link question to exam
+                exam.Questions.Add(question);
+            }
+
+            await _context.SaveChangesAsync();
             return RedirectToAction("Exams");
         }
 
@@ -515,6 +548,49 @@ namespace WebNangCao_MVC_Model.Controllers
             };
 
             return View(model);
+        }
+
+        // ==========================================
+        // EXAM MANAGEMENT - UPDATE STATUS
+        // ==========================================
+        [HttpPost]
+        public async Task<IActionResult> UpdateExamStatus(int examId, string status)
+        {
+            var exam = await _context.Exams.FindAsync(examId);
+            if (exam == null)
+                return Json(new { success = false, message = "Exam not found" });
+
+            int instructorId = GetInstructorId();
+            var instructorGroups = await _context.UserGroups
+                .Where(ug => ug.UserId == instructorId)
+                .Select(ug => ug.GroupId)
+                .ToListAsync();
+
+            if (!instructorGroups.Contains(exam.IdGroup))
+                return Json(new { success = false, message = "Unauthorized" });
+
+            switch (status)
+            {
+                case "active":
+                    exam.IsActive = true;
+                    exam.StartTime = DateTime.UtcNow;
+                    break;
+                case "paused":
+                    exam.IsActive = false;
+                    break;
+                case "completed":
+                    exam.EndTime = DateTime.UtcNow;
+                    exam.IsActive = false;
+                    break;
+                case "scheduled":
+                    exam.IsActive = true;
+                    break;
+            }
+
+            _context.Exams.Update(exam);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, status = status });
         }
     }
 }
