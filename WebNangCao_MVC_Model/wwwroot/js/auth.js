@@ -37,35 +37,64 @@ function toggleRoleList() {
 
 // 2. Hàm chọn vai trò
 function selectRole(value, text, iconName) {
-    // a. Cập nhật giao diện hiển thị
+    // 1. CẬP NHẬT TEXT: Đổi chữ hiển thị trên Dropdown (ví dụ: "Học viên" -> "Quản trị viên")
     document.getElementById('current-role-text').innerText = text;
 
-    // Cập nhật icon (Cần gọi lucide.createIcons sau khi đổi DOM)
-    // Cách đơn giản nhất: Đổi class hoặc innerHTML nếu dùng thư viện khác
-    // Nhưng với Lucide JS, ta đổi attribute và gọi lại render
-    const iconEl = document.getElementById('current-role-icon');
-    iconEl.setAttribute('data-lucide', iconName);
-    lucide.createIcons(); // Re-render icon mới
+    // 2. CẬP NHẬT ICON (Xử lý an toàn với DOM):
+    const oldIcon = document.getElementById('current-role-icon');
+    if (oldIcon) {
+        // Tạo hẳn một thẻ <i> mới tinh để tránh bị dính rác từ thẻ <svg> cũ của Lucide
+        const newIcon = document.createElement('i');
+        newIcon.setAttribute('data-lucide', iconName); // Gắn tên icon mới (user, briefcase, shield)
+        newIcon.id = 'current-role-icon'; // Giữ lại ID để lần sau còn tìm được
+        newIcon.className = 'role-icon'; // Giữ lại class CSS
+        oldIcon.replaceWith(newIcon);
+        lucide.createIcons(); // Lúc này Lucide chỉ chú ý đến cái thẻ vừa tạo, không phá phách chỗ khác
+    }
 
-    // b. Cập nhật dấu tích (Check icon) trong danh sách
-    document.getElementById('check-student').classList.add('hidden');
-    document.getElementById('check-instructor').classList.add('hidden');
-    document.getElementById('check-' + value).classList.remove('hidden');
+    // c. THUẬT TOÁN TẬN DIỆT 2 DẤU TÍCH:
+    // Tìm TẤT CẢ các thẻ có ID bắt đầu bằng chữ "check-" và giáng đòn "Tàng hình"
+    const allChecks = document.querySelectorAll('[id^="check-"]');
+    allChecks.forEach(icon => {
+        icon.style.display = 'none';
+        icon.style.opacity = '0'; // Đè thêm opacity cho chắc cú 100%
+    });
 
-    // c. Cập nhật giá trị cho Input ẩn (Quan trọng để gửi về Server)
+    // Chỉ "Hồi sinh" đúng cái dấu tích của Role đang được chọn
+    const activeCheck = document.getElementById('check-' + value);
+    if (activeCheck) {
+        activeCheck.style.display = 'inline-block'; // Hoặc block tuỳ CSS của em
+        activeCheck.style.opacity = '1';
+    }
+
+    // d. Cập nhật Input ẩn
     const inputLogin = document.getElementById('input-role-login');
     const inputRegister = document.getElementById('input-role-register');
-
     if (inputLogin) inputLogin.value = value;
     if (inputRegister) inputRegister.value = value;
 
-    // d. Ngăn sự kiện nổi bọt (để không kích hoạt toggleRoleList lần nữa)
+    // e. Khởi động hệ thống chặn Admin đăng ký
+    handleAdminSecurity(value);
+
+    // f. Đóng dropdown an toàn
     if (window.event) {
         window.event.stopPropagation();
     }
-
-    // e. Đóng dropdown
     toggleRoleList();
+}
+function handleAdminSecurity(selectedRole) {
+    const registerBtn = document.getElementById('btn-tab-register');
+    const loginBtn = document.getElementById('btn-tab-login');
+    if (selectedRole === 'admin') {
+        //Nếu đang ở tab đăng ký thì tự động quay về tab đăng nhập
+        switchTab('login');
+        //Vô hiệu hoá nút đăng ký
+        registerBtn.style.display = 'none';
+    }
+    else {
+        //Nếu chọn role Hhọc Viên/ Giảng Viên thì nút đăng ký lại hiện ra
+        registerBtn.style.display = 'inline-flex';
+    }
 }
 
 // 3. Đóng dropdown khi click ra ngoài
