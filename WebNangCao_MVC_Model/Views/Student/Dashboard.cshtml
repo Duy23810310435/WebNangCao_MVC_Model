@@ -109,43 +109,49 @@
             </div>
         </section>
         <!--giao diện hiển thị nhóm lớp đã tham gia-->
-        <section class="class-section" style="margin-bottom: 32px;">
-            <div class="exam-header" style="margin-bottom: 20px;">
-                <h2><i data-lucide="users"></i> Lớp học đã tham gia</h2>
-                <p>Danh sách các lớp bạn đang là thành viên</p>
+        <section class="class-section" id="classSection">
+            <div class="exam-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2><i data-lucide="users"></i> Lớp học đã tham gia</h2>
+                    <p>Danh sách các lớp bạn đang là thành viên</p>
+                </div>
+                <button type="button" class="btn-toggle-section" onclick="toggleSection('classSection')">
+                    <i data-lucide="chevron-up" class="icon-toggle"></i>
+                </button>
             </div>
 
-            <div class="class-grid">
-                @* Lưu ý: Cần bổ sung List<JoinedClassViewModel> JoinedClasses vào ViewModel của sếp *@
-                @if (Model.JoinedClasses != null && Model.JoinedClasses.Count > 0)
-                {
-                    @foreach (var cls in Model.JoinedClasses)
+            <div class="section-content">
+                <div class="class-grid">
+                    @if (Model.JoinedClasses != null && Model.JoinedClasses.Count > 0)
                     {
-                        <div class="class-card">
-                            <div class="class-card-header">
-                                <div class="class-icon"><i data-lucide="graduation-cap"></i></div>
-                                <div>
-                                    <h3 title="@cls.ClassName">@cls.ClassName</h3>
-                                    <span class="class-id">Mã lớp: @cls.IdGroup</span>
+                        @foreach (var cls in Model.JoinedClasses)
+                        {
+                            <div class="class-card">
+                                <div class="class-card-header">
+                                    <div class="class-icon"><i data-lucide="graduation-cap"></i></div>
+                                    <div>
+                                        <h3 title="@cls.ClassName">@cls.ClassName</h3>
+                                        <span class="class-id">Mã: @cls.IdGroup</span>
+                                    </div>
+                                </div>
+                                <div class="class-card-body">
+                                    <p><i data-lucide="user"></i> GV: @cls.TeacherName</p>
+                                    <p><i data-lucide="file-text"></i> @cls.ExamCount bài thi</p>
+                                </div>
+                                <div class="class-card-footer">
+                                    <a href="javascript:void(0);" class="btn-view-class">Vào lớp học</a>
                                 </div>
                             </div>
-                            <div class="class-card-body">
-                                <p><i data-lucide="user"></i> GV: @cls.TeacherName</p>
-                                <p><i data-lucide="file-text"></i> @cls.ExamCount bài thi</p>
-                            </div>
-                            <div class="class-card-footer">
-                                <a href="javascript:void(0);" class="btn-view-class">Xem chi tiết</a>
-                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="empty-state-sm">
+                            <i data-lucide="folder-open"></i>
+                            <p>Bạn chưa tham gia lớp học nào.</p>
                         </div>
                     }
-                }
-                else
-                {
-                    <div class="empty-state-sm">
-                        <i data-lucide="folder-open" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3;"></i>
-                        <p>Bạn chưa tham gia lớp học nào.</p>
-                    </div>
-                }
+                </div>
             </div>
         </section>
 
@@ -332,14 +338,25 @@
                         <p style="margin: 0; font-size: 14px;">Bạn chưa có bài thi nào từ các lớp đã tham gia.</p>
                     </div>
                 }
-                <!--Dùng khi không tìm thấy thẻ bài thi nào trong các thẻ bài thi trong DB-->
-                <div id="jsEmptyState" style="display: none; grid-column: 1 / -1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0;">
-                    <i data-lucide="search-x" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
-                    <h3 style="margin: 0 0 8px 0; color: #334155;">Không tìm thấy bài thi phù hợp</h3>
-                    <p style="margin: 0; font-size: 14px;">Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</p>
-                </div>
             </div>
-            
+            <div id="jsEmptyState" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0; margin-bottom: 20px;">
+                <i data-lucide="search-x" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
+                <h3 style="margin: 0 0 8px 0; color: #334155;">Không tìm thấy bài thi phù hợp</h3>
+                <p style="margin: 0; font-size: 14px;">Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</p>
+            </div>
+
+            <div class="pagination-container">
+                <button id="prevPage" class="btn-page">
+                    <i data-lucide="chevron-left"></i>
+                </button>
+
+                <div id="pageNumbers" class="page-numbers">
+                </div>
+
+                <button id="nextPage" class="btn-page">
+                    <i data-lucide="chevron-right"></i>
+                </button>
+            </div>
         </section>
 
     </main>
@@ -364,10 +381,11 @@
         </div>
     </div>
 
-    <script src="~/js/student-dashboard.js"></script>
+    
     <script>
         // Kích hoạt icon Lucide
         lucide.createIcons();
     </script>
+    <script src="~/js/student-dashboard.js"></script>
 </body>
 </html>

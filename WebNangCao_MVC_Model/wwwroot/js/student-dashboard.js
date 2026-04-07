@@ -1,54 +1,41 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    // Khởi tạo Lucide Icons (Biến các thẻ <i> thành <svg>)
-    // Khởi tạo giúp đọc và hiểu lệnh: "Data-lucide" trong HTML
+    // 0. KHỞI TẠO BIỂU TƯỢNG (LUCIDE ICONS)
     if (typeof lucide !== 'undefined') {
         lucide.createIcons();
     }
 
-    //
-    // 1. LOGIC ẨN/HIỆN UI BỘ LỌC NÂNG CAO
-    // 
-    const btnToggleFilter = document.getElementById('btnToggleFilter');
-    const advancedFilter = document.getElementById('advancedFilter');
-
-    if (btnToggleFilter && advancedFilter) {
-        btnToggleFilter.addEventListener('click', function () {
-            // Thêm/Xóa class 'active' để ẩn hiện (đã css display: grid)
-            advancedFilter.classList.toggle('active');
-
-            // Đổi màu nút lọc để tạo cảm giác đang được chọn
-            if (advancedFilter.classList.contains('active')) {
-                btnToggleFilter.style.backgroundColor = '#eaeaea';
-            } else {
-                btnToggleFilter.style.backgroundColor = 'var(--bg-main)';
-            }
-        });
-    }
-
-    // 
-    // 2. LOGIC BỘ LỌC NHIỀU LỚP (TÌM KIẾM + TABS + DROPDOWN)
-    // 
-    // Giả định các ID cho input và dropdown (sếp nhớ map đúng với HTML nhé)
+    // --- CẤU HÌNH BIẾN TOÀN CỤC ---
     const searchInput = document.getElementById('searchInput');
-    const filterDropdown1 = document.getElementById('filterSubject'); // Ví dụ: dropdown môn học
-    const filterDropdown2 = document.getElementById('filterDate');    // Ví dụ: dropdown thời gian
-    const listItems = document.querySelectorAll('.data-item');        // Các thẻ card/row bài thi cần lọc
+    const filterSubject = document.getElementById('filterSubject');
+    const filterStatus = document.getElementById('filterStatus');
+    const filterDifficulty = document.getElementById('filterDifficulty');
+    const listItems = document.querySelectorAll('.data-item');
     const tabButtons = document.querySelectorAll('.tab-btn');
+    const jsEmptyState = document.getElementById('jsEmptyState');
+    const pageNumbersContainer = document.getElementById('pageNumbers');
+    const prevBtn = document.getElementById('prevPage');
+    const nextBtn = document.getElementById('nextPage');
 
-    let currentTabStatus = 'all'; // Trạng thái mặc định của tab
+    // Biến điều khiển phân trang
+    let currentPage = 1;
+    const itemsPerPage = 6; // Đã chỉnh lại số lượng hợp lý (6 thay vì 1)
+    let currentTabStatus = 'all';
+    let totalPagesGlobal = 1;
 
-    // Hàm thực thi lọc đa điều kiện
-    const jsEmptyState = document.getElementById('jsEmptyState'); // kiểm tra nếu không thấy cái gì trong bộ lọc thì in ra thông báo
+    // --- 1. LOGIC CHÍNH: LỌC & PHÂN TRANG ---
 
     function applyFilters() {
+        console.log("%c--- BẮT ĐẦU CHẠY BỘ LỌC ---", "color: blue; font-weight: bold;");
+
         const searchText = searchInput ? searchInput.value.toLowerCase().trim() : '';
         const selectedSubject = filterSubject ? filterSubject.value : 'all';
         const selectedStatus = filterStatus ? filterStatus.value : 'all';
         const selectedDifficulty = filterDifficulty ? filterDifficulty.value : 'all';
 
-        let visibleCount = 0; // Thêm biến đếm số lượng thẻ được hiển thị
+        let filteredItems = [];
 
-        listItems.forEach(item => {
+        // BƯỚC A: Lọc danh sách dựa trên dữ liệu Attributes
+        listItems.forEach((item) => {
             const itemText = item.textContent.toLowerCase();
             const itemSubject = item.getAttribute('data-subject') || 'all';
             const itemStatusAttr = item.getAttribute('data-status') || 'all';
@@ -60,114 +47,181 @@
             const matchDifficulty = selectedDifficulty === 'all' || itemDifficulty === selectedDifficulty;
             const matchTab = currentTabStatus === 'all' || itemStatusAttr === currentTabStatus;
 
+            // Ẩn tất cả trước
+            item.style.display = 'none';
+
             if (matchSearch && matchSubject && matchStatus && matchDifficulty && matchTab) {
-                item.style.display = '';
-                visibleCount++; // Có 1 thẻ thỏa mãn thì cộng 1
-            } else {
-                item.style.display = 'none';
+                filteredItems.push(item);
             }
         });
 
-        // Xử lý hiện thông báo nếu không có thẻ nào
-        if (jsEmptyState) {
-            if (visibleCount === 0 && listItems.length > 0) {
-                jsEmptyState.style.display = 'flex';
-                // Chạy lại lucide icon cho cái kính lúp (nếu cần)
-                if (typeof lucide !== 'undefined') lucide.createIcons();
-            } else {
-                jsEmptyState.style.display = 'none';
+        // BƯỚC B: Tính toán số trang
+        const totalItems = filteredItems.length;
+        totalPagesGlobal = Math.ceil(totalItems / itemsPerPage) || 1;
+
+        if (currentPage > totalPagesGlobal) currentPage = 1;
+
+        // BƯỚC C: Hiển thị các item thuộc trang hiện tại
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+
+        filteredItems.forEach((item, index) => {
+            if (index >= startIndex && index < endIndex) {
+                item.style.display = 'block';
+                item.style.animation = 'fadeInUp 0.4s ease forwards';
             }
+        });
+
+        // BƯỚC D: Cập nhật UI bổ trợ
+        renderPaginationUI(totalPagesGlobal);
+        updateNavigationButtons();
+
+        if (jsEmptyState) {
+            jsEmptyState.style.display = (totalItems === 0) ? 'flex' : 'none';
+            if (totalItems === 0 && typeof lucide !== 'undefined') lucide.createIcons();
+        }
+
+        console.log(`Đang hiển thị trang ${currentPage}/${totalPagesGlobal} (${totalItems} bài thi)`);
+    }
+
+    // HÀM VẼ CÁC SỐ TRANG (1, 2, 3...)
+    function renderPaginationUI(totalPages) {
+        if (!pageNumbersContainer) return;
+        pageNumbersContainer.innerHTML = '';
+
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.className = `page-num ${i === currentPage ? 'active' : ''}`;
+            btn.onclick = () => {
+                currentPage = i;
+                applyFilters();
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+            };
+            pageNumbersContainer.appendChild(btn);
         }
     }
 
-    if (searchInput) searchInput.addEventListener('input', applyFilters);
-    if (filterSubject) filterSubject.addEventListener('change', applyFilters);
-    if (filterStatus) filterStatus.addEventListener('change', applyFilters);
-    if (filterDifficulty) filterDifficulty.addEventListener('change', applyFilters);
-
-    // Lắng nghe sự kiện gõ tìm kiếm -> lọc realtime
-    if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
+    // HÀM CẬP NHẬT TRẠNG THÁI NÚT PREV/NEXT KHI Ở CUỐI / ĐẦU TRANG
+    function updateNavigationButtons() {
+        if (prevBtn) prevBtn.disabled = (currentPage === 1);
+        if (nextBtn) nextBtn.disabled = (currentPage === totalPagesGlobal || totalPagesGlobal === 0);
     }
 
-    // Lắng nghe sự kiện đổi dropdown -> lọc
-    if (filterDropdown1) filterDropdown1.addEventListener('change', applyFilters);
-    if (filterDropdown2) filterDropdown2.addEventListener('change', applyFilters);
+    // --- 2. ĐĂNG KÝ SỰ KIỆN (EVENT LISTENERS) ---
 
-    // Xử lý Tabs kết hợp bộ lọc
+    if (prevBtn) {
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                applyFilters();
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+            }
+        };
+    }
+
+    if (nextBtn) {
+        nextBtn.onclick = () => {
+            if (currentPage < totalPagesGlobal) {
+                currentPage++;
+                applyFilters();
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+            }
+        };
+    }
+
+    // Lọc tự động khi nhập liệu
+    [searchInput, filterSubject, filterStatus, filterDifficulty].forEach(el => {
+        if (el) {
+            const eventType = el.tagName === 'INPUT' ? 'input' : 'change';
+            el.addEventListener(eventType, () => {
+                currentPage = 1;
+                applyFilters();
+            });
+        }
+    });
+
+    // Sự kiện Click Tab
     tabButtons.forEach(button => {
         button.addEventListener('click', function () {
-            // Xóa class active ở tất cả các nút
             tabButtons.forEach(btn => btn.classList.remove('active'));
-            // Thêm class active vào nút vừa được click
             this.classList.add('active');
-
-            // Cập nhật trạng thái tab hiện tại
             currentTabStatus = this.getAttribute('data-tab') || 'all';
-
-            // Gọi lại bộ lọc tổng thay vì chỉ fetch API
+            currentPage = 1;
             applyFilters();
         });
     });
 
-    // 
-    // 3. LOGIC AVATAR DROPDOWN MENU PROFILE USER
-    // 
+    // --- 3. UI/UX: DROPDOWN, MODAL, ALERTS ---
+
+    // Dropdown Avatar
     const userAvatar = document.getElementById('userAvatar');
     const avatarDropdown = document.getElementById('avatarDropdown');
-
     if (userAvatar && avatarDropdown) {
-        // 1. Click vào Avatar thì bật/tắt Menu
-        userAvatar.addEventListener('click', function (event) {
-            event.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài body
+        userAvatar.onclick = (e) => {
+            e.stopPropagation();
             avatarDropdown.classList.toggle('show');
-        });
-
-        // 2. Click ra bất kỳ đâu trên màn hình thì tự đóng Menu
-        document.addEventListener('click', function (event) {
-            // Nếu menu đang mở VÀ chỗ click chuột KHÔNG NẰM TRONG menu hoặc avatar
-            if (avatarDropdown.classList.contains('show') &&
-                !avatarDropdown.contains(event.target) &&
-                event.target !== userAvatar) {
-                avatarDropdown.classList.remove('show'); // Đóng menu lại
-            }
-        });
+            avatarDropdown.style.display = avatarDropdown.classList.contains('show') ? 'block' : 'none';
+        };
     }
 
-    // 
-    // 4. XỬ LÝ MODAL THAM GIA LỚP
-    // 
-    const btnOpenModal = document.getElementById('btnOpenJoinModal');
-    const btnCloseModal = document.getElementById('btnCloseJoinModal');
-    const btnCancelModal = document.getElementById('btnCancelJoinModal');
-    const modalOverlay = document.getElementById('joinClassModal');
-
-    function toggleModal(e) {
-        if (e) e.preventDefault();
-        if (modalOverlay) modalOverlay.classList.toggle('active');
-    }
-
-    if (btnOpenModal) btnOpenModal.addEventListener('click', toggleModal);
-    if (btnCloseModal) btnCloseModal.addEventListener('click', toggleModal);
-    if (btnCancelModal) btnCancelModal.addEventListener('click', toggleModal);
-
-    // Bấm ra ngoài vùng xám để đóng modal
-    if (modalOverlay) {
-        modalOverlay.addEventListener('click', function (e) {
-            if (e.target === modalOverlay) toggleModal();
-        });
-    }
-
-    // 
-    // 5. XỬ LÝ TẮT THÔNG BÁO (ALERTS)
-    // 
-    const alertCloseBtns = document.querySelectorAll('.btn-close-alert');
-    alertCloseBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const alertBox = this.closest('.custom-alert');
-            if (alertBox) {
-                alertBox.style.display = 'none';
-            }
-        });
+    // Đóng dropdown khi click bên ngoài
+    document.addEventListener('click', () => {
+        if (avatarDropdown) {
+            avatarDropdown.classList.remove('show');
+            avatarDropdown.style.display = 'none';
+        }
     });
+
+    // Modal Tham gia lớp học
+    const modalOverlay = document.getElementById('joinClassModal');
+    ['btnOpenJoinModal', 'btnCloseJoinModal', 'btnCancelJoinModal'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el && modalOverlay) {
+            el.onclick = (e) => {
+                e.preventDefault();
+                modalOverlay.classList.toggle('active');
+            };
+        }
+    });
+
+    // Tự động tắt Alerts
+    document.querySelectorAll('.custom-alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = "0";
+            setTimeout(() => alert.remove(), 500);
+        }, 5000);
+
+        const closeBtn = alert.querySelector('.btn-close-alert');
+        if (closeBtn) {
+            closeBtn.onclick = () => alert.remove();
+        }
+    });
+
+    // Nút mở bộ lọc nâng cao
+    const btnToggleFilter = document.getElementById('btnToggleFilter');
+    const advancedFilter = document.getElementById('advancedFilter');
+    if (btnToggleFilter && advancedFilter) {
+        btnToggleFilter.onclick = () => {
+            advancedFilter.classList.toggle('active');
+        };
+    }
+
+    // --- 4. KHỞI CHẠY LẦN ĐẦU ---
+    applyFilters();
+
+    // Khôi phục trạng thái collapse của section lớp học
+    const classSection = document.getElementById('classSection');
+    if (classSection && localStorage.getItem('classSection_state') === 'closed') {
+        classSection.classList.add('collapsed');
+    }
 });
+
+// Hàm toàn cục cho HTML
+function toggleSection(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return;
+    section.classList.toggle('collapsed');
+    const isCollapsed = section.classList.contains('collapsed');
+    localStorage.setItem(sectionId + '_state', isCollapsed ? 'closed' : 'open');
+}
