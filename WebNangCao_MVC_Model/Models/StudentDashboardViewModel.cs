@@ -11,6 +11,7 @@
 
         // Danh sách bài thi hiển thị ra màn hình
         public List<ExamItemViewModel> Exams { get; set; } = new List<ExamItemViewModel>();
+        public List<JoinedClassViewModel> JoinedClasses { get; set; }
     }
 
     // Class đại diện cho 1 thẻ bài thi trên màn hình
@@ -23,12 +24,21 @@
         public int TotalQuestions { get; set; }
         public string Status { get; set; } = string.Empty; // "Có thể làm", "Sắp tới", "Đã hoàn thành"
 
-        // Các thuộc tính phụ (nếu Database của bạn có thì map vào, không thì để trống)
+        // Các thuộc tính phụ (nếu Database có thì map vào, không thì để trống)
         public string SubjectName { get; set; } = "Môn học chung";
         public string Difficulty { get; set; } = "Cơ bản";
         public string GroupName { get; set; } = "Lớp của tôi";
         public int? IdGroup { get; set; }
         public DateTime EndTime { get; set; }  // Add this if needed
         public int SubmittedCount { get; set; }  // Add this for instructor dashboard
+    }
+    //Class đại diện cho 1 thẻ Lớp trong các nhóm lớp
+    public class JoinedClassViewModel
+    {
+        
+        public int IdGroup { get; set; }
+        public string ClassName { get; set; } = string.Empty;//tên lớp
+        public string TeacherName { get; set; } = string.Empty;//giảng viên của lớp
+        public int ExamCount { get; set; } // Tổng số bài thi trong lớp này
     }
 }

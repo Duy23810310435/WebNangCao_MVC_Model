@@ -5,9 +5,9 @@
         lucide.createIcons();
     }
 
-    // ==========================================
+    //
     // 1. LOGIC ẨN/HIỆN UI BỘ LỌC NÂNG CAO
-    // ==========================================
+    // 
     const btnToggleFilter = document.getElementById('btnToggleFilter');
     const advancedFilter = document.getElementById('advancedFilter');
 
@@ -25,9 +25,9 @@
         });
     }
 
-    // ==========================================
+    // 
     // 2. LOGIC BỘ LỌC NHIỀU LỚP (TÌM KIẾM + TABS + DROPDOWN)
-    // ==========================================
+    // 
     // Giả định các ID cho input và dropdown (sếp nhớ map đúng với HTML nhé)
     const searchInput = document.getElementById('searchInput');
     const filterDropdown1 = document.getElementById('filterSubject'); // Ví dụ: dropdown môn học
@@ -71,7 +71,7 @@
         // Xử lý hiện thông báo nếu không có thẻ nào
         if (jsEmptyState) {
             if (visibleCount === 0 && listItems.length > 0) {
-                jsEmptyState.style.display = 'block';
+                jsEmptyState.style.display = 'flex';
                 // Chạy lại lucide icon cho cái kính lúp (nếu cần)
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             } else {
@@ -102,7 +102,7 @@
             // Thêm class active vào nút vừa được click
             this.classList.add('active');
 
-            // Cập nhật trạng thái tab hiện tại (Sếp cần gắn data-tab="tên_trạng_thái" vào html thẻ tab)
+            // Cập nhật trạng thái tab hiện tại
             currentTabStatus = this.getAttribute('data-tab') || 'all';
 
             // Gọi lại bộ lọc tổng thay vì chỉ fetch API
@@ -110,9 +110,9 @@
         });
     });
 
-    // ==========================================
-    // 3. LOGIC AVATAR DROPDOWN MENU
-    // ==========================================
+    // 
+    // 3. LOGIC AVATAR DROPDOWN MENU PROFILE USER
+    // 
     const userAvatar = document.getElementById('userAvatar');
     const avatarDropdown = document.getElementById('avatarDropdown');
 
@@ -134,9 +134,9 @@
         });
     }
 
-    // ==========================================
+    // 
     // 4. XỬ LÝ MODAL THAM GIA LỚP
-    // ==========================================
+    // 
     const btnOpenModal = document.getElementById('btnOpenJoinModal');
     const btnCloseModal = document.getElementById('btnCloseJoinModal');
     const btnCancelModal = document.getElementById('btnCancelJoinModal');
@@ -158,9 +158,9 @@
         });
     }
 
-    // ==========================================
+    // 
     // 5. XỬ LÝ TẮT THÔNG BÁO (ALERTS)
-    // ==========================================
+    // 
     const alertCloseBtns = document.querySelectorAll('.btn-close-alert');
     alertCloseBtns.forEach(btn => {
         btn.addEventListener('click', function () {

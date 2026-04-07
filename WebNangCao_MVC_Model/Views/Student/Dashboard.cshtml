@@ -108,6 +108,46 @@
                 <div class="stat-icon bg-orange"><i data-lucide="clock"></i></div>
             </div>
         </section>
+        <!--giao diện hiển thị nhóm lớp đã tham gia-->
+        <section class="class-section" style="margin-bottom: 32px;">
+            <div class="exam-header" style="margin-bottom: 20px;">
+                <h2><i data-lucide="users"></i> Lớp học đã tham gia</h2>
+                <p>Danh sách các lớp bạn đang là thành viên</p>
+            </div>
+
+            <div class="class-grid">
+                @* Lưu ý: Cần bổ sung List<JoinedClassViewModel> JoinedClasses vào ViewModel của sếp *@
+                @if (Model.JoinedClasses != null && Model.JoinedClasses.Count > 0)
+                {
+                    @foreach (var cls in Model.JoinedClasses)
+                    {
+                        <div class="class-card">
+                            <div class="class-card-header">
+                                <div class="class-icon"><i data-lucide="graduation-cap"></i></div>
+                                <div>
+                                    <h3 title="@cls.ClassName">@cls.ClassName</h3>
+                                    <span class="class-id">Mã lớp: @cls.IdGroup</span>
+                                </div>
+                            </div>
+                            <div class="class-card-body">
+                                <p><i data-lucide="user"></i> GV: @cls.TeacherName</p>
+                                <p><i data-lucide="file-text"></i> @cls.ExamCount bài thi</p>
+                            </div>
+                            <div class="class-card-footer">
+                                <a href="javascript:void(0);" class="btn-view-class">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="empty-state-sm">
+                        <i data-lucide="folder-open" style="width: 48px; height: 48px; margin-bottom: 12px; opacity: 0.3;"></i>
+                        <p>Bạn chưa tham gia lớp học nào.</p>
+                    </div>
+                }
+            </div>
+        </section>
 
         <section class="exam-section">
             <div class="exam-header">
