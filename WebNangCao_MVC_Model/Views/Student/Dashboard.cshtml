@@ -118,7 +118,7 @@
             <div class="search-filter-bar">
                 <div class="search-box">
                     <i data-lucide="search"></i>
-                    <input type="text" placeholder="Tìm kiếm bài thi theo tên hoặc môn học..." />
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm bài thi theo tên hoặc môn học..." />
                 </div>
                 <button class="btn-toggle-filter" id="btnToggleFilter">
                     <i data-lucide="filter"></i> Bộ lọc
@@ -127,24 +127,71 @@
 
             <div class="advanced-filter" id="advancedFilter">
                 <div class="filter-group">
-                    <label></label>
-                    <select><option>Tất cả môn học</option></select>
+                    <label>Môn học</label>
+                    <select id="filterSubject">
+                        <option value="all">Tất cả môn học</option>
+                        @if (Model.Exams != null && Model.Exams.Any())
+                        {
+                            // Lấy ra các môn học không bị null/rỗng và loại bỏ trùng lặp
+                            var subjects = Model.Exams
+                            .Where(e => !string.IsNullOrWhiteSpace(e.SubjectName))
+                            .Select(e => e.SubjectName)
+                            .Distinct();
+
+                            foreach (var subject in subjects)
+                            {
+                                <option value="@subject">@subject</option>
+                            }
+                        }
+                    </select>
                 </div>
+
                 <div class="filter-group">
                     <label>Trạng thái</label>
-                    <select><option>Tất cả trạng thái</option></select>
+                    <select id="filterStatus">
+                        <option value="all">Tất cả trạng thái</option>
+                        @if (Model.Exams != null && Model.Exams.Any())
+                        {
+                            // Lấy ra các trạng thái thực tế đang có và loại bỏ trùng lặp
+                            var statuses = Model.Exams
+                            .Where(e => !string.IsNullOrWhiteSpace(e.Status))
+                            .Select(e => e.Status)
+                            .Distinct();
+
+                            foreach (var status in statuses)
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        }
+                    </select>
                 </div>
+
                 <div class="filter-group">
                     <label>Độ khó</label>
-                    <select><option>Tất cả độ khó</option></select>
+                    <select id="filterDifficulty">
+                        <option value="all">Tất cả độ khó</option>
+                        @if (Model.Exams != null && Model.Exams.Any())
+                        {
+                            // Lấy ra các mức độ khó đang có và loại bỏ trùng lặp
+                            var difficulties = Model.Exams
+                            .Where(e => !string.IsNullOrWhiteSpace(e.Difficulty))
+                            .Select(e => e.Difficulty)
+                            .Distinct();
+
+                            foreach (var diff in difficulties)
+                            {
+                                <option value="@diff">@diff</option>
+                            }
+                        }
+                    </select>
                 </div>
             </div>
 
             <div class="status-tabs">
-                <button class="tab-btn active">Tất cả</button>
-                <button class="tab-btn">Có thể làm</button>
-                <button class="tab-btn">Sắp tới</button>
-                <button class="tab-btn">Đã hoàn thành</button>
+                <button class="tab-btn active" data-tab="all">Tất cả (@Model.TotalExams)</button>
+                <button class="tab-btn" data-tab="Có thể làm">Có thể làm (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Sắp tới">Sắp tới (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Đã hoàn thành">Đã hoàn thành (@Model.CompletedExams)</button>
             </div>
 
             <div class="exam-grid">
@@ -152,62 +199,107 @@
                 {
                     @foreach (var exam in Model.Exams)
                     {
-                        <div class="exam-card">
+                        var difficultyClass = exam.Difficulty?.ToLower() switch
+                        {
+                            "dễ" => "tag-green",
+                            "trung bình" => "tag-orange",
+                            "khó" => "tag-red",
+                            _ => "tag-blue" // Mặc định nếu không khớp
+                        };
+
+                        <div class="exam-card data-item"
+                             data-status="@exam.Status"
+                             data-subject="@exam.SubjectName"
+                             data-date="@exam.Status"
+                             data-difficulty="@exam.Difficulty">
+
                             <div class="card-header">
-                                <h3>@exam.Title</h3>
+                                <h3 title="@exam.Title">@exam.Title</h3>
                                 @if (exam.Status == "Có thể làm")
                                 {
-                                    <span class="badge badge-success">Có thể làm</span>
+                                    <span class="badge badge-success" title="Bạn có thể bắt đầu làm bài ngay bây giờ">
+                                        <i data-lucide="unlock" style="width: 14px; height: 14px; margin-right: 4px;"></i> Có thể làm
+                                    </span>
                                 }
                                 else if (exam.Status == "Sắp tới")
                                 {
-                                    <span class="badge badge-blue">Sắp tới</span>
+                                    <span class="badge badge-blue" title="Chưa đến thời gian làm bài">
+                                        <i data-lucide="lock" style="width: 14px; height: 14px; margin-right: 4px;"></i> Sắp tới
+                                    </span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-gray">Đã hoàn thành</span>
+                                    <span class="badge badge-gray" title="Bạn đã hoàn thành bài thi này">
+                                        <i data-lucide="check-circle-2" style="width: 14px; height: 14px; margin-right: 4px;"></i> Đã hoàn thành
+                                    </span>
                                 }
                             </div>
+
                             <div class="card-tags">
-                                <span class="tag tag-blue">@exam.SubjectName</span>
-                                <span class="tag tag-orange">@exam.Difficulty</span>
-                            </div>
-                            <div class="card-details">
-                                <div class="detail-item"><i data-lucide="calendar"></i> @exam.StartTime.ToString("dd/MM/yyyy HH:mm")</div>
-                                <div class="detail-item"><i data-lucide="clock"></i> @exam.Duration phút</div>
-                                <div class="detail-item"><i data-lucide="file-text"></i> @exam.TotalQuestions câu hỏi</div>
-                                <div class="detail-item"><i data-lucide="users"></i> @exam.GroupName (Mã lớp: @exam.IdGroup)</div>
+                                <span class="tag tag-blue"><i data-lucide="book" style="width: 12px; height: 12px; margin-right: 4px;"></i> @exam.SubjectName</span>
+                                <span class="tag @difficultyClass">@exam.Difficulty</span>
                             </div>
 
-                            @if (exam.Status == "Có thể làm")
-                            {
-                                <a asp-controller="TestAttempt"
-                                   asp-action="GiaoDienLamBai"
-                                   asp-route-id="@exam.Id"
-                                   class="btn-primary-action" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                    <i data-lucide="play-circle"></i> Bắt đầu làm bài
-                                </a>
-                            }
-                            else if (exam.Status == "Sắp tới")
-                            {
-                                <button class="btn-disabled" disabled><i data-lucide="history"></i> Chưa tới giờ thi</button>
-                            }
-                            else
-                            {
-                                <button class="btn-disabled" disabled style="background-color: #e2e8f0; color: #475569;"><i data-lucide="check-circle"></i> Đã hoàn thành</button>
-                            }
+                            <div class="card-details">
+                                <div class="detail-item" title="Thời gian bắt đầu">
+                                    <i data-lucide="calendar"></i> @exam.StartTime.ToString("dd/MM/yyyy HH:mm")
+                                </div>
+                                <div class="detail-item" title="Thời lượng làm bài">
+                                    <i data-lucide="clock"></i> @exam.Duration phút
+                                </div>
+                                <div class="detail-item" title="Số lượng câu hỏi">
+                                    <i data-lucide="file-text"></i> @exam.TotalQuestions câu hỏi
+                                </div>
+                                <div class="detail-item" title="Tên lớp học">
+                                    <i data-lucide="users"></i> @exam.GroupName (Mã lớp: @exam.IdGroup)
+                                </div>
+                            </div>
+
+                            <div class="card-actions" style="margin-top: auto; padding-top: 16px;">
+                                @if (exam.Status == "Có thể làm")
+                                {
+                                    <a asp-controller="TestAttempt"
+                                       asp-action="GiaoDienLamBai"
+                                       asp-route-id="@exam.Id"
+                                       class="btn-primary-action"
+                                       style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
+                                        <i data-lucide="play-circle"></i> Bắt đầu làm bài
+                                    </a>
+                                }
+                                else if (exam.Status == "Sắp tới")
+                                {
+                                    <button class="btn-disabled" disabled style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <i data-lucide="history"></i> Chưa tới giờ thi
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn-disabled" disabled style="background-color: #f1f5f9; color: #64748b; border: 1px dashed #cbd5e1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                                        <i data-lucide="check-circle"></i> Đã hoàn thành
+                                    </button>
+                                }
+                            </div>
                         </div>
                     }
                 }
+                //dùng cho tài khoản mới hoàn toàn mà chưa có bài thi nào
+
                 else
                 {
-                    <div class="empty-state" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #64748b;">
-                        <i data-lucide="inbox" style="width: 48px; height: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
-                        <h3>Không có bài thi nào</h3>
-                        <p>Bạn chưa có bài thi nào từ các lớp đã tham gia.</p>
+                    <div class="empty-state" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                        <i data-lucide="inbox" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
+                        <h3 style="margin: 0 0 8px 0; color: #334155;">Không có bài thi nào</h3>
+                        <p style="margin: 0; font-size: 14px;">Bạn chưa có bài thi nào từ các lớp đã tham gia.</p>
                     </div>
                 }
+                <!--Dùng khi không tìm thấy thẻ bài thi nào trong các thẻ bài thi trong DB-->
+                <div id="jsEmptyState" style="display: none; grid-column: 1 / -1; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0;">
+                    <i data-lucide="search-x" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
+                    <h3 style="margin: 0 0 8px 0; color: #334155;">Không tìm thấy bài thi phù hợp</h3>
+                    <p style="margin: 0; font-size: 14px;">Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</p>
+                </div>
             </div>
+            
         </section>
 
     </main>

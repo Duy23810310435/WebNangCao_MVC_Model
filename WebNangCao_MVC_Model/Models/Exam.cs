@@ -6,7 +6,9 @@ namespace WebNangCao_MVC_Model.Models
     {
         public int Id { get; set; } // <--- Đảm bảo bạn có dòng này và viết đúng chữ Id
         public string Title { get; set; } = string.Empty;
-        public string SubjectName { get; set; } = string.Empty;  // ADD THIS
+        public string SubjectName { get; set; } = string.Empty;
+        
+        public string Difficulty { get; set; } = "Trung bình"; // Gán mặc định là Trung bình cho các record cũ
         public bool IsActive { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

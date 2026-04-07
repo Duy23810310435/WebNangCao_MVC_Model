@@ -23,134 +23,153 @@
     </head> 
     <body>
     <!---->
-    @Html.AntiForgeryToken()
-    <header class="test-header">
-        <div class="header-title">
-            <h1>@Model?.Title</h1>
-            <p>Thời gian: @Model?.Duration phút</p>
-        </div>
-        <div class="header-actions">
-            <div class="timer-badge">
-                <i data-lucide="clock" width="20" height="20"></i>
-                <span id="countdownDisplay">00:00</span>
+    <form id="examForm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" id="ExamId" value="@Model?.Id"/>
+        <header class="test-header">
+            <div class="header-title">
+                <h1>@Model?.Title</h1>
+                <p>Thời gian: @Model?.Duration phút</p>
             </div>
-            <button class="btn-submit" onclick="submitExam()">
-                <i data-lucide="send" width="16" height="16"></i>
-                <span>Nộp bài</span>
-            </button>
-        </div>
-    </header>
-
-    <main class="test-container">
-        <div class="main-content">
-            <div class="card">
-                <div class="progress-header">
-                    <span>Tiến độ: 0/@totalQs câu</span>
-                    <span class="percent">0%</span>
+            <div class="header-actions">
+                <div class="timer-badge">
+                    <i data-lucide="clock" width="20" height="20"></i>
+                    <span id="countdownDisplay">00:00</span>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: 0%"></div>
-                </div>
+                <button type="button" class="btn-submit" onclick="submitExam()">
+                    <i data-lucide="send" width="16" height="16"></i>
+                    <span>Nộp bài</span>
+                </button>
             </div>
+        </header>
 
-            @{
-                int qIdx = 1;
-            }
-            @if (Model?.Questions != null)
-            {
-                foreach (var question in Model.Questions)
+        <main class="test-container">
+            <div class="main-content">
+                <div class="card">
+                    <div class="progress-header">
+                        <span>Tiến độ: 0/@totalQs câu</span>
+                        <span class="percent">0%</span>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                @{
+                    int qIdx = 1;
+                }
+                @if (Model?.Questions != null)
                 {
-                    <div class="card question-block" id="question-block-@qIdx" style="display: @(qIdx == 1 ? "block" : "none");">
-                        <div class="question-header">
-                            <div class="question-title-wrapper">
-                                <div class="question-number">@qIdx</div>
-                                <div class="question-title">
-                                    <h2>Câu hỏi @qIdx</h2>
-                                    <span class="badge-difficulty">@question.Difficulty</span>
+                    foreach (var question in Model.Questions)
+                    {
+                        <div class="card question-block" id="question-block-@qIdx" style='display: @(qIdx == 1 ? "block" : "none");'>
+                            <div class="question-header">
+                                <div class="question-title-wrapper">
+                                    <div class="question-number">@qIdx</div>
+                                    <div class="question-title">
+                                        <h2>Câu hỏi @qIdx</h2>
+                                        <span class="badge-difficulty">@question.Difficulty</span>
+                                    </div>
                                 </div>
+                                <button class="btn-flag" type="button" title="Đánh dấu xem lại">
+                                    <i data-lucide="flag" width="20" height="20"></i>
+                                </button>
                             </div>
-                            <button class="btn-flag" type="button" title="Đánh dấu xem lại">
-                                <i data-lucide="flag" width="20" height="20"></i>
-                            </button>
-                        </div>
 
-                        <div class="question-text">
-                            @Html.Raw(question.Content)
-                        </div>
+                            <div class="question-text">
+                                @Html.Raw(question.Content)
+                            </div>
 
-                        <div class="answer-list">
-                            @if (question.Answers != null)
-                            {
-                                char optionLetter = 'A'; // Biến để sinh chữ A, B, C, D
-                                foreach (var answer in question.Answers)
+                            <div class="answer-list">
+                                @if (question.Answers != null)
                                 {
-                                    <label class="answer-option">
-                                        <input type="radio" name="question_@question.Id" value="@answer.Id">
-                                        <span>@optionLetter. @answer.Content</span>
-                                    </label>
-                                    optionLetter++;
+                                    char optionLetter = 'A'; // Biến để sinh chữ A, B, C, D
+                                    foreach (var answer in question.Answers)
+                                    {
+                                        <label class="answer-option">
+                                            <input type="radio" name="question_@question.Id" value="@answer.Id">
+                                            <span>@optionLetter. @answer.Content</span>
+                                        </label>
+                                        optionLetter++;
+                                    }
                                 }
-                            }
+                            </div>
+
+                            <div class="question-nav">
+                                <button type="button" class="btn-nav btn-nav-prev" onclick="prevQuestion()" @(qIdx == 1 ? "disabled" : "")>
+                                    <i data-lucide="chevron-left" width="18" height="18"></i> Câu trước
+                                </button>
+
+                                <span style="color: var(--text-muted); font-size: 14px; font-weight: 500;">@qIdx / @totalQs</span>
+
+                                <button type="button" class="btn-nav btn-nav-next" onclick="nextQuestion()">
+                                    Câu sau <i data-lucide="chevron-right" width="18" height="18"></i>
+                                </button>
+                            </div>
                         </div>
-
-                        <div class="question-nav">
-                            <button type="button" class="btn-nav btn-nav-prev" onclick="prevQuestion()" @(qIdx == 1 ? "disabled" : "")>
-                                <i data-lucide="chevron-left" width="18" height="18"></i> Câu trước
-                            </button>
-
-                            <span style="color: var(--text-muted); font-size: 14px; font-weight: 500;">@qIdx / @totalQs</span>
-
-                            <button type="button" class="btn-nav btn-nav-next" onclick="nextQuestion()">
-                                Câu sau <i data-lucide="chevron-right" width="18" height="18"></i>
-                            </button>
-                        </div>
-                    </div>
-                    qIdx++;
+                        qIdx++;
+                    }
                 }
-            }
+            </div>
+
+            <aside class="sidebar card">
+                <h3>Danh sách câu hỏi</h3>
+
+                <div class="filter-tabs">
+                    <button type="button" class="filter-tab active">Tất cả</button>
+                    <button type="button" class="filter-tab">Đã làm</button>
+                    <button type="button" class="filter-tab">Đánh dấu</button>
+                </div>
+
+                <div class="question-grid">
+                    @for (int i = 1; i <= totalQs; i++)
+                    {
+                        <button type="button" class="grid-item @(i == 1 ? "active" : "")" onclick="jumpToQuestion(@i)">@i</button>
+                    }
+                </div>
+
+                <div class="legend-list">
+                    <div class="legend-item">
+                        <div class="legend-left">
+                            <div class="legend-box box-answered"></div>
+                            <span>Đã trả lời</span>
+                        </div>
+                        <span class="legend-count">0</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-left">
+                            <div class="legend-box box-unanswered"></div>
+                            <span>Chưa trả lời</span>
+                        </div>
+                        <span class="legend-count">@totalQs</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-left">
+                            <i data-lucide="flag" width="14" height="14" style="color: var(--warning-color); fill: var(--warning-color)"></i>
+                            <span>Đánh dấu</span>
+                        </div>
+                        <span class="legend-count">0</span>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </form>
+
+    <!--Phần hướng dẫn phím tắt cho người dùng biết-->
+    <footer class="exam-footer">
+        <div class="shortcut-hints">
+            <span class="shortcut-title">
+                <i class="shortCutIconText" data-lucide="keyboard" width="24" height="24"></i>
+                <strong>Phím tắt:</strong>
+            </span>
+            <span class="key-hint"><kbd>1</kbd> - <kbd>9</kbd> Chọn đáp án</span>
+            <span class="key-hint"><kbd>0</kbd> Bỏ chọn</span>
+            <span class="key-hint"><kbd>←</kbd> <kbd>→</kbd> Chuyển câu</span>
+            <span class="key-hint"><kbd>F</kbd> Cắm cờ</span>
+            <span class="key-hint"><kbd>Enter</kbd> Nộp bài</span>
+            <span class="key-hint"><kbd>Esc</kbd> Hủy xác nhận nộp bài</span>
         </div>
-
-        <aside class="sidebar card">
-            <h3>Danh sách câu hỏi</h3>
-
-            <div class="filter-tabs">
-                <button class="filter-tab active">Tất cả</button>
-                <button class="filter-tab">Đã làm</button>
-                <button class="filter-tab">Đánh dấu</button>
-            </div>
-
-            <div class="question-grid">
-                @for (int i = 1; i <= totalQs; i++)
-                {
-                    <button type="button" class="grid-item @(i == 1 ? "active" : "")" onclick="jumpToQuestion(@i)">@i</button>
-                }
-            </div>
-
-            <div class="legend-list">
-                <div class="legend-item">
-                    <div class="legend-left">
-                        <div class="legend-box box-answered"></div>
-                        <span>Đã trả lời</span>
-                    </div>
-                    <span class="legend-count">0</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-left">
-                        <div class="legend-box box-unanswered"></div>
-                        <span>Chưa trả lời</span>
-                    </div>
-                    <span class="legend-count">@totalQs</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-left">
-                        <i data-lucide="flag" width="14" height="14" style="color: var(--warning-color); fill: var(--warning-color)"></i>
-                        <span>Đánh dấu</span>
-                    </div>
-                    <span class="legend-count">0</span>
-                </div>
-            </div>
-        </aside>
-    </main>
+    </footer>
 
     <!--Giao diện nộp bài-->
     <!--nó sẽ hiện lên sau khi nhấn nút Submit-->
