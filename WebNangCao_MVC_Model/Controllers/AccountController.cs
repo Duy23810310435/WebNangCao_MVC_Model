@@ -86,12 +86,18 @@ namespace WebNangCao_MVC_Model.Controllers
 
             //Bước 2: truy vấn PsstGreSQL để đăng nhập
             //tìm user có username hoặc email khớp với dữ liệu nhập vào
-            //so sánh mật khẩu đúng
-            var user = _context.Users.FirstOrDefault(u => (u.Username == model.Login.UsernameOrEmail || u.Email == model.Login.UsernameOrEmail)
-                && u.PasswordHash == model.Login.Password);
+            //so sánh mật khẩu trong database và khi người dùng nhập vào
+            var user = _context.Users.FirstOrDefault(u => (u.Username == model.Login.UsernameOrEmail || u.Email == model.Login.UsernameOrEmail));
             //nếu tìm thấy tài khoản hợp lệ
             if (user != null)
             {
+                bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.Login.Password, user.PasswordHash);
+                if (!isPasswordCorrect) 
+                {
+                    ModelState.AddModelError("Login.Password", "Tài khoản hoặc mật khẩu không chính xác.");
+                    model.ActiveTab = "login";
+                    return View("Index", model);
+                }
                 //so sánh Role trên giao diện Front-End với Role lưu trong Database (user.Role)
                 if (user.Role != Role)
                 {
@@ -162,12 +168,14 @@ namespace WebNangCao_MVC_Model.Controllers
                 return View("Index", model);
             }
             // Tạo đối tượng User mới từ dữ liệu form gửi lên
+            //Băm dữ liệu trước khi đưa vào database
+            string hashPassword = BCrypt.Net.BCrypt.HashPassword(model.Register.Password);
             var newUser = new User
             {
                 FullName = model.Register.Name,
                 Username = model.Register.Username,
-                Email = model.Register.Email,
-                PasswordHash = model.Register.Password, // ⚠️ Cảnh báo: Thực tế đi làm phải mã hóa (Hash) mật khẩu nhé!
+                Email = model.Register.Email, 
+                PasswordHash = hashPassword,
                 Role = model.Register.Role ?? "student"
             };
             //nếu chưa có tài khoản nào thì sẽ tạo và lưu dữ liệu vào Database
