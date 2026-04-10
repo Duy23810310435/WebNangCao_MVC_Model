@@ -12,8 +12,8 @@ using WebNangCao_MVC_Model.Data;
 namespace WebNangCao_MVC_Model.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260331180139_InitEduTest")]
-    partial class InitEduTest
+    [Migration("20260401153020_TaoDB")]
+    partial class TaoDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,6 +74,10 @@ namespace WebNangCao_MVC_Model.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<int>("Duration")
                         .HasColumnType("integer");
 
@@ -91,6 +95,10 @@ namespace WebNangCao_MVC_Model.Migrations
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("SubjectName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Title")
                         .IsRequired()

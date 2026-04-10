@@ -276,6 +276,8 @@ body.dashboard-body {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
+    min-height:500px;
+    align-content:start;
 }
 
 .exam-card {

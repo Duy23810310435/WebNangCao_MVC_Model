@@ -5,48 +5,157 @@
     ViewData["Title"] = "Tạo Lớp Học Mới";
 }
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <h2><i class="fas fa-plus-circle"></i> Tạo Lớp Học Mới</h2>
-            <hr />
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="bg-gray-100 min-h-screen">
 
-            @if (!ViewData.ModelState.IsValid)
-            {
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Lỗi!</strong> Vui lòng kiểm tra lại các trường thông tin bên dưới.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div id="modalOverlay" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        
+        <!-- Form View -->
+        <div id="formView" class="w-full max-w-md my-8 bg-white border-2 border-gray-200 rounded-xl shadow-2xl">
+            <div class="p-6 pb-4 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-green-600">
+                            <i data-lucide="users" class="h-6 w-6 text-white"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-semibold tracking-tight text-gray-900">Tạo lớp học mới</h2>
+                            <p class="text-sm text-gray-500">Tạo lớp học để quản lý học sinh</p>
+                        </div>
+                    </div>
+                    <a href="@Url.Action("Classes")" class="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors">
+                        <i data-lucide="x" class="h-4 w-4"></i>
+                    </a>
                 </div>
-            }
+            </div>
 
-            <form method="post" novalidate>
-                <div class="mb-3">
-                    <label asp-for="GroupName" class="form-label">Tên Lớp Học <span class="text-danger">*</span></label>
-                    <input asp-for="GroupName" class="form-control" placeholder="Ví dụ: Lớp Toán 12A1" required>
-                        <span asp-validation-for="GroupName" class="text-danger d-block mt-1"></span>
-                        <small class="text-muted">3-100 ký tự</small>
+            <div class="p-6 pt-0">
+                <form id="createClassForm" method="post" class="space-y-4" novalidate>
+                    @if (!ViewData.ModelState.IsValid && Model != null)
+                    {
+                        <div class="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                            <i data-lucide="alert-circle" class="h-4 w-4 flex-shrink-0"></i>
+                            <span class="text-sm">
+                                @if (ViewData.ModelState.ErrorCount > 0)
+                                {
+                                    <span>Vui lòng kiểm tra lại các trường thông tin bên dưới</span>
+                                }
+                            </span>
+                        </div>
+                    }
+
+                    <div id="errorMessage" class="hidden items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700">
+                        <i data-lucide="alert-circle" class="h-4 w-4 flex-shrink-0"></i>
+                        <span class="text-sm">Vui lòng điền đầy đủ thông tin bắt buộc</span>
                     </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Description" class="form-label">Mô Tả <span class="text-danger">*</span></label>
-                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Nhập mô tả lớp học..." required></textarea>
-                        <span asp-validation-for="Description" class="text-danger d-block mt-1"></span>
-                        <small class="text-muted">10-500 ký tự</small>
-                    </div>
+                    <!-- Group Name Input -->
+                    <div class="space-y-2">
+                        <label asp-for="GroupName" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                            Tên lớp học <span class="text-red-500">*</span>
+                        </label>
+                        <input asp-for="GroupName"
+                               type="text"
+                               placeholder="VD: Lớp Toán 12A1"
+                               class="flex h-10 w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                               required>
+                            <span asp-validation-for="GroupName" class="text-red-600 text-xs block mt-1"></span>
+                            <small class="text-muted text-gray-500">3-100 ký tự</small>
+                        </div>
 
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="@Url.Action("Classes")" class="btn btn-secondary">Hủy</a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-save"></i> Tạo Lớp
-                        </button>
+                        <!-- Description Input -->
+                        <div class="space-y-2">
+                            <label asp-for="Description" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                                Mô tả <span class="text-red-500">*</span>
+                            </label>
+                            <textarea asp-for="Description"
+                                      placeholder="VD: Lớp ôn thi đại học khối A"
+                                      rows="3"
+                                      class="flex w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                                      required></textarea>
+                            <span asp-validation-for="Description" class="text-red-600 text-xs block mt-1"></span>
+                            <small class="text-muted text-gray-500">10-500 ký tự</small>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 pt-2">
+                            <a href="@Url.Action("Classes")" class="flex-1 inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors">
+                                Hủy
+                            </a>
+                            <button type="submit" class="flex-1 inline-flex items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors">
+                                <i data-lucide="plus" class="h-4 w-4 mr-2"></i>
+                                Tạo lớp học
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Success View -->
+            <div id="successView" class="hidden w-full max-w-md bg-white border-2 border-gray-200 rounded-xl shadow-2xl">
+                <div class="p-6 pt-6">
+                    <div class="text-center space-y-4">
+                        <div class="flex justify-center">
+                            <div class="h-16 w-16 rounded-full bg-green-100 flex items-center justify-center">
+                                <i data-lucide="check-circle-2" class="h-8 w-8 text-green-600"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-2">
+                                Tạo lớp học thành công!
+                            </h3>
+                            <p class="text-gray-500 text-sm mb-4">
+                                Lớp học của bạn đã được khởi tạo và sẵn sàng để sử dụng.
+                            </p>
+                        </div>
+                        <a href="@Url.Action("Classes")" class="w-full inline-flex items-center justify-center rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                            Quay lại danh sách lớp học
+                        </a>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
 
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        <script>
+            lucide.createIcons();
+
+            const formView = document.getElementById('formView');
+            const successView = document.getElementById('successView');
+            const createClassForm = document.getElementById('createClassForm');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Form submission - delegates to ASP.NET MVC POST handler
+            createClassForm.addEventListener('submit', function(e) {
+            errorMessage.classList.add('hidden');
+            errorMessage.classList.remove('flex');
+
+            const groupName = document.querySelector('[name="GroupName"]').value.trim();
+            const description = document.querySelector('[name="Description"]').value.trim();
+
+            // Client-side validation before submission
+            if (!groupName || !description) {
+            e.preventDefault();
+            errorMessage.classList.remove('hidden');
+            errorMessage.classList.add('flex');
+            return false;
+            }
+            });
+        </script>
+
+        @section Scripts {
+            @{
+                await Html.RenderPartialAsync("_ValidationScriptsPartial");
+            }
         }
-    }
+
+    </body>
+</html>

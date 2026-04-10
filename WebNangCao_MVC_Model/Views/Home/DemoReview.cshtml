@@ -1,0 +1,101 @@
+﻿@model WebNangCao_MVC_Model.Models.Exam
+@{
+    ViewData["Title"] = "Kết quả Demo";
+    Layout = null; // Tắt layout mặc định để khớp CSS
+
+    var userChoices = ViewBag.UserChoices as Dictionary<int, int>;
+    var score = ViewBag.Score ?? 0.0;
+    var correctCount = ViewBag.CorrectAnswers ?? 0;
+}
+
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <title>Kết quả bài thi Demo</title>
+    <link rel="stylesheet" href="~/css/review-result.css" />
+</head>
+<body>
+    <div class="review-container">
+        <header class="review-header">
+            <div class="score-circle">
+                <span class="score-value" id="animatedScore" data-target="@score">@score</span>
+                <span class="score-label">Điểm</span>
+            </div>
+            <div class="summary-info">
+                <h1>Kết Quả Chi Tiết (Bản Demo)</h1>
+                <p>Khách vãng lai - Chưa đăng nhập</p>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span>Số câu đúng:</span>
+                        <strong>@correctCount / @Model.Questions.Count</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>Trạng thái:</span>
+                        <strong class="status-pass">Hoàn thành</strong>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <a href="@Url.Action("Index", "Home")" class="btn-back">
+                        Về trang chủ
+                    </a>
+                    <a href="@Url.Action("GetStarted", "Home")" class="btn-print" style="background-color: #0f172a; color: white;">
+                        Đăng ký tài khoản ngay!
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="question-list">
+            @{
+                int _qIndex = 0;
+            }
+
+            @foreach (var q in Model.Questions)
+            {
+                var i = _qIndex++;
+                int selectedAnswerId = userChoices != null && userChoices.ContainsKey(q.Id) ? userChoices[q.Id] : 0;
+
+                <section class="question-card">
+                    <div class="question-title">
+                        <span class="q-number">Câu @(i + 1)</span>
+                        <p>@Html.Raw(q.Content)</p>
+                    </div>
+
+                    <div class="answer-options">
+                        @foreach (var ans in q.Answers)
+                        {
+                            bool isUserSelected = (selectedAnswerId == ans.Id);
+                            bool isCorrect = ans.IsCorrect;
+
+                            string statusClass = "";
+                            if (isCorrect) statusClass = "correct";
+                            else if (isUserSelected && !isCorrect) statusClass = "wrong";
+
+                            <div class="answer-item @statusClass">
+                                <div class="custom-indicator">
+                                    @if (isCorrect)
+                                    {
+                                        <span>✔</span>
+                                    }
+                                    else if (isUserSelected)
+                                    {
+                                        <span>✖</span>
+                                    }
+                                </div>
+                                <span class="answer-text">@ans.Content</span>
+                                @if (isUserSelected)
+                                {
+                                    <span class="user-tag">Lựa chọn của bạn</span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </section>
+            }
+        </main>
+    </div>
+    <script src="~/js/review-result.js"></script>
+</body>
+</html>
