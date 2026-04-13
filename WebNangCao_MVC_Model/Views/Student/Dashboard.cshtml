@@ -250,11 +250,11 @@
                 {
                     @foreach (var exam in Model.Exams)
                     {
-                        var difficultyClass = exam.Difficulty?.ToLower() switch
+                        var difficultyClass = exam.Difficulty?.Trim().ToLower() switch
                         {
-                            "dễ" => "tag-green",
-                            "trung bình" => "tag-orange",
-                            "khó" => "tag-red",
+                            "dễ" or "Dễ" => "tag-green",
+                            "trung bình" or "Trung bình" => "tag-orange",
+                            "khó" or "Khó"=> "tag-red",
                             _ => "tag-blue" // Mặc định nếu không khớp
                         };
 

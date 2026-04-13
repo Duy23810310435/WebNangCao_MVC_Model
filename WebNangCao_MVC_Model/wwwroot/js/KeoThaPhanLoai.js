@@ -86,8 +86,8 @@ document.addEventListener('dragover', function (e) {
 });
 
 function updateCardCounts() {
-    ['col-easy', 'col-medium', 'col-hard', 'col-waiting'].forEach(id => {
-        const col = document.getElementById(id);
+    ['col-easy', 'col-medium', 'col-hard', 'col-waiting'].forEach(colId => {
+        const col = document.getElementById(colId);
         if (col) {
             const count = col.querySelectorAll('.question-card').length;
             const badge = col.querySelector('.badge-count');
@@ -298,18 +298,22 @@ function saveClassification() {
                     confirmButtonColor: '#22c55e',
                     cancelButtonColor: '#64748b'
                 }).then((result) => {
+                    // 1. Lấy examId từ thanh địa chỉ URL hiện tại (VD: ?examId=5)
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const examId = currentExamId;
+
                     if (result.isConfirmed) {
                         // Lấy các tùy chọn người dùng đã chọn
                         const shuffleQ = document.getElementById('chk-shuffle-questions').checked;
                         const shuffleA = document.getElementById('chk-shuffle-answers').checked;
                         const antiCheat = document.getElementById('chk-anti-cheat').checked;
 
-                        // Chuyển hướng sang Controller tạo bài thi (Truyền cấu hình qua Query String)
-                        // Controller này sẽ tạo session thi rồi ném sang View/TestAttempt/GiaoDienLamBai
-                        window.location.href = `/TestAttempt/CreateTestSession?shuffleQ=${shuffleQ}&shuffleA=${shuffleA}&antiCheat=${antiCheat}`;
+                        // Ghép thêm tham số examId=${examId} vào URL để Controller biết đang thi bài nào
+                        window.location.href = `/TestAttempt/CreateTestSession?examId=${examId}&shuffleQ=${shuffleQ}&shuffleA=${shuffleA}&antiCheat=${antiCheat}`;
                     } else {
-                        // Quay về trang chủ nếu bấm "Để sau"
-                        window.location.href = document.querySelector('a.btn-outline-secondary').getAttribute('href');
+                        // NÚT "ĐỂ SAU" - chưa bắt đầu thi vội: Điều hướng thẳng về trang chủ Dashboard của học sinh
+                        //tại trang chủ, trong các trang bài thi sẽ luôn mở cho bài kiểm tra cá nhân của người đó
+                        window.location.href = '/Student/Dashboard';
                     }
                 });
 

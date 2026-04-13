@@ -91,7 +91,26 @@ namespace WebNangCao_MVC_Model.Controllers
             //nếu tìm thấy tài khoản hợp lệ
             if (user != null)
             {
-                bool isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.Login.Password, user.PasswordHash);
+                bool isPasswordCorrect = false;
+
+                // 1. KIỂM TRA: Nếu mật khẩu trong DB KHÔNG bắt đầu bằng "$" (tức là chưa được mã hóa bằng BCrypt)
+                if (!string.IsNullOrEmpty(user.PasswordHash) && !user.PasswordHash.StartsWith("$"))
+                {
+                    // 2. So sánh trực tiếp chữ thường (Plain text)
+                    if (model.Login.Password == user.PasswordHash)
+                    {
+                        isPasswordCorrect = true; // Đúng mật khẩu
+
+                        // 3. LẶNG LẼ NÂNG CẤP MẬT KHẨU: Băm mật khẩu này và lưu đè lại vào Database
+                        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.Login.Password);
+                        _context.SaveChanges(); // Lưu thay đổi xuống DB
+                    }
+                }
+                else
+                {
+                    // 4. Nếu mật khẩu đã có định dạng BCrypt (Bắt đầu bằng "$") -> Kiểm tra bình thường
+                    isPasswordCorrect = BCrypt.Net.BCrypt.Verify(model.Login.Password, user.PasswordHash);
+                }
                 if (!isPasswordCorrect) 
                 {
                     ModelState.AddModelError("Login.Password", "Tài khoản hoặc mật khẩu không chính xác.");
@@ -233,6 +252,7 @@ namespace WebNangCao_MVC_Model.Controllers
         {
             // 1. LỆNH XÓA COOKIE
             // Lệnh này ra chỉ thị cho trình duyệt: "Hãy xóa sạch chiếc Cookie xác thực của trang web này đi"
+            //Không có cookie tức là không cho phép truy cập lại vào trang, và không cho phép thao tác gì thêm nữa khi "BACK"
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             // 2. Sau khi thẻ Cookie đã bị hủy, ta mới điều hướng người dùng về lại màn hình Đăng nhập (Tab Login)

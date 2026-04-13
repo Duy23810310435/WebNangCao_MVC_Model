@@ -80,6 +80,10 @@
 </div>
 
 @section Scripts {
+    <script>
+        // Lấy trực tiếp ID từ Model của C# để đảm bảo không bao giờ sai ID
+        const currentExamId = @Model.Id;
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="~/js/KeoThaPhanLoai.js"></script>
 }

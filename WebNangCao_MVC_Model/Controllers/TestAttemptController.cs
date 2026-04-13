@@ -14,37 +14,62 @@ public class TestAttemptController : Controller
         _context = context;
     }
 
-    // =========================================================================
-    // 1. TẠO PHIÊN THI MỚI (DÀNH CHO BÀI TỰ TẠO TỪ AI PHÂN LOẠI)
-    // =========================================================================
+    //
+    // 1. TẠO PHIÊN THI MỚI (DÀNH CHO BÀI TỰ TẠO TỪ THÍ SINH - ĐÂY LÀ BÀI THI CÁ NHÂN CỦA THÍ SINH)
+    // 
     [HttpGet]
-    public async Task<IActionResult> CreateTestSession(bool shuffleQ, bool shuffleA, bool antiCheat)
+    public async Task<IActionResult> CreateTestSession(int examId, bool shuffleQ, bool shuffleA, bool antiCheat)
     {
         try
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int studentId = string.IsNullOrEmpty(userIdString) ? 0 : int.Parse(userIdString);
 
-            // Khởi tạo một bài Exam mới cho sinh viên
+            // 1. Lấy danh sách câu hỏi từ bài thi gốc (examId = 20)
+            var studentQuestions = await _context.Questions
+                .Include(q => q.Answers) // Quan trọng: Phải lấy cả đáp án để bài thi có dữ liệu
+                .Where(q => q.Exams.Any(e => e.Id == examId))
+                .ToListAsync();
+
+            if (studentQuestions == null || !studentQuestions.Any())
+            {
+                // Nếu vào đây là do không tìm thấy câu hỏi nào thuộc examId=20
+                return RedirectToAction("Dashboard", "Student");
+            }
+
+            // 2. BƯỚC THẦN THÁNH: Đánh dấu câu hỏi là "CŨ"
+            foreach (var q in studentQuestions)
+            {
+                // Attach báo cho EF Core: "Câu hỏi này đã có trong DB, đừng INSERT mới"
+                _context.Questions.Attach(q);
+                _context.Entry(q).State = EntityState.Unchanged;
+            }
+
+            // 3. Tạo bài Exam mới (Bản sao cho sinh viên làm)
             var newExam = new Exam
             {
-                // Mẹo: Đảm bảo bảng Exam của bạn có trường IsSelfCreated (bool) để phân biệt
-                // IsSelfCreated = true, 
-                // StudentId = studentId,
+                Title = "Tự ôn tập - " + DateTime.Now.ToString("HH:mm dd/MM"),
+                SubjectName = "Luyện tập cá nhân",
+                IsSelfCreated = true,
+                StudentId = studentId,
+                IsActive = true,
+                StartTime = DateTime.UtcNow,
+                EndTime = DateTime.UtcNow.AddDays(1),
+                Duration = studentQuestions.Count * 2,
+                Questions = studentQuestions // EF sẽ chỉ tạo liên kết trong bảng trung gian ExamQuestion
             };
 
-            /* * LƯU Ý: Tại đây bạn cần gán các câu hỏi mà AI vừa phân loại vào bài Exam này. 
-             * Tùy thuộc vào cấu trúc DB của bạn, có thể bạn sẽ cần query các Question vừa 
-             * được update Difficulty và map chúng vào bảng trung gian Exam_Question.
-             */
-
             _context.Exams.Add(newExam);
+
+            // Dòng này sẽ thực hiện 2 việc:
+            // - Insert 1 dòng vào bảng Exams
+            // - Insert N dòng vào bảng trung gian ExamQuestion (Dùng ID câu hỏi cũ)
             await _context.SaveChangesAsync();
 
-            // Chuyển hướng sang giao diện làm bài với cấu hình đã chọn
+            // 4. Vào phòng thi
             return RedirectToAction("GiaoDienLamBai", new
             {
-                testId = newExam.Id,
+                testId = newExam.Id, // Dùng ID của bài thi VỪA TẠO
                 mode = "self_created",
                 antiCheat = antiCheat,
                 shuffleQ = shuffleQ,
@@ -53,20 +78,23 @@ public class TestAttemptController : Controller
         }
         catch (Exception ex)
         {
-            return RedirectToAction("Dashboard", "Student"); // Quăng về trang chủ nếu lỗi
+            // TẠM THỜI: Đừng Redirect để xem lỗi thật sự là gì
+            // Sau khi chạy ngon thì hãy mở lại dòng Redirect
+            //return Content("Lỗi lưu Database: " + ex.InnerException?.Message ?? ex.Message);
+
+            return RedirectToAction("Dashboard", "Student");
         }
     }
-
-    // =========================================================================
-    // 2. GIAO DIỆN LÀM BÀI (Đã cập nhật để nhận testId và các cấu hình)
-    // =========================================================================
+    // 
+    // 2. GIAO DIỆN LÀM BÀI 
+    // 
     [HttpGet]
-    public async Task<IActionResult> GiaoDienLamBai(int testId = 1, string mode = "", bool antiCheat = false, bool shuffleQ = false, bool shuffleA = false)
+    public async Task<IActionResult> GiaoDienLamBai(int id, string mode = "", bool antiCheat = false, bool shuffleQ = false, bool shuffleA = false)
     {
         var exam = await _context.Exams
             .Include(e => e.Questions)
                 .ThenInclude(q => q.Answers)
-            .FirstOrDefaultAsync(e => e.Id == testId);
+            .FirstOrDefaultAsync(e => e.Id == id);
 
         if (exam == null)
         {
@@ -82,9 +110,9 @@ public class TestAttemptController : Controller
         return View(exam);
     }
 
-    // =========================================================================
-    // 3. NỘP BÀI THI (Giữ nguyên logic của bạn, rất chuẩn)
-    // =========================================================================
+    // 
+    // 3. NỘP BÀI THI 
+    // 
     [ValidateAntiForgeryToken]
     [HttpPost]
     public async Task<IActionResult> SubmitExam([FromBody] SubmitExamModel model)
@@ -160,9 +188,9 @@ public class TestAttemptController : Controller
         });
     }
 
-    // =========================================================================
+    //
     // 4. XEM LẠI KẾT QUẢ CHI TIẾT (Đã truyền thêm IsSelfCreated và TestId)
-    // =========================================================================
+    // 
     [HttpGet]
     public async Task<IActionResult> ReviewResult(int resultId)
     {
@@ -209,9 +237,9 @@ public class TestAttemptController : Controller
         return View(viewModel);
     }
 
-    // =========================================================================
+    // 
     // 5. XÓA BÀI THI VÀ CÂU HỎI (API gọi từ Frontend)
-    // =========================================================================
+    //
     [HttpPost]
     public async Task<IActionResult> DeleteTestAndQuestions(int testId)
     {

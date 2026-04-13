@@ -49,7 +49,7 @@ namespace WebNangCao_MVC_Model.Data
             //// modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
             ///
             // Dòng thần thánh này sẽ tự động tìm tất cả các class kế thừa IEntityTypeConfiguration
-            // trong assembly hiện tại (bao gồm 3 file trong thư mục Fluent_API của bạn) và áp dụng chúng.
+            // trong assembly hiện tại (bao gồm 3 file trong thư mục Fluent_API) và áp dụng chúng.
             modelBuilder.Entity<Exam>()
                 .HasMany(e => e.Questions)
                 .WithMany(q => q.Exams)

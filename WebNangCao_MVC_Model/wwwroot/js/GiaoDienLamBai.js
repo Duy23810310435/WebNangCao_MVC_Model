@@ -21,11 +21,9 @@ const timerBadge = countdownDisplay?.parentElement;
 function startTimer() {
     if (!countdownDisplay) return;
     //Lấy ID bài thi để tạo KEY lưu trữ của chính bài thi đang làm
-    // pathParts: chia Path = "/TestAttempt/5" -> [ "TestAttempt" , "5" ]
     // examId: lấy phần tử cuối cùng của mảng; nếu không thấy số sau "TestAttempt\ " --> lấy ID 1
     // Kiểm tra số Id phải là KDL int, nếu không thì --> lấy Id 1 làm mặc định
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
 
     //KEY lưu trong bộ nhớ Local_Storage, đặt tên là: "eduTest_deadline_xyz"
     const storageKey = `eduTest_deadline_${examId}`;//gắn Id bài thi cho dễ phân biệt
@@ -122,11 +120,10 @@ function initQuestionLogic() {
     const unansweredLegendCount = document.querySelectorAll('.legend-count')[1];
 
     
-    // pathParts: chia Path = "/TestAttempt/5" -> [ "TestAttempt" , "5" ]
+
     // examId: lấy phần tử cuối cùng của mảng; nếu không thấy số sau "TestAttempt\ " --> lấy ID 1
     // Kiểm tra số Id phải là KDL int, nếu không thì --> lấy Id 1 làm mặc định
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
 
     //KEY lưu trong bộ nhớ Local_Storage, đặt tên là: "eduTest_deadline_xyz"
     const draftKey = `eduTest_draft_${examId}`;//gắn Id bài thi cho dễ phân biệt
@@ -186,8 +183,7 @@ function initFlagLogic() {
     const flaggedLegendCount = document.querySelectorAll('.legend-count')[2];
 
     // Tạo KEY lưu trữ cờ dựa trên ID bài thi
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
     const flagKey = `eduTest_flagged_${examId}`;
 
     flagButtons.forEach(btn => {
@@ -376,8 +372,7 @@ async function executeSubmit() {
     closeSubmitModal();
 
     // Lấy ID bài thi từ URL
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
 
     // Xóa Local Storage (* Cập nhật: chuyển Xóa Local Storage khi điều kiện chấm xong bài thi là TRUE)
     //localStorage.removeItem(`eduTest_deadline_${examId}`);
@@ -414,8 +409,7 @@ async function executeSubmit() {
                 'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
             },
             body: JSON.stringify({
-                ExamId: examId,
-                // Truyền mảng finalAnswers vừa gom được thay vì pendingAnswers
+                ExamId: examId, // Đảm bảo dùng biến examId
                 UserAnswers: finalAnswers
             })
         });
@@ -493,9 +487,10 @@ function initFilterLogic() {
         tab.addEventListener("click", function () {
             // 1. Xóa class "active" ở tất cả các tab và thêm vào tab đang được click
             tabs.forEach(t => t.classList.remove("active"));
+            //active cho Tab đang được Click
             this.classList.add("active");
 
-            // 2. Lấy tên của tab để làm điều kiện lọc
+            // 2. Lấy tên của tab để làm điều kiện lọc, tên tab chính là TEXT bên trong thẻ HTML (VD: "Đã làm", "Đánh dấu", "Tất cả")
             const filterType = this.textContent.trim();
 
             // 3. Lặp qua tất cả các ô số câu hỏi để ẩn/hiện
@@ -613,8 +608,7 @@ document.addEventListener('keydown', function (event) {
             checkedRadio.checked = false; // Hủy check radio button
 
             //xóa đáp án khỏi Local Storage khi nhấn phím tắt "0"
-            const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-            const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+            const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
             const draftKey = `eduTest_draft_${examId}`;
             let draftAnswers = {};
             try {
@@ -676,11 +670,9 @@ document.addEventListener('keydown', function (event) {
 //
 function initAntiCheat() {
     //1. lấy ID bài thi để tạo KEY lưu trữ (tránh nhầm bài thi)
-        // pathParts: chia Path = "/TestAttempt/5" -> [ "TestAttempt" , "5" ]
     // examId: lấy phần tử cuối cùng của mảng; nếu không thấy số sau "TestAttempt\ " --> lấy ID 1
     // Kiểm tra số Id phải là KDL int, nếu không thì --> lấy Id 1 làm mặc định
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
     
     //KEY lưu trong bộ nhớ Local_Storage, đặt tên là: "eduTest_violations_xyz"
     const violationKey = `eduTest_violations_${examId}`;//gắn Id bài thi cho dễ phân biệt
@@ -722,8 +714,7 @@ function initAntiCheat() {
 //10. KHÔI PHỤC ĐÁP ÁN ĐÃ CHỌN KHI TẢI LẠI TRANG
 //
 function restoreDraftAnswers() {
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
     const draftKey = `eduTest_draft_${examId}`;
     const draftAnswers = JSON.parse(localStorage.getItem(draftKey));//lấy ra kết quả đang lưu tại Local Storage
     if (draftAnswers) {
@@ -750,8 +741,7 @@ function restoreDraftAnswers() {
 // 10.5. KHÔI PHỤC CÁC CÂU ĐÃ CẮM CỜ KHI TẢI LẠI TRANG
 //
 function restoreFlaggedQuestions() {
-    const pathParts = window.location.pathname.split('/').filter(part => part.trim() !== ''); //bỏ các chuỗi rỗng trước khi lấy phần tử cuối
-    const examId = parseInt(pathParts[pathParts.length - 1]) || 1;
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
     const flagKey = `eduTest_flagged_${examId}`;
 
     // Lấy mảng cờ đã lưu

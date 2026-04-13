@@ -202,26 +202,36 @@ ul {
     margin-bottom: 4px;
 }
 
+/* 1. CSS Gốc định hình kích thước (KHÔNG ĐỂ MÀU Ở ĐÂY) */
 .badge-difficulty {
-    background-color: var(--success-light);
-    color: var(--success-color);
-    padding: 4px 8px;
+    padding: 4px 10px;
     border-radius: 6px;
     font-size: 12px;
     font-weight: 600;
     display: inline-block;
 }
 
-    /* Màu Badge tùy theo độ khó (có thể dùng JS hoặc Razor thêm class) */
-    .badge-difficulty.medium {
-        background-color: #fef3c7;
-        color: #d97706;
-    }
+/* 2. Các class định dạng màu sắc cho từng cấp độ */
+.badge-easy {
+    background-color: #dcfce7;
+    color: #15803d;
+}
 
-    .badge-difficulty.hard {
-        background-color: #fee2e2;
-        color: #ef4444;
-    }
+.badge-medium {
+    background-color: #fef3c7;
+    color: #d97706; /* Mình lấy màu cam/vàng từ code cũ của bạn cho đẹp */
+}
+
+.badge-hard {
+    background-color: #fee2e2;
+    color: #ef4444; /* Đỏ đậm */
+}
+
+/* Màu mặc định nếu bị lỗi dữ liệu */
+.badge-default {
+    background-color: #f1f5f9;
+    color: #475569;
+}
 
 .btn-flag {
     color: var(--text-muted);

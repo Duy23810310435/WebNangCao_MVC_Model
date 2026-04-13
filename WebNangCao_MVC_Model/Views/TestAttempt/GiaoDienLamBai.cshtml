@@ -68,7 +68,20 @@
                                     <div class="question-number">@qIdx</div>
                                     <div class="question-title">
                                         <h2>Câu hỏi @qIdx</h2>
-                                        <span class="badge-difficulty">@question.Difficulty</span>
+                                        @{
+                                            var difficulty = question.Difficulty?
+                                            .Trim()
+                                            .ToLower();
+
+                                            string difficultyClass = difficulty switch
+                                            {
+                                                "dễ" or "de" => "badge-easy",
+                                                "trung bình" or "trung binh" => "badge-medium",
+                                                "khó" or "kho" => "badge-hard",
+                                                _ => "badge-default"
+                                            };
+                                        }
+                                        <span class="badge-difficulty @difficultyClass">@question.Difficulty</span>
                                     </div>
                                 </div>
                                 <button class="btn-flag" type="button" title="Đánh dấu xem lại">
@@ -261,9 +274,14 @@
             </div>
         </div>
     </div>
-
     <script>
+        const currentExamId = @Model.Id; // Phải chắc chắn Model.Id ở đây là ID của bài thi đang làm
+    </script>
+    <script>
+        // Nhận dữ liệu từ Backend
         const TIME_LIMIT_MINUTES = @(Model?.Duration ?? 0);
+        const IS_ANTI_CHEAT = '@(ViewBag.AntiCheat ?? false)'.toLowerCase() === 'true';
+        const IS_SHUFFLE_Q = '@(ViewBag.ShuffleQ ?? false)'.toLowerCase() === 'true';
     </script>
     <script src="~/js/GiaoDienLamBai.js" asp-append-version="true"></script>
 

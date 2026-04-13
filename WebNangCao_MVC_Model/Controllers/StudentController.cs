@@ -78,10 +78,27 @@ namespace WebNangCao_MVC_Model.Controllers
             foreach (var exam in rawExams)
             {
                 string status = "";
-                if (completedExamIds.Contains(exam.Id)) status = "Đã hoàn thành";
-                else if (currentTime < exam.StartTime) status = "Sắp tới";
-                else if (currentTime >= exam.StartTime && currentTime <= exam.EndTime) status = "Có thể làm";
-                else status = "Đã hoàn thành";
+                // Xác định xem đây có phải bài thi cá nhân (không thuộc group nào) hay không
+                bool isPersonalExam = (exam.IdGroup == null);
+
+                // Nếu KHÔNG phải bài cá nhân và đã làm rồi -> Đã hoàn thành
+                if (!isPersonalExam && completedExamIds.Contains(exam.Id))
+                {
+                    status = "Đã hoàn thành";
+                }
+                else if (currentTime < exam.StartTime)
+                {
+                    status = "Sắp tới";
+                }
+                else if (currentTime >= exam.StartTime && currentTime <= exam.EndTime)
+                {
+                    status = "Có thể làm";
+                }
+                else
+                {
+                    // Quá hạn EndTime. Nếu là bài cá nhân, người dùng có thể vẫn cho phép "Có thể làm"
+                    status = isPersonalExam ? "Có thể làm" : "Đã hoàn thành";
+                }
 
                 string dominantDifficulty = "Chưa xác định";
                 if (exam.Questions != null && exam.Questions.Any())

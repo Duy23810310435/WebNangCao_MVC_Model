@@ -29,6 +29,9 @@
                     <button type="button" onclick="handlePostTest('SAVE', @Model.TestId)" class="btn-print" style="background: #64748b; color: white;">
                         <i class="fas fa-save"></i> Lưu bài
                     </button>
+                    <button class="btn-print" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;" onclick="handlePostTest('DELETE', @Model.TestId)">
+                        <i class="fas fa-trash-alt"></i> Xóa vĩnh viễn bài & Câu hỏi
+                    </button>
                 }
                 else
                 {
@@ -109,7 +112,7 @@
     <script>
         function handlePostTest(actionType, testId) {
             if (actionType === 'RETAKE') {
-                window.location.href = `/TestAttempt/GiaoDienLamBai?testId=${testId}&mode=retake`;
+                window.location.href = `/TestAttempt/GiaoDienLamBai?id=${testId}&mode=retake`;
                 return;
             }
 
