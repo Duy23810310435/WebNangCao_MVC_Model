@@ -99,7 +99,7 @@ namespace WebNangCao_MVC_Model.Controllers
                     return View("Index", model);
                 }
                 //so sánh Role trên giao diện Front-End với Role lưu trong Database (user.Role)
-                if (user.Role != Role)
+                if (user.Role.ToLower() != Role.ToLower())
                 {
                     //nếu không khớp với Role thì đẩy ra lỗi
                     ModelState.AddModelError("Login.Password", "Tài khoản của bạn không thuộc vai trò này. Vui lòng chọn đúng vai trò");
@@ -133,6 +133,17 @@ namespace WebNangCao_MVC_Model.Controllers
                     //Controller="Instructor", hàm trong controller = "Dashboard"
                     return RedirectToAction("Dashboard", "Instructor");
                 }
+                else if (currentRole == "Admin") // Đã thêm "else" và dùng chữ thường
+{
+    return RedirectToAction("Index", "Admin"); 
+}
+else 
+{
+    // CHỐT CHẶN AN TOÀN CUỐI CÙNG: 
+    // Nếu Role trong DB là một cái tên lạ hoắc nào đó (bị lỗi data), 
+    // thì đá nó về trang chủ, tuyệt đối không được rớt xuống lỗi "Sai mật khẩu" bên dưới!
+    return RedirectToAction("Index", "Home"); 
+}
             }
             //nếu user==null(không tìm thấy trong DB)
             ModelState.AddModelError("login.Password", "Tài khoản hoặc mật khẩu không chính xác.");

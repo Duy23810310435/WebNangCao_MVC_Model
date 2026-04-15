@@ -152,6 +152,10 @@
                 <button type="submit" class="btn-submit">Tạo tài khoản</button>
             </form>
         </div>
+        <h3 style="color: red;">
+    Tài khoản đang đăng nhập: @User.Identity.Name <br />
+    Quyền hạn (Role) hiện tại là: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
+</h3>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
