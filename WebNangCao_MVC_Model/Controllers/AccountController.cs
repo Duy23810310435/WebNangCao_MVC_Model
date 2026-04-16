@@ -127,8 +127,9 @@ namespace WebNangCao_MVC_Model.Controllers
                 }
                 //lấy Role trực tiếp từ Database của user đó
                 string currentRole = user.Role ?? "student"; //mặc định là student
+                //GIẢI PHÁP CHỐNG HACKER: newUser.Role = "student"; // LUÔN LUÔN là student, Admin phải được set tay trong DB
                 //tạo thẻ căn cước (Claims lưu vào COOKIE)
-                var claims=new List<Claim>
+                var claims =new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), //Lưu UserId để sau này còn truy xuất dữ liệu theo UserId
                     new Claim(ClaimTypes.Name, user.FullName), //Lưu FullName để hiển thị trên giao diện
