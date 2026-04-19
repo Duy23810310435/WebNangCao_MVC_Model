@@ -1,4 +1,4 @@
-﻿namespace WebNangCao_MVC_Model.ViewModels // Nhớ đổi namespace theo project của bạn
+﻿namespace WebNangCao_MVC_Model.ViewModels 
 {
     public class ReviewResultViewModel
     {

@@ -283,6 +283,34 @@
         const IS_ANTI_CHEAT = '@(ViewBag.AntiCheat ?? false)'.toLowerCase() === 'true';
         const IS_SHUFFLE_Q = '@(ViewBag.ShuffleQ ?? false)'.toLowerCase() === 'true';
     </script>
+    @{
+
+        //
+        // Tổng thời gian làm bài (tính bằng giây)
+        var totalSec = (Model?.Duration ?? 0) * 60;
+
+        // Giới hạn thời gian (phòng hờ kỳ thi sắp đóng form)
+        double maxAllowedSec = totalSec;
+        if (Model?.EndTime != null)
+        {
+            // Lấy Thời hạn đóng đề - Hiện tại
+            var timeDiff = (DateTime)Model.EndTime - DateTime.Now;
+
+            // Nếu đề đóng trong khoảng thời gian < thời gian làm bài -> Chỉ được làm trong thời gian còn lại
+            if (timeDiff.TotalSeconds > 0 && timeDiff.TotalSeconds < totalSec)
+            {
+                maxAllowedSec = timeDiff.TotalSeconds;
+            }
+            else if (timeDiff.TotalSeconds <= 0)
+            {
+                maxAllowedSec = 0; // Đề đã đóng
+            }
+        }
+    }
+    <script>
+        //const SERVER_TOTAL_SECONDS = @Math.Floor((double)totalSec);
+        //const SERVER_MAX_ALLOWED_SECONDS = @Math.Floor((double)maxAllowedSec);
+    </script>
     <script src="~/js/GiaoDienLamBai.js" asp-append-version="true"></script>
 
     </body>

@@ -485,7 +485,77 @@ body.dashboard-body {
         width: 18px;
         height: 18px;
     }
+/* Container cho toàn bộ phần timeline */
+.status-timeline {
+    margin: 16px 0;
+    padding: 0 4px;
+}
 
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.status-text {
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-percent {
+    color: #4f46e5;
+}
+
+/* Thanh ray bên dưới */
+.timeline-track {
+    height: 8px;
+    background-color: #f1f5f9;
+    border-radius: 10px;
+    overflow: hidden; /* Để thanh fill không tràn ra ngoài */
+    position: relative;
+}
+
+/* Thanh chạy bên trong */
+.timeline-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+    /* Màu sắc theo trạng thái */
+    .timeline-fill.finished {
+        background: linear-gradient(90deg, #22c55e, #16a34a);
+    }
+
+    .timeline-fill.available {
+        background: linear-gradient(90deg, #3b82f6, #4f46e5);
+        /* Hiệu ứng xung nhịp cho bài đang mở */
+        animation: pulse-progress 2s infinite;
+    }
+
+    .timeline-fill.upcoming {
+        background-color: #cbd5e1;
+    }
+
+/* Hiệu ứng lướt sáng (Shimmer effect) cho bài đang mở */
+@keyframes pulse-progress {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
 /* NÚT BẤM */
 .btn-primary-action {
     width: 100%;

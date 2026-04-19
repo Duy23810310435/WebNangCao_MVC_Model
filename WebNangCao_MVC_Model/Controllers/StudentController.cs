@@ -35,7 +35,7 @@ namespace WebNangCao_MVC_Model.Controllers
 
             int studentId = int.Parse(userIdString);
 
-            // --- MỚI: Lấy ID đề thi cá nhân mới nhất để phục vụ nút bấm ở Modal ---
+            //  Lấy ID đề thi cá nhân mới nhất để phục vụ nút bấm ở Modal ---
             var latestExam = await _context.Exams
                 .Where(e => e.StudentId == studentId && e.IdGroup == null)
                 .OrderByDescending(e => e.Id)

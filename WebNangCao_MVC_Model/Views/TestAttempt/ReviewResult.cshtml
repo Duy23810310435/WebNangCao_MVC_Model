@@ -7,7 +7,7 @@
             <span class="score-label">Điểm</span>
         </div>
         <div class="summary-info">
-            <h1>Kết Quả Chi Tiết</h1>
+            <h1>Kết Quả @(Model.IsSelfCreated ? "Chi Tiết" : "Bài Thi")</h1>
             <p>Mã bài làm: <strong>#@Model.ResultId</strong></p>
             <div class="stats-grid">
                 <div class="stat-item">
@@ -26,24 +26,23 @@
                     <button type="button" onclick="handlePostTest('RETAKE', @Model.TestId)" class="btn-back" style="background: #3b82f6; color: white; border: none;">
                         <i class="fas fa-redo"></i> Làm lại ngay
                     </button>
-                    <button type="button" onclick="handlePostTest('SAVE', @Model.TestId)" class="btn-print" style="background: #64748b; color: white;">
-                        <i class="fas fa-save"></i> Lưu bài
+                    <button type="button" onclick="handlePostTest('SAVE', @Model.TestId)" class="btn-print" style="background: #64748b; color: white; border: none;">
+                        <i class="fas fa-save"></i> Lưu bài thi
                     </button>
-                    <button class="btn-print" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;" onclick="handlePostTest('DELETE', @Model.TestId)">
-                        <i class="fas fa-trash-alt"></i> Xóa vĩnh viễn bài & Câu hỏi
+                    <button type="button" onclick="handlePostTest('DELETE', @Model.TestId)" class="btn-print" style="background: #ef4444; color: white; border: none;">
+                        <i class="fas fa-trash-alt"></i> Xóa bài thi cá nhân
                     </button>
                 }
                 else
                 {
-                    <a href="@Url.Action("Dashboard", "Student")" class="btn-back">
-                        Quay về trang chủ
+                    <a href="@Url.Action("Dashboard", "Student")" class="btn-back" style="background: #3b82f6; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-home"></i> Về trang chủ
                     </a>
-                    <button type="button" onclick="window.print()" class="btn-print">
-                        In kết quả
+                    <button type="button" onclick="window.print()" class="btn-print" style="background: #64748b; color: white; border: none;">
+                        <i class="fas fa-print"></i> In đề thi
                     </button>
                 }
             </div>
-
         </div>
     </header>
 
@@ -103,6 +102,43 @@
     </main>
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Hiệu ứng nhảy số điểm
+        const scoreElement = document.getElementById("animatedScore");
+        if (scoreElement) {
+            const target = parseFloat(scoreElement.getAttribute("data-target"));
+            let current = 0;
+            const increment = target / 50; // Tốc độ chạy
+
+            const updateScore = () => {
+                if (current < target) {
+                    current += increment;
+                    scoreElement.innerText = current.toFixed(1);
+                    setTimeout(updateScore, 20);
+                } else {
+                    scoreElement.innerText = target;
+                }
+            };
+            updateScore();
+        }
+
+        // Hiệu ứng hover nhẹ vào các câu hỏi
+        const cards = document.querySelectorAll(".question-card");
+        cards.forEach(card => {
+            card.addEventListener("mouseenter", () => {
+                card.style.transform = "translateY(0px) Scale(1.02)";
+                card.style.transition = "0.3s";
+                card.style.boxShadow = "0 10px 15px -3px rgba(0, 0, 0, 0.1)";
+            });
+            card.addEventListener("mouseleave", () => {
+                card.style.transform = "translateY(0) Scale(1)";
+                card.style.boxShadow = "0 4px 6px -1px rgba(0, 0, 0, 0.1)";
+            });
+        });
+    });
+</script>
+
 <link rel="stylesheet" href="~/css/review-result.css" />
 <script src="~/js/review-result.js"></script>
 
@@ -132,7 +168,7 @@
             if (actionType === 'DELETE') {
                 Swal.fire({
                     title: 'Cảnh báo nguy hiểm!',
-                    text: "Bạn đang xóa bài thi TỰ TẠO. Hành động này sẽ xóa sạch bài làm và XÓA LUÔN CÁC CÂU HỎI trong PostgreSQL. Không thể khôi phục!",
+                    text: "Bạn đang xóa bài thi TỰ TẠO. Hành động này sẽ xóa sạch bài làm và XÓA LUÔN CÁC CÂU HỎI. Không thể khôi phục!",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
@@ -147,7 +183,7 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                Swal.fire('Đã xóa!', 'Toàn bộ dữ liệu bài tự tạo đã bốc hơi.', 'success')
+                                Swal.fire('Đã xóa!', 'Toàn bộ dữ liệu bài tự tạo đã bị xóa.', 'success')
                                 .then(() => {
                                     window.location.href = '/Student/Dashboard';
                                 });

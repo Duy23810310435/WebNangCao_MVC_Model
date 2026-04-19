@@ -15,7 +15,7 @@ public class TestAttemptController : Controller
     }
 
     //
-    // 1. TẠO PHIÊN THI MỚI (DÀNH CHO BÀI TỰ TẠO TỪ THÍ SINH - ĐÂY LÀ BÀI THI CÁ NHÂN CỦA THÍ SINH)
+    // 1. TẠO PHIÊN THI MỚI 
     // 
     [HttpGet]
     public async Task<IActionResult> CreateTestSession(int examId, bool shuffleQ, bool shuffleA, bool antiCheat)
@@ -25,27 +25,22 @@ public class TestAttemptController : Controller
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             int studentId = string.IsNullOrEmpty(userIdString) ? 0 : int.Parse(userIdString);
 
-            // 1. Lấy danh sách câu hỏi từ bài thi gốc (examId = 20)
             var studentQuestions = await _context.Questions
-                .Include(q => q.Answers) // Quan trọng: Phải lấy cả đáp án để bài thi có dữ liệu
+                .Include(q => q.Answers)
                 .Where(q => q.Exams.Any(e => e.Id == examId))
                 .ToListAsync();
 
             if (studentQuestions == null || !studentQuestions.Any())
             {
-                // Nếu vào đây là do không tìm thấy câu hỏi nào thuộc examId=20
                 return RedirectToAction("Dashboard", "Student");
             }
 
-            // 2. BƯỚC THẦN THÁNH: Đánh dấu câu hỏi là "CŨ"
             foreach (var q in studentQuestions)
             {
-                // Attach báo cho EF Core: "Câu hỏi này đã có trong DB, đừng INSERT mới"
                 _context.Questions.Attach(q);
                 _context.Entry(q).State = EntityState.Unchanged;
             }
 
-            // 3. Tạo bài Exam mới (Bản sao cho sinh viên làm)
             var newExam = new Exam
             {
                 Title = "Tự ôn tập - " + DateTime.Now.ToString("HH:mm dd/MM"),
@@ -56,20 +51,15 @@ public class TestAttemptController : Controller
                 StartTime = DateTime.UtcNow,
                 EndTime = DateTime.UtcNow.AddDays(1),
                 Duration = studentQuestions.Count * 2,
-                Questions = studentQuestions // EF sẽ chỉ tạo liên kết trong bảng trung gian ExamQuestion
+                Questions = studentQuestions
             };
 
             _context.Exams.Add(newExam);
-
-            // Dòng này sẽ thực hiện 2 việc:
-            // - Insert 1 dòng vào bảng Exams
-            // - Insert N dòng vào bảng trung gian ExamQuestion (Dùng ID câu hỏi cũ)
             await _context.SaveChangesAsync();
 
-            // 4. Vào phòng thi
             return RedirectToAction("GiaoDienLamBai", new
             {
-                testId = newExam.Id, // Dùng ID của bài thi VỪA TẠO
+                id = newExam.Id,
                 mode = "self_created",
                 antiCheat = antiCheat,
                 shuffleQ = shuffleQ,
@@ -78,13 +68,10 @@ public class TestAttemptController : Controller
         }
         catch (Exception ex)
         {
-            // TẠM THỜI: Đừng Redirect để xem lỗi thật sự là gì
-            // Sau khi chạy ngon thì hãy mở lại dòng Redirect
-            //return Content("Lỗi lưu Database: " + ex.InnerException?.Message ?? ex.Message);
-
             return RedirectToAction("Dashboard", "Student");
         }
     }
+
     // 
     // 2. GIAO DIỆN LÀM BÀI 
     // 
@@ -96,12 +83,8 @@ public class TestAttemptController : Controller
                 .ThenInclude(q => q.Answers)
             .FirstOrDefaultAsync(e => e.Id == id);
 
-        if (exam == null)
-        {
-            return NotFound("Không tìm thấy bài thi này!");
-        }
+        if (exam == null) return NotFound("Không tìm thấy bài thi này!");
 
-        // Đẩy cấu hình sang View bằng ViewBag để JS ở Frontend bắt được và xử lý
         ViewBag.Mode = mode;
         ViewBag.AntiCheat = antiCheat;
         ViewBag.ShuffleQ = shuffleQ;
@@ -111,7 +94,7 @@ public class TestAttemptController : Controller
     }
 
     // 
-    // 3. NỘP BÀI THI 
+    // 3. NỘP BÀI THI (Phân loại xử lý lưu trữ)
     // 
     [ValidateAntiForgeryToken]
     [HttpPost]
@@ -120,6 +103,11 @@ public class TestAttemptController : Controller
         if (model == null || model.ExamId == 0)
             return Json(new { success = false, message = "Dữ liệu không hợp lệ" });
 
+        var examInfo = await _context.Exams.FirstOrDefaultAsync(e => e.Id == model.ExamId);
+        if (examInfo == null) return Json(new { success = false, message = "Không tìm thấy bài thi" });
+
+        bool isSelfCreated = examInfo.IsSelfCreated;
+
         var questions = await _context.Questions
             .Include(q => q.Answers)
             .Where(q => q.Exams.Any(e => e.Id == model.ExamId))
@@ -127,9 +115,7 @@ public class TestAttemptController : Controller
 
         int correctCount = 0;
         int totalQuestions = questions.Count;
-        int correctEasy = 0;
-        int correctMedium = 0;
-        int correctHard = 0;
+        int correctEasy = 0, correctMedium = 0, correctHard = 0;
 
         foreach (var userAns in model.UserAnswers)
         {
@@ -140,7 +126,6 @@ public class TestAttemptController : Controller
                 if (isCorrect)
                 {
                     correctCount++;
-
                     if (question.Difficulty == "Dễ") correctEasy++;
                     else if (question.Difficulty == "Trung bình") correctMedium++;
                     else if (question.Difficulty == "Khó") correctHard++;
@@ -149,30 +134,46 @@ public class TestAttemptController : Controller
         }
 
         double score = totalQuestions > 0 ? Math.Round((double)correctCount / totalQuestions * 10, 2) : 0.0;
-
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
         int studentId = string.IsNullOrEmpty(userIdString) ? 0 : int.Parse(userIdString);
 
-        var examResult = new ExamResult
-        {
-            StudentId = studentId,
-            ExamId = model.ExamId,
-            Score = score,
-            SubmitTime = DateTime.UtcNow,
-            ExamResultDetails = new List<ExamResultDetail>()
-        };
+        int resultId = 0;
+        string note = "";
 
-        foreach (var userAns in model.UserAnswers)
+        if (!isSelfCreated)
         {
-            examResult.ExamResultDetails.Add(new ExamResultDetail
+            // 3.1 BÀI THI CỦA LỚP: Lưu vào Database vĩnh viễn
+            var examResult = new ExamResult
             {
-                QuestionId = userAns.QuestionId,
-                SelectedAnswerId = userAns.SelectedAnswerId
-            });
-        }
+                StudentId = studentId,
+                ExamId = model.ExamId,
+                Score = score,
+                SubmitTime = DateTime.UtcNow,
+                ExamResultDetails = new List<ExamResultDetail>()
+            };
 
-        _context.ExamResults.Add(examResult);
-        await _context.SaveChangesAsync();
+            foreach (var userAns in model.UserAnswers)
+            {
+                examResult.ExamResultDetails.Add(new ExamResultDetail
+                {
+                    QuestionId = userAns.QuestionId,
+                    SelectedAnswerId = userAns.SelectedAnswerId
+                });
+            }
+
+            _context.ExamResults.Add(examResult);
+            await _context.SaveChangesAsync();
+            resultId = examResult.Id;
+            note = "Kết quả đã được ghi nhận vào lịch sử.";
+        }
+        else
+        {
+            // 3.2 BÀI THI CÁ NHÂN: KHÔNG lưu vào DB. Dùng bộ nhớ TempData tạm thời
+            note = "Bài tự ôn tập, kết quả không lưu vào lịch sử để tránh rác thông số trang chủ.";
+            TempData["PersonalAnswers_" + model.ExamId] = System.Text.Json.JsonSerializer.Serialize(model.UserAnswers);
+
+            // Không xóa bản sao Đề thi ở đây nữa, giữ lại để hàm ReviewPersonalResult có thể gọi lấy câu hỏi lên!
+        }
 
         return Json(new
         {
@@ -183,13 +184,15 @@ public class TestAttemptController : Controller
             correctEasy = correctEasy,
             correctMedium = correctMedium,
             correctHard = correctHard,
-            resultId = examResult.Id,
-            message = "Chúc mừng bạn đã hoàn thành bài thi!"
+            resultId = resultId,
+            examId = model.ExamId,          // Trả về ID đề thi để JS xử lý
+            isSelfCreated = isSelfCreated,  // Trả cờ nhận biết cho JS
+            message = note
         });
     }
 
-    //
-    // 4. XEM LẠI KẾT QUẢ CHI TIẾT (Đã truyền thêm IsSelfCreated và TestId)
+    // 
+    // 4. XEM LẠI KẾT QUẢ CHI TIẾT (BÀI THI LỚP)
     // 
     [HttpGet]
     public async Task<IActionResult> ReviewResult(int resultId)
@@ -206,25 +209,19 @@ public class TestAttemptController : Controller
             .Where(q => q.Exams.Any(e => e.Id == result.ExamId))
             .ToListAsync();
 
-        // Lấy thông tin bài Exam để xác định nguồn gốc (Ai tạo)
         var exam = await _context.Exams.FindAsync(result.ExamId);
-
-        // Mẹo: Cần thuộc tính IsSelfCreated trong bảng Exams để xác định. 
-        // Ở đây tôi dùng biến giả lập, bạn hãy map với cột thực tế trong DB nhé.
-        bool isSelfCreated = true; // Sửa thành: exam.IsSelfCreated (nếu có cột này)
 
         var viewModel = new ReviewResultViewModel
         {
             ResultId = result.Id,
-            Score = (int)result.Score, // Ép kiểu tùy theo ViewModel của bạn
-            TestId = result.ExamId,    // <-- TRUYỀN ID BÀI THI LÊN VIEW
-            IsSelfCreated = isSelfCreated, // <-- TRUYỀN CỜ PHÂN BIỆT LÊN VIEW
+            Score = (int)result.Score,
+            TestId = result.ExamId,
+            IsSelfCreated = false,
             Questions = questions.Select(q => new ReviewQuestionViewModel
             {
                 QuestionId = q.Id,
                 Content = q.Content,
                 SelectedAnswerId = userDetails.ContainsKey(q.Id) ? userDetails[q.Id] : 0,
-
                 Answers = q.Answers.Select(a => new ReviewAnswerViewModel
                 {
                     AnswerId = a.Id,
@@ -238,33 +235,93 @@ public class TestAttemptController : Controller
     }
 
     // 
-    // 5. XÓA BÀI THI VÀ CÂU HỎI (API gọi từ Frontend)
+    // 4.1 XEM LẠI KẾT QUẢ ĐẶC BIỆT DÀNH CHO BÀI THI CÁ NHÂN (DÙNG TEMPDATA)
+    // 
+    [HttpGet]
+    public async Task<IActionResult> ReviewPersonalResult(int examId)
+    {
+        var exam = await _context.Exams.FindAsync(examId);
+        if (exam == null) return NotFound("Đề thi này không còn tồn tại!");
+
+        var questions = await _context.Questions
+            .Include(q => q.Answers)
+            .Where(q => q.Exams.Any(e => e.Id == examId))
+            .ToListAsync();
+
+        var userDetails = new Dictionary<int, int>();
+        var tempAnswers = TempData["PersonalAnswers_" + examId] as string;
+
+        if (!string.IsNullOrEmpty(tempAnswers))
+        {
+            var parsedAnswers = System.Text.Json.JsonSerializer.Deserialize<List<TempUserAnswer>>(tempAnswers);
+            if (parsedAnswers != null)
+            {
+                userDetails = parsedAnswers.ToDictionary(a => a.QuestionId, a => a.SelectedAnswerId);
+            }
+            TempData.Keep("PersonalAnswers_" + examId); // Giữ bộ nhớ nếu thí sinh F5 tải lại trang
+        }
+
+        // Tính lại điểm
+        int correctCount = 0;
+        foreach (var q in questions)
+        {
+            if (userDetails.TryGetValue(q.Id, out int selectedId))
+            {
+                if (q.Answers.Any(a => a.Id == selectedId && a.IsCorrect)) correctCount++;
+            }
+        }
+        int score = questions.Count > 0 ? (int)Math.Round((double)correctCount / questions.Count * 10) : 0;
+
+        var viewModel = new ReviewResultViewModel
+        {
+            ResultId = 0, // Không có ResultID trong DB
+            Score = score,
+            TestId = examId,
+            IsSelfCreated = true,
+            Questions = questions.Select(q => new ReviewQuestionViewModel
+            {
+                QuestionId = q.Id,
+                Content = q.Content,
+                SelectedAnswerId = userDetails.ContainsKey(q.Id) ? userDetails[q.Id] : 0,
+                Answers = q.Answers.Select(a => new ReviewAnswerViewModel
+                {
+                    AnswerId = a.Id,
+                    Content = a.Content,
+                    IsCorrectAnswer = a.IsCorrect
+                }).ToList()
+            }).ToList()
+        };
+
+        // Render ra cùng View "ReviewResult" như bài thi bình thường
+        return View("ReviewResult", viewModel);
+    }
+
+    // Class phụ trợ để hứng dữ liệu từ TempData
+    public class TempUserAnswer
+    {
+        public int QuestionId { get; set; }
+        public int SelectedAnswerId { get; set; }
+    }
+
+    // 
+    // 5. XÓA BÀI THI VÀ CÂU HỎI
     //
     [HttpPost]
     public async Task<IActionResult> DeleteTestAndQuestions(int testId)
     {
         try
         {
-            // Lấy bài thi kèm theo các câu hỏi của nó
-            var exam = await _context.Exams
-                .Include(e => e.Questions)
-                .FirstOrDefaultAsync(e => e.Id == testId);
-
+            var exam = await _context.Exams.Include(e => e.Questions).FirstOrDefaultAsync(e => e.Id == testId);
             if (exam != null)
             {
-                // Xóa toàn bộ câu hỏi (EF Core sẽ tự động xóa đáp án nếu cấu hình Cascade Delete)
                 if (exam.Questions != null && exam.Questions.Any())
                 {
                     _context.Questions.RemoveRange(exam.Questions);
                 }
-
-                // Xóa bài thi
                 _context.Exams.Remove(exam);
                 await _context.SaveChangesAsync();
-
                 return Json(new { success = true });
             }
-
             return Json(new { success = false, message = "Không tìm thấy bài thi trong Database." });
         }
         catch (Exception ex)

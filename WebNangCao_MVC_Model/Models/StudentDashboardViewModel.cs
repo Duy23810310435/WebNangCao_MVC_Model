@@ -16,7 +16,18 @@
 
     // Class đại diện cho 1 thẻ bài thi trên màn hình
     public class ExamItemViewModel
+
     {
+        public string DisplayStatus => Status switch
+        {
+            "Có thể làm" => "Có thể làm",
+            "Sắp tới" => "Sắp tới",
+            "Đã hoàn thành" => "Đã hoàn thành",
+            _ => "Khác"
+        };
+
+        // Hàm tính toán màu sắc cho progress bar (có thể dùng trong View hoặc Helper)
+        public string GetScoreColor => ScorePercentage >= 50 ? "#22c55e" : "#ef4444";
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public DateTime StartTime { get; set; }
@@ -31,14 +42,19 @@
         public int? IdGroup { get; set; }
         public DateTime EndTime { get; set; }  // Add this if needed
         public int SubmittedCount { get; set; }  // Add this for instructor dashboard
+
+        // --- BỔ SUNG CÁC THUỘC TÍNH MỚI DÀNH CHO THANH TIẾN ĐỘ & ĐIỂM SỐ ---
+        public int CompletedQuestions { get; set; }
+        public bool IsResuming { get; set; }
+        public double ScorePercentage { get; set; }
     }
+
     //Class đại diện cho 1 thẻ Lớp trong các nhóm lớp
     public class JoinedClassViewModel
     {
-        
         public int IdGroup { get; set; }
-        public string ClassName { get; set; } = string.Empty;//tên lớp
-        public string TeacherName { get; set; } = string.Empty;//giảng viên của lớp
+        public string ClassName { get; set; } = string.Empty; //tên lớp
+        public string TeacherName { get; set; } = string.Empty; //giảng viên của lớp
         public int ExamCount { get; set; } // Tổng số bài thi trong lớp này
     }
 }

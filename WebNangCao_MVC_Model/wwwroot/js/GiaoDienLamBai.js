@@ -20,44 +20,36 @@ const timerBadge = countdownDisplay?.parentElement;
 
 function startTimer() {
     if (!countdownDisplay) return;
-    //Lấy ID bài thi để tạo KEY lưu trữ của chính bài thi đang làm
-    // examId: lấy phần tử cuối cùng của mảng; nếu không thấy số sau "TestAttempt\ " --> lấy ID 1
-    // Kiểm tra số Id phải là KDL int, nếu không thì --> lấy Id 1 làm mặc định
+
+    // 1. Lấy ID bài thi để tạo KEY lưu trữ
     const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
+    const storageKey = `eduTest_deadline_${examId}`;
 
-    //KEY lưu trong bộ nhớ Local_Storage, đặt tên là: "eduTest_deadline_xyz"
-    const storageKey = `eduTest_deadline_${examId}`;//gắn Id bài thi cho dễ phân biệt
-
-    //lấy deadline từ bộ nhớ local_Storage lên khi người dùng thoát bài giữa lúc làm
-    // deadlineTime = thời điểm tương lai khi bài thi kết thúc
-    // ví dụ: Date.now() = 8:30 = xxxxx (mili-giây)
-    // -> deadlineTime = xxxxx (mili-giây) + thời gian thi (dạng mili-giây)
+    // 2. Lấy deadline từ bộ nhớ Local Storage
     let savedDeadline = localStorage.getItem(storageKey);
     let deadlineTime;
+
     if (!savedDeadline) {
-        //Nếu chưa có Deadline (Vào thi lần đầu tiên) --> tạo Deadline mới
-        //Date.now() trả về mili-giây (thay vì cho ra đơn vị giờ, phút, giây thì sẽ trả về mili-giây)
+        // LỖI BẢO MẬT Ở ĐÂY: Nếu không có deadline trong Local Storage (do bị xóa), 
+        // nó sẽ tự động tạo một mốc kết thúc mới bằng: [Thời điểm hiện tại] + [Tổng thời gian thi]
         deadlineTime = Date.now() + (totalTime * 1000);
-        localStorage.setItem(storageKey, deadlineTime); //lưu vào Local Storage
+        localStorage.setItem(storageKey, deadlineTime);
     }
     else {
-        //nếu đã có Deadline (Do f5 hoặc mở lại sau khi đã thoát bài)
-        //ép kiểu chuỗi lưu trong bộ nhớ về số nguyên int
-        // localStorage: chỉ lưu KDL string
+        // Nếu có thì lấy mốc cũ
         deadlineTime = parseInt(savedDeadline);
     }
 
-    //vòng lặp đếm ngược thời gian
+    // 3. Vòng lặp đếm ngược dựa trên mốc thời gian đã ấn định
     const timerInterval = setInterval(function () {
-        //tính toán lại số giây còn lại dựa vào thời gian thực tế
+        // Tính toán lại số giây còn lại dựa vào chênh lệch thời gian thực tế
         let timeRemaining = Math.floor((deadlineTime - Date.now()) / 1000);
 
-        // Nếu bỏ thi quá thời gian thi kể từ lúc vào làm bài --> Nộp hết giờ
         if (timeRemaining < 0) {
-            timeRemaining = 0; // về sau khi hết giờ/ đã nộp thì tự động xóa deadline cho lần thi sau
+            timeRemaining = 0;
         }
 
-        //xử lý hiển thị phút giây (Ví dụ mô phòng: 08:00 - 8 phút 0 giây)
+        // Xử lý hiển thị phút giây
         let minutes = Math.floor(timeRemaining / 60);
         let seconds = timeRemaining % 60;
 
@@ -66,10 +58,8 @@ function startTimer() {
 
         countdownDisplay.textContent = formattedMinutes + ":" + formattedSeconds;
 
-        // Tính phần trăm thời gian còn lại
+        // Tính phần trăm và đổi màu giao diện
         let percentRemaining = (timeRemaining / totalTime) * 100;
-
-        // Đổi màu linh hoạt theo từng mốc %
         if (percentRemaining <= 10 && timeRemaining > 0) {
             timerBadge.style.backgroundColor = '#fef2f2';
             timerBadge.style.color = '#ef4444';
@@ -91,19 +81,106 @@ function startTimer() {
             clearInterval(timerInterval);
             countdownDisplay.textContent = "00:00";
 
-            //Xóa Deadline trong bộ nhớ để lần sau thi lại đề này (nếu cho phép làm lại)
+            // Xóa dữ liệu cũ để tránh kẹt giờ khi thi lại
             localStorage.removeItem(storageKey);
             alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động lưu và nộp bài của bạn.");
 
-            // Gọi hàm nộp bài và truyền tham số true (báo hiệu là nộp tự động, không cần confirm)
-            submitExam(true);
+            // Tự động gọi hàm nộp bài
+            if (typeof submitExam === 'function') {
+                submitExam(true);
+            }
         }
-        //else {
-        //    timeRemaining--;
-        //}
+    }, 1000);
+}/*//// 2. BỘ ĐẾM NGƯỢC THỜI GIAN (CODE MỚI - DÙNG LOCALSTORAGE CHỐNG F5 VÀ KHÓA HACK TIME)
+const totalTime = typeof SERVER_TOTAL_SECONDS !== 'undefined' ? SERVER_TOTAL_SECONDS : 3600;
+// Lấy thời gian tối đa được phép làm (chống hack, và chặn làm bài khi đề sắp đóng)
+const maxAllowedSec = typeof SERVER_MAX_ALLOWED_SECONDS !== 'undefined' ? SERVER_MAX_ALLOWED_SECONDS : totalTime;
+
+const countdownDisplay = document.getElementById('countdownDisplay');
+const timerBadge = countdownDisplay?.parentElement;
+
+function startTimer() {
+    if (!countdownDisplay) return;
+
+    // Lấy ID bài thi an toàn
+    const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
+    const storageKey = `eduTest_deadline_${examId}`;
+
+    // 1. Lấy deadline từ Local Storage
+    let savedDeadline = localStorage.getItem(storageKey);
+    let currentDeadlineTime;
+
+    if (!savedDeadline) {
+        // Vào thi lần đầu -> Ấn định deadline = thời điểm hiện tại + maxAllowedSec
+        currentDeadlineTime = Date.now() + (maxAllowedSec * 1000);
+        localStorage.setItem(storageKey, currentDeadlineTime);
+    } else {
+        // Đã có (do F5 reload) -> Lấy lại mốc cũ
+        currentDeadlineTime = parseInt(savedDeadline);
+    }
+
+    const timerInterval = setInterval(function () {
+        // Tính số giây còn lại
+        let timeRemaining = Math.floor((currentDeadlineTime - Date.now()) / 1000);
+
+        // Bảo mật bổ sung: Nếu học sinh cố tình sửa LocalStorage để tăng thời gian
+        // Nó sẽ bị ép về lại giới hạn tối đa mà Server cho phép
+        if (timeRemaining > maxAllowedSec) {
+            timeRemaining = maxAllowedSec;
+            currentDeadlineTime = Date.now() + (maxAllowedSec * 1000);
+            localStorage.setItem(storageKey, currentDeadlineTime);
+        }
+
+        if (timeRemaining < 0) {
+            timeRemaining = 0;
+        }
+
+        // Xử lý hiển thị phút giây
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+
+        let formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+        let formattedSeconds = seconds < 10 ? "0" + seconds : seconds;
+
+        countdownDisplay.textContent = formattedMinutes + ":" + formattedSeconds;
+
+        // Tính phần trăm thời gian còn lại
+        let percentRemaining = (timeRemaining / totalTime) * 100;
+
+        if (percentRemaining <= 10 && timeRemaining > 0) {
+            timerBadge.style.backgroundColor = '#fef2f2';
+            timerBadge.style.color = '#ef4444';
+            timerBadge.style.borderColor = '#fecaca';
+        }
+        else if (percentRemaining <= 30) {
+            timerBadge.style.backgroundColor = '#fff7ed';
+            timerBadge.style.color = '#ea580c';
+            timerBadge.style.borderColor = '#fed7aa';
+        }
+        else if (percentRemaining <= 50) {
+            timerBadge.style.backgroundColor = '#fefce8';
+            timerBadge.style.color = '#ca8a04';
+            timerBadge.style.borderColor = '#fef08a';
+        }
+
+        // Xử lý khi HẾT GIỜ
+        if (timeRemaining <= 0) {
+            clearInterval(timerInterval);
+            countdownDisplay.textContent = "00:00";
+
+            // Quan trọng: Dọn dẹp LocalStorage để lần thi lại không bị kẹt giờ ở 00:00
+            localStorage.removeItem(storageKey);
+
+            alert("Đã hết thời gian làm bài! Hệ thống sẽ tự động lưu và nộp bài của bạn.");
+
+            // Nộp bài tự động
+            if (typeof submitExam === 'function') {
+                submitExam(true);
+            }
+        }
     }, 1000);
 }
-
+*/
 // 
 // 3. LOGIC CHỌN ĐÁP ÁN & THANH TIẾN ĐỘ
 // 
@@ -364,6 +441,8 @@ function closeSubmitModal() {
 // BIẾN LƯU TRỮ ID KẾT QUẢ, SAU NÀY XEM LẠI KẾT QUẢ
 // 
 let currentResultId = 0;
+let currentExamIdForReview = 0;
+let isSelfCreatedExam = false;
 
 // 
 // HÀM NỘP BÀI LÊN SERVER (AJAX)
@@ -374,11 +453,6 @@ async function executeSubmit() {
     // Lấy ID bài thi từ URL
     const examId = typeof currentExamId !== 'undefined' ? currentExamId : parseInt(document.getElementById("ExamId")?.value || "0");
 
-    // Xóa Local Storage (* Cập nhật: chuyển Xóa Local Storage khi điều kiện chấm xong bài thi là TRUE)
-    //localStorage.removeItem(`eduTest_deadline_${examId}`);
-    //localStorage.removeItem(`eduTest_violations_${examId}`);
-    //localStorage.removeItem(`eduTest_draft_${examId}`);
-
     const mainSubmitBtn = document.querySelector('.btn-submit');
     if (mainSubmitBtn) {
         mainSubmitBtn.disabled = true;
@@ -387,11 +461,9 @@ async function executeSubmit() {
 
     // GOM ĐÁP ÁN TRỰC TIẾP TỪ GIAO DIỆN 
     let finalAnswers = [];
-    // Tìm tất cả các input radio đang ở trạng thái "checked" (đã được chọn)
     const checkedRadios = document.querySelectorAll('input[type="radio"]:checked');
 
     checkedRadios.forEach(radio => {
-        // Tên radio đang có dạng "question_12", ta cắt bỏ chữ "question_" để lấy ID (12)
         const qId = radio.name.replace('question_', '');
         const aId = radio.value;
 
@@ -422,6 +494,7 @@ async function executeSubmit() {
             localStorage.removeItem(`eduTest_violations_${examId}`);
             localStorage.removeItem(`eduTest_draft_${examId}`);
             localStorage.removeItem(`eduTest_flagged_${examId}`);
+
             // 1. Gán dữ liệu hiển thị lên Modal Kết quả
             document.getElementById('result-score').textContent = result.score;
             document.getElementById('result-correct').textContent = `${result.correctCount} / ${result.totalQuestions}`;
@@ -429,8 +502,10 @@ async function executeSubmit() {
             document.getElementById('result-medium').textContent = `${result.correctMedium} câu`;
             document.getElementById('result-hard').textContent = `${result.correctHard} câu`;
 
-            // 2. GÁN ID KẾT QUẢ VÀO BIẾN TOÀN CỤC
-            currentResultId = result.attemptId || result.resultId || result.AttemptId || result.ResultId || result.id || result.Id || 0;
+            // 2. GÁN ID KẾT QUẢ VÀ CỜ PHÂN BIỆT BÀI CÁ NHÂN VÀO BIẾN TOÀN CỤC
+            currentResultId = result.resultId || 0;
+            currentExamIdForReview = result.examId || examId;
+            isSelfCreatedExam = result.isSelfCreated || false;
 
             // 3. Hiển thị Modal Kết quả
             document.getElementById('resultModal').style.display = 'flex';
@@ -452,10 +527,15 @@ async function executeSubmit() {
 // HÀM XỬ LÝ KHI BẤM NÚT "XEM CHI TIẾT ĐÁP ÁN VÀ ĐIỂM"
 // 
 function goToResultPage() {
-    if (currentResultId > 0) {
-        // Có ID -> Chuyển hướng sang trang xem chi tiết
+    if (isSelfCreatedExam) {
+        // Bài thi tự tạo -> Chuyển sang Review đọc từ TempData (Không dùng ResultId)
+        window.location.href = '/TestAttempt/ReviewPersonalResult?examId=' + currentExamIdForReview;
+    }
+    else if (currentResultId > 0) {
+        // Bài thi chuẩn của lớp -> Review từ Database qua ResultId
         window.location.href = '/TestAttempt/ReviewResult?resultId=' + currentResultId;
-    } else {
+    }
+    else {
         // Lỗi không có ID -> Bắt buộc quay về Dashboard
         alert("Không tìm thấy dữ liệu bài thi. Đang quay về Dashboard!");
         window.location.href = '/Student/Dashboard';
@@ -782,6 +862,7 @@ function restoreFlaggedQuestions() {
 // ==========================================
 window.onload = function () {
     startTimer();//hàm đếm ngược thời gian làm bài thi
+    
     initQuestionLogic();//chọn đáp án và Animation thanh tiến độ khi chọn đáp án
     restoreDraftAnswers() //hàm khôi phục đáp ấn câu hỏi
     restoreFlaggedQuestions();//hàm khôi phục các mốc cờ đã cắm

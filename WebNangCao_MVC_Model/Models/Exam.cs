@@ -25,5 +25,6 @@ namespace WebNangCao_MVC_Model.Models
         public int? StudentId { get; set; }
         //phân biệt đề do GV tạo ra hay đề do SV tự tạo ra, nếu IsSelfCreated = true thì đây là đề do SV tự tạo, nếu IsSelfCreated = false thì đây là đề do GV giao
         public bool IsSelfCreated { get; set; } = false;
+
     }
 }
