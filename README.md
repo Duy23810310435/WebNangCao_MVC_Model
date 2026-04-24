@@ -39,3 +39,54 @@ git checkout Chien
 //merge main vào branch đó (lặp lại với branch khác)
 git merge main
 git push //push để cập nhật merge lên github
+
+Công Nghệ Sử Dụng
+Frontend: HTML, CSS, JavaScript, Tailwind CSS.
+
+Backend: ASP.NET MVC (C#).
+
+Cơ Sở Dữ Liệu: PostgreSQL.
+
+Testing: Selenium (UI Test), NUnit (Unit Test).
+
+Yêu Cầu Môi Trường (Prerequisites)
+.NET SDK: Phiên bản 10.0 trở lên.
+
+IDE: Visual Studio 2022 (hoặc VS Code).
+
+Database Engine: PostgreSQL đã được cài đặt và chạy trên máy.
+Hướng Dẫn Sử Dụng (Cho Môn Kiểm Thử)
+
+Phần 1: Phục hồi Cơ sở dữ liệu (Database Restore)
+Yêu cầu: Máy tính đã cài đặt PostgreSQL và công cụ quản lý pgAdmin 4.
+
+Tải file .backup của dự án về máy.
+
+Mở pgAdmin, đăng nhập và tạo một Database mới rỗng với tên CHÍNH XÁC là: EduTestDB.
+
+Nhấp chuột phải vào Database EduTestDB vừa tạo > Chọn Restore...
+
+Trong hộp thoại Restore, trỏ đường dẫn đến file .backup vừa tải về và thực thi. Hệ thống sẽ tự động nạp toàn bộ cấu trúc bảng và dữ liệu mẫu.
+
+Phần 2: Cài đặt và Khởi chạy Website
+Mở Terminal (hoặc CMD/Git Bash) tại thư mục muốn lưu dự án, chạy lệnh sau để tải source code:
+
+Bash
+git clone https://github.com/Duy23810310435/WebNangCao_MVC_Model
+Mở Visual Studio 2022 (Đảm bảo máy đã cài đặt .NET 10.0 LTS) và mở thư mục/solution dự án vừa clone về.
+
+[BƯỚC BẮT BUỘC]: Mở file cấu hình kết nối (thường là appsettings.json) trong project WebNangCao_MVC_Model. Tìm đến mục ConnectionStrings và cập nhật lại User ID và Password cho khớp với tài khoản PostgreSQL trên máy của bạn.
+
+Đặt project WebNangCao_MVC_Model làm project khởi chạy mặc định (Right-click vào project > Chọn Set as Startup Project).
+
+Nhấn Ctrl + F5 (Run without Debugging) để khởi chạy Website. Hãy giữ cho website được bật và chạy ngầm.
+
+Phần 3: Chạy Kiểm thử Tự động (Selenium & NUnit)
+
+Trong cửa sổ Solution Explorer của Visual Studio, tìm và mở project kiểm thử mang tên: WebNangCao_MVC_KiemThu.
+
+Mở file mã nguồn chứa các Test Case.
+
+Nhấp chuột phải vào màn hình code > Chọn Run Tests (Kèm biểu tượng ống nghiệm).
+
+Hệ thống sẽ tự động bật trình duyệt và thực thi các kịch bản kiểm thử. Bạn có thể quan sát trực tiếp kết quả (Pass/Fail) trên cửa sổ Test Explorer.
