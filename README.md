@@ -60,13 +60,11 @@ Hướng Dẫn Sử Dụng (Cho Môn Kiểm Thử)
 Phần 1: Phục hồi Cơ sở dữ liệu (Database Restore)
 Yêu cầu: Máy tính đã cài đặt PostgreSQL và công cụ quản lý pgAdmin 4.
 
-Tải file .backup của dự án về máy.
+Tạo một Database rỗng trong PostgreSQL với tên chính xác là: EduTestDB.
 
-Mở pgAdmin, đăng nhập và tạo một Database mới rỗng với tên CHÍNH XÁC là: EduTestDB.
+Nhấp chuột phải vào Database EduTestDB vừa tạo, chọn Restore...
 
-Nhấp chuột phải vào Database EduTestDB vừa tạo > Chọn Restore...
-
-Trong hộp thoại Restore, trỏ đường dẫn đến file .backup vừa tải về và thực thi. Hệ thống sẽ tự động nạp toàn bộ cấu trúc bảng và dữ liệu mẫu.
+Trỏ đường dẫn đến file .backup được đính kèm trong thư mục dự án để khôi phục toàn bộ cấu trúc bảng (Schema) và dữ liệu mẫu.
 
 Phần 2: Cài đặt và Khởi chạy Website
 Mở Terminal (hoặc CMD/Git Bash) tại thư mục muốn lưu dự án, chạy lệnh sau để tải source code:
