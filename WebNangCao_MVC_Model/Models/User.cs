@@ -18,6 +18,8 @@ namespace WebNangCao_MVC_Model.Models
 
         public string Role { get; set; } = "student"; // Tương ứng với Register.Role
 
+        public DateTime? LastUpdateAt { get; set; } //THÊM MỚI TRONG USER.CS
+
         // Thêm trường này để quản lý thời gian tạo
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
