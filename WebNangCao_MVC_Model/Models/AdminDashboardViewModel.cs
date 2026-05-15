@@ -20,6 +20,7 @@ namespace WebNangCao_MVC_Model.Models
 
         public decimal WeeklyActiveRate { get; set; } // VD: 94.0m (94%)
         public decimal WeeklyActiveRateGrowth { get; set; } // VD: 3.0m (+3%)
+        public List<User> ActiveUsers { get; set; } = new List<User>();
         // 3. DANH SÁCH NHẬT KÝ HOẠT ĐỘNG (Activity Logs)
         public List<ActivityLog> RecentLogs { get; set; } = new List<ActivityLog>();
         // 2. DANH SÁCH NHỮNG NGƯỜI VỪA ĐĂNG KÝ (Cần duyệt)

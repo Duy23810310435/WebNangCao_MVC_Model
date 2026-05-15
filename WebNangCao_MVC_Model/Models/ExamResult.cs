@@ -12,7 +12,6 @@
         public DateTime SubmitTime { get; set; }
         // ---> BỔ SUNG CHO ADMIN: Giám sát thời gian làm bài
         public DateTime StartTime { get; set; } // Lúc sinh viên bấm nút "Bắt đầu làm bài"
-        public DateTime SubmitTime { get; set; }
         
         // Thời gian thực tế (Giây). Thằng EF Core tính sẵn lưu vào đây cho Admin Query cho lẹ!
         public int TimeTakenSeconds { get; set; } 

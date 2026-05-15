@@ -60,7 +60,7 @@ namespace WebNangCao_MVC_Model.Data.Fluent_API
                 BlockUnknownIps = false,
                 LogAllActivities = true,
                 
-                UpdatedAt = DateTime.UtcNow,
+                UpdatedAt = new DateTime(2026, 4, 27, 0, 0, 0, DateTimeKind.Utc),
                 UpdatedByUserId = 1 // Vì em bảo chỉ có 1 Admin, ta giả định luôn ID của ông Vua này là 1
             });
         }

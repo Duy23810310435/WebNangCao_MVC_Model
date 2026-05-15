@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 namespace WebNangCao_MVC_Model.Models
 {
     [Table("ActivityLogs")]

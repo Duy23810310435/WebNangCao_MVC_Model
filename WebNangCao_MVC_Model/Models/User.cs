@@ -31,6 +31,7 @@ namespace WebNangCao_MVC_Model.Models
     // QUYỀN LỰC ADMIN: Không xóa tài khoản, chỉ khóa mõm!
     public bool IsBanned { get; set; } = false;
     public string BanReason { get; set; } = string.Empty;
+    public bool IsActive { get; set; } = true;
 
         //thêm bảng UserGroups là bảng trung gian để quản lý mối quan hệ nhiều-nhiều giữa User và Group
         // Một User có thể thuộc nhiều Group thông qua bảng trung gian UserGroup
