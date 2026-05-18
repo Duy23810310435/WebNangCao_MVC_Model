@@ -32,6 +32,11 @@ namespace WebNangCao_MVC_Model.Models
     public bool IsBanned { get; set; } = false;
     public string BanReason { get; set; } = string.Empty;
     public bool IsActive { get; set; } = true;
+    // Đếm số lần người dùng nhập sai mật khẩu liên tiếp
+        public int FailedLoginAttempts { get; set; } = 0;
+
+        // Lưu thời điểm hết hạn khóa tài khoản (Nếu null tức là không bị khóa)
+        public DateTime? LockoutEnd { get; set; }
 
         //thêm bảng UserGroups là bảng trung gian để quản lý mối quan hệ nhiều-nhiều giữa User và Group
         // Một User có thể thuộc nhiều Group thông qua bảng trung gian UserGroup
