@@ -1,8 +1,10 @@
 ﻿@using WebNangCao_MVC_Model.ViewModels
 @model InstructorDashboardViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Dashboard Giảng Viên";
+    ViewData["Title"] = Localizer["InstDashboardTitle"];
 }
 
 <!DOCTYPE html>
@@ -587,16 +589,15 @@
 </head>
 <body>
 
-<!-- NAVBAR -->
 <nav>
     <a href="@Url.Action("Index", "Home")" class="nav-left">
         <span class="nav-left-arrow">←</span>
-        <span>Quay lại</span>
+        <span>@Localizer["Back"]</span>
     </a>
     <div class="nav-right">
         <div>
-            <span class="nav-greeting">Xin chào,</span>
-            <span class="nav-name">@User.Identity?.Name ?? "Giảng Viên"</span>
+            <span class="nav-greeting">@Localizer["Welcome"]</span>
+            <span class="nav-name">@User.Identity?.Name</span>
         </div>
         <div class="avatar-container">
             <button class="avatar-btn" id="avatarBtn" title="Tài khoản">
@@ -604,22 +605,22 @@
             </button>
             <div class="dropdown-menu" id="dropdownMenu">
                 <div class="dropdown-header">
-                    <div class="dropdown-user-name">@User.Identity?.Name ?? "Giảng Viên"</div>
+                    <div class="dropdown-user-name">@User.Identity?.Name</div>
                     <div class="dropdown-user-email">instructor@example.com</div>
                 </div>
                 <div class="dropdown-items">
                     <a href="@Url.Action("Profile", "Instructor")" class="dropdown-item">
                         <span class="dropdown-icon">👤</span>
-                        <span>Hồ sơ cá nhân</span>
+                        <span>@Localizer["UserProfile"]</span>
                     </a>
                     <a href="@Url.Action("Settings", "Instructor")" class="dropdown-item">
                         <span class="dropdown-icon">⚙️</span>
-                        <span>Cài đặt</span>
+                        <span>@Localizer["Settings"]</span>
                     </a>
                     <form method="post" action="@Url.Action("Logout", "Account")" style="display: contents;">
                         <button type="submit" class="dropdown-item logout">
                             <span class="dropdown-icon">↪️</span>
-                            <span>Đăng xuất</span>
+                            <span>@Localizer["Logout"]</span>
                         </button>
                     </form>
                 </div>
@@ -632,20 +633,19 @@
 
     <div class="page-header">
         <div>
-            <h1 class="page-title">Dashboard Giảng Viên</h1>
-            <p class="page-sub">Quản lý lớp học, đề thi và đánh giá kết quả</p>
+            <h1 class="page-title">@Localizer["InstDashboardTitle"]</h1>
+            <p class="page-sub">@Localizer["InstDashboardSub"]</p>
         </div>
         <div class="header-actions">
             <a href="@Url.Action("CreateClass")" class="btn btn-outline">
-                ➕ Tạo lớp học
+                ➕ @Localizer["CreateClass"]
             </a>
             <a href="@Url.Action("CreateExam")" class="btn btn-primary">
-                ➕ Tạo đề thi
+                ➕ @Localizer["CreateExam"]
             </a>
         </div>
     </div>
 
-    <!-- STATS -->
     <div class="stats">
         <div class="stat-card">
             <div class="stat-top">
@@ -653,7 +653,7 @@
                 <span class="stat-badge pos">+12%</span>
             </div>
             <div>
-                <div class="stat-label">Tổng đề thi</div>
+                <div class="stat-label">@Localizer["InstTotalExams"]</div>
                 <div class="stat-value">@Model.TotalExams</div>
             </div>
         </div>
@@ -664,7 +664,7 @@
                 <span class="stat-badge pos">+8%</span>
             </div>
             <div>
-                <div class="stat-label">Học sinh</div>
+                <div class="stat-label">@Localizer["InstTotalStudents"]</div>
                 <div class="stat-value">@Model.TotalStudents</div>
             </div>
         </div>
@@ -675,7 +675,7 @@
                 <span class="stat-badge neg">-5%</span>
             </div>
             <div>
-                <div class="stat-label">Lớp học</div>
+                <div class="stat-label">@Localizer["InstTotalClasses"]</div>
                 <div class="stat-value">@Model.TotalClasses</div>
             </div>
         </div>
@@ -686,27 +686,25 @@
                 <span class="stat-badge pos">+15%</span>
             </div>
             <div>
-                <div class="stat-label">Điểm TB</div>
+                <div class="stat-label">@Localizer["InstAvgScore"]</div>
                 <div class="stat-value">@Model.AverageStudentScore</div>
             </div>
         </div>
     </div>
 
-    <!-- MAIN -->
     <div class="main-grid">
         <div class="left-col">
 
-            <!-- CLASSES -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title-wrap">
-                            <span class="card-title">👥 Lớp học của tôi</span>
+                            <span class="card-title">👥 @Localizer["MyClassesTitle"]</span>
                         </div>
-                        <div class="card-sub">Quản lý các lớp học bạn đã tạo</div>
+                        <div class="card-sub">@Localizer["MyClassesSub"]</div>
                     </div>
                     <a href="@Url.Action("CreateClass")" class="add-btn">
-                        ➕ Tạo lớp mới
+                        ➕ @Localizer["CreateClassNew"]
                     </a>
                 </div>
 
@@ -720,13 +718,13 @@
                                     <span class="class-name">@cls.GroupName</span>
                                     <span class="badge student">@cls.StudentCount HS</span>
                                 </div>
-                                <div class="class-desc">@cls.StudentCount sinh viên đang học</div>
+                                <div class="class-desc">@cls.StudentCount @Localizer["StudentsCount"]</div>
                                 <div class="class-actions">
                                     <a href="@Url.Action("ManageStudents", new { classId = cls.Id })" class="action-btn">
-                                        👥 Quản lý HS
+                                        👥 @Localizer["ManageStudents"]
                                     </a>
                                     <a href="@Url.Action("AssignExams", new { classId = cls.Id })" class="action-btn">
-                                        📝 Giao đề thi
+                                        📝 @Localizer["AssignExams"]
                                     </a>
                                 </div>
                             </div>
@@ -736,30 +734,29 @@
                 else
                 {
                     <div class="empty-state">
-                        <p>Chưa có lớp học nào</p>
-                        <a href="@Url.Action("CreateClass")">Tạo lớp mới</a>
+                        <p>@Localizer["NoClassesYet"]</p>
+                        <a href="@Url.Action("CreateClass")">@Localizer["CreateClassNew"]</a>
                     </div>
                 }
             </div>
 
-            <!-- EXAM MANAGEMENT -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title-wrap">
-                            <span class="card-title">📄 Quản lý đề thi</span>
+                            <span class="card-title">📄 @Localizer["ManageExamsTitle"]</span>
                         </div>
-                        <div class="card-sub">Danh sách các đề thi bạn đã tạo</div>
+                        <div class="card-sub">@Localizer["ManageExamsSub"]</div>
                     </div>
                     <a href="@Url.Action("CreateExam")" class="add-btn">
-                        ➕ Tạo đề mới
+                        ➕ @Localizer["CreateExamNew"]
                     </a>
                 </div>
 
                 <div class="tabs">
-                    <button class="tab active" data-tab="all">Tất cả</button>
-                    <button class="tab" data-tab="active">Đang diễn ra</button>
-                    <button class="tab" data-tab="scheduled">Đã lên lịch</button>
+                    <button class="tab active" data-tab="all">@Localizer["InstTabAll"]</button>
+                    <button class="tab" data-tab="active">@Localizer["InstTabOngoing"]</button>
+                    <button class="tab" data-tab="scheduled">@Localizer["InstTabScheduled"]</button>
                 </div>
 
                 @if (Model.RecentExams.Any())
@@ -771,25 +768,33 @@
                                 <div class="exam-top">
                                     <div class="exam-name-row">
                                         <span class="exam-name">@exam.Title</span>
-                                        <span class="badge @(exam.Status == "Đã hoàn thành" ? "status-done" : "status-live")">
-                                            @exam.Status
+                                        @{
+                                            var badgeClass = exam.Status == "Đã hoàn thành" ? "status-done" : "status-live";
+                                            var statusTranslated = exam.Status; // Default
+
+                                            if (exam.Status == "Đã hoàn thành") statusTranslated = Localizer["TabCompleted"].Value;
+                                            else if (exam.Status == "Đang diễn ra") statusTranslated = Localizer["InstTabOngoing"].Value;
+                                            else if (exam.Status == "Sắp tới") statusTranslated = Localizer["Upcoming"].Value;
+                                        }
+                                        <span class="badge @badgeClass">
+                                            @statusTranslated
                                         </span>
                                     </div>
                                 </div>
                                 <div class="exam-meta">
-                                    <span class="exam-meta-item">📚 @exam.TotalQuestions câu</span>
-                                    <span class="exam-meta-item">⏱️ @exam.Duration phút</span>
+                                    <span class="exam-meta-item">📚 @exam.TotalQuestions @Localizer["InstExamQuestions"]</span>
+                                    <span class="exam-meta-item">⏱️ @exam.Duration @Localizer["InstExamDuration"]</span>
                                 </div>
                                 <div class="exam-bottom">
-                                    <div class="exam-progress-label">Bài nộp: <span>@exam.TotalQuestions</span></div>
+                                    <div class="exam-progress-label">@Localizer["InstSubmissions"] <span>@exam.TotalQuestions</span></div>
                                     <div class="exam-actions">
-                                        <a href="@Url.Action("ViewExam", new { examId = exam.Id })" class="exam-icon-btn" title="Xem">
+                                        <a href="@Url.Action("ViewExam", new { examId = exam.Id })" class="exam-icon-btn" title="@Localizer["InstTooltipView"]">
                                             👁️
                                         </a>
-                                        <a href="@Url.Action("EditExam", new { examId = exam.Id })" class="exam-icon-btn" title="Chỉnh sửa">
+                                        <a href="@Url.Action("EditExam", new { examId = exam.Id })" class="exam-icon-btn" title="@Localizer["InstTooltipEdit"]">
                                             ✏️
                                         </a>
-                                        <button class="exam-icon-btn red" title="Xóa">
+                                        <button class="exam-icon-btn red" title="@Localizer["InstTooltipDelete"]">
                                             🗑️
                                         </button>
                                     </div>
@@ -801,23 +806,19 @@
                 else
                 {
                     <div class="empty-state">
-                        <p>Chưa có bài thi nào</p>
-                        <a href="@Url.Action("CreateExam")">Tạo bài thi mới</a>
+                        <p>@Localizer["NoExamsYet"]</p>
+                        <a href="@Url.Action("CreateExam")">@Localizer["CreateExamNew"]</a>
                     </div>
                 }
             </div>
 
-        </div><!-- /left -->
+        </div><div class="right-col">
 
-        <!-- RIGHT -->
-        <div class="right-col">
-
-            <!-- GRADING -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title-wrap">
-                            <span class="card-title">📊 Chấm điểm gần đây</span>
+                            <span class="card-title">📊 @Localizer["RecentGradingTitle"]</span>
                         </div>
                     </div>
                 </div>
@@ -832,54 +833,48 @@
                                     <span class="grade-name">@exam.Title</span>
                                     <span class="grade-score high">@exam.TotalQuestions Q</span>
                                 </div>
-                                <div class="grade-sub">@exam.Duration phút</div>
-                                <div class="grade-time">Vừa tạo</div>
+                                <div class="grade-sub">@exam.Duration @Localizer["InstExamDuration"]</div>
+                                <div class="grade-time">@Localizer["JustCreated"]</div>
                             </div>
                         }
                     }
                     else
                     {
                         <div style="padding: 16px; text-align: center; color: var(--text-2); font-size: 12px;">
-                            Chưa có dữ liệu chấm điểm
+                            @Localizer["NoGradingData"]
                         </div>
                     }
                 </div>
 
-                <button class="view-all-btn">Xem tất cả</button>
+                <button class="view-all-btn">@Localizer["ViewAll"]</button>
             </div>
 
-            <!-- QUICK STATS -->
             <div class="card">
                 <div class="card-header">
                     <div>
                         <div class="card-title-wrap">
-                            <span class="card-title">📈 Thống kê nhanh</span>
+                            <span class="card-title">📈 @Localizer["QuickStatsTitle"]</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="quick-stats">
                     <div class="stat-row">
-                        <span class="stat-row-label">Tổng lớp</span>
+                        <span class="stat-row-label">@Localizer["StatTotalClasses"]</span>
                         <span class="stat-row-value">@Model.TotalClasses</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-row-label">Tổng sinh viên</span>
+                        <span class="stat-row-label">@Localizer["StatTotalStudents"]</span>
                         <span class="stat-row-value green">@Model.TotalStudents</span>
                     </div>
                     <div class="stat-row">
-                        <span class="stat-row-label">Tổng đề thi</span>
+                        <span class="stat-row-label">@Localizer["StatTotalExams"]</span>
                         <span class="stat-row-value">@Model.TotalExams</span>
                     </div>
                 </div>
             </div>
 
-        </div><!-- /right -->
-    </div><!-- /main-grid -->
-
-</div><!-- /page -->
-
-<script>
+        </div></div></div><script>
     // Avatar dropdown toggle
     const avatarBtn = document.getElementById('avatarBtn');
     const dropdownMenu = document.getElementById('dropdownMenu');

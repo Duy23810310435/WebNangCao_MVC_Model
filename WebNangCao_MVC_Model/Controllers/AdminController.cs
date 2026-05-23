@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Authorization;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
 
 namespace WebNangCao_MVC_Model.Controllers
 {
@@ -22,9 +25,7 @@ namespace WebNangCao_MVC_Model.Controllers
             _context = context;
         }
 
-        // =========================================================
         // 1. TRẢ VỀ GIAO DIỆN DASHBOARD CHO ADMIN TRÊN WEB
-        // =========================================================
         public async Task<IActionResult> Index() 
         {
             var viewModel = new AdminDashboardViewModel();
@@ -45,11 +46,10 @@ namespace WebNangCao_MVC_Model.Controllers
 
             // 2. ĐỔ DATA CHO DANH SÁCH ĐANG HOẠT ĐỘNG (Gán thẳng vào viewModel.ActiveUsers)
             viewModel.ActiveUsers = await _context.Users
-    // Ép Role trong DB biến thành chữ thường hết để so sánh cho chắc cốp!
-    .Where(u => u.Role != null && targetRoles.Contains(u.Role.ToLower().Trim()) && u.IsActive == true)
-    .OrderByDescending(u => u.CreatedAt)
-    .Take(5)
-    .ToListAsync();
+                .Where(u => u.Role != null && targetRoles.Contains(u.Role.ToLower().Trim()) && u.IsActive == true)
+                .OrderByDescending(u => u.CreatedAt)
+                .Take(5)
+                .ToListAsync();
 
             // 3. ĐỔ DATA CHO LOG HOẠT ĐỘNG
             viewModel.RecentLogs = await _context.ActivityLogs
@@ -69,85 +69,13 @@ namespace WebNangCao_MVC_Model.Controllers
 
             viewModel.WeeklyLogins = 120;
             viewModel.WeeklyLoginsGrowth = 12.5m;
-            // 🔴 MÚC CẤU HÌNH TỪ DB LÊN (Nếu rỗng thì tạo nháp 1 cái để khỏi báo lỗi null)
+            //(Nếu rỗng thì tạo nháp 1 cái để khỏi báo lỗi null)
             viewModel.CurrentConfig = await _context.SystemConfigs.FirstOrDefaultAsync() ?? new SystemConfig();
 
-            return View(viewModel); // Bưng mâm Data đã nhồi đầy ắp ra cho View xơi!
+            return View(viewModel); 
         }
 
-        // =========================================================
-        // 2. API CUNG CẤP DATA CHO MOBILE APP (REACT NATIVE)
-        // =========================================================
-        [AllowAnonymous] // Cho phép App gọi không cần Cookie của Web
-        [HttpGet("api/Admin/DashboardStats")]
-        public async Task<IActionResult> GetDashboardStatsForApp()
-        {
-            try
-            {
-                var today = DateTime.UtcNow.Date;
-                var targetRoles = new[] { "student", "teacher" };
-
-                var totalActiveUsers = await _context.Users.CountAsync(u => u.IsActive);
-                var totalExams = await _context.Exams.CountAsync();
-                var totalExamsToday = await _context.Exams.CountAsync(e => e.CreatedAt >= today);
-
-                var pendingUsers = await _context.Users
-                    .Where(u => targetRoles.Contains(u.Role) && u.IsActive == false)
-                    .OrderByDescending(u => u.CreatedAt)
-                    .Take(5)
-                    .Select(u => new { u.Id, u.FullName, u.Email, u.Role, u.CreatedAt }) 
-                    .ToListAsync();
-
-                var activeUsers = await _context.Users
-                    .Where(u => targetRoles.Contains(u.Role) && u.IsActive == true)
-                    .OrderByDescending(u => u.CreatedAt)
-                    .Take(5)
-                    .Select(u => new { u.Id, u.FullName, u.Email, u.Role, u.LastLoginAt }) 
-                    .ToListAsync();
-
-                // Lọc dữ liệu chống vòng lặp JSON
-                var recentLogs = await _context.ActivityLogs
-                    .Include(l => l.User)
-                    .OrderByDescending(l => l.Timestamp)
-                    .Take(10)
-                    .Select(l => new 
-                    {
-                        l.Id, 
-                        l.Timestamp,
-                        UserName = l.User != null ? l.User.FullName : "System" 
-                    })
-                    .ToListAsync();
-
-                var systemHealth = new 
-                {
-                    IsWebServerOnline = true,
-                    IsDatabaseOnline = await _context.Database.CanConnectAsync(),
-                    StorageUsagePercentage = 65.5m,
-                    BackupStatus = "Active"
-                };
-
-                return Ok(new
-                {
-                    success = true,
-                    message = "Lấy dữ liệu Dashboard thành công!",
-                    data = new 
-                    {
-                        stats = new { totalActiveUsers, totalExams, totalExamsToday, weeklyLogins = 120, weeklyLoginsGrowth = 12.5m },
-                        users = new { pending = pendingUsers, active = activeUsers },
-                        logs = recentLogs,
-                        health = systemHealth
-                    }
-                });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { success = false, message = "Lỗi Server: " + ex.Message });
-            }
-        }
-
-        // =========================================================
         // 3. API NHẬN FETCH TỪ FRONTEND ĐỂ LƯU CẤU HÌNH VÀO DB
-        // =========================================================
         [HttpPost("api/Admin/UpdateSystemConfig")]
         // Đã sửa SystemConfigDto thành SystemConfig để map trực tiếp vào Model của DB
         public async Task<IActionResult> UpdateSystemConfig([FromBody] SystemConfig model)
@@ -254,9 +182,7 @@ namespace WebNangCao_MVC_Model.Controllers
                 return StatusCode(500, new { success = false, message = "Lỗi Server: " + ex.Message });
             }
         }
-        // =========================================================
         // 4. API DUYỆT TÀI KHOẢN (ĐỔI TRẠNG THÁI ISACTIVE)
-        // =========================================================
         [HttpPost("api/Admin/ApproveUser/{id}")]
         public async Task<IActionResult> ApproveUser(int id) 
         {
@@ -289,9 +215,7 @@ namespace WebNangCao_MVC_Model.Controllers
                 return StatusCode(500, new { success = false, message = "Lỗi Server: " + ex.Message });
             }
         }
-        // =========================================================
         // 5. API XÓA NGƯỜI DÙNG (DELETE)
-        // =========================================================
         [HttpDelete("api/Admin/DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -321,9 +245,7 @@ namespace WebNangCao_MVC_Model.Controllers
                 return StatusCode(500, new { success = false, message = "Lỗi Server (Có thể do vướng dữ liệu liên quan): " + ex.Message });
             }
         }
-        // =========================================================
-        // 6. API SỬA NGƯỜI DÙNG (CẬP NHẬT)
-        // =========================================================
+        // 6. API SỬA NGƯỜI DÙNG 
         public class EditUserDto
         {
             public int Id { get; set; }
@@ -376,9 +298,7 @@ namespace WebNangCao_MVC_Model.Controllers
                 return StatusCode(500, new { success = false, message = "Lỗi Server: " + ex.Message });
             }
         }
-        // =========================================================
-        // 7. API SAO LƯU DỮ LIỆU (UC-08: BACKUP)
-        // =========================================================
+        // 7. API SAO LƯU DỮ LIỆU 
         [HttpGet("api/Admin/BackupData")]
         public async Task<IActionResult> BackupData()
         {
@@ -425,27 +345,153 @@ namespace WebNangCao_MVC_Model.Controllers
                 return StatusCode(500, "Lỗi khi sao lưu dữ liệu: " + ex.Message);
             }
         }
+        
+       
+        // 8. API KIỂM TRA KẾT NỐI DATABASE
         public class DatabaseConfigDto
         {
             public string Host { get; set; }
             public int Port { get; set; }
-            public string DbName { get; set; }
-            public string User { get; set; }
+            public string DatabaseName { get; set; } 
+            public string DatabaseUser { get; set; } 
+            public string Password { get; set; } // Hứng mật khẩu từ giao diện gửi lên
         }
-        [HttpPost("api/Admin/TestDbConnection")]
-public async Task<IActionResult> TestDbConnection([FromBody] DatabaseConfigDto model)
-{
-    // Tạo chuỗi kết nối giả định từ dữ liệu Admin vừa nhập
-    string testConnString = $"Host={model.Host};Port={model.Port};Database={model.DbName};Username={model.User};Password=TỰ_NHẬP_PASS";
-    
-    try {
-        using var connection = new Npgsql.NpgsqlConnection(testConnString);
-        await connection.OpenAsync();
-        return Ok(new { success = true, message = "Kết nối đến Database mới thành công!" });
-    }
-    catch (Exception ex) {
-        return BadRequest(new { success = false, message = "Kết nối thất bại: " + ex.Message });
-    }
-}
-    }
-}
+
+        [HttpPost("api/Admin/CheckDbConnection")]
+        public async Task<IActionResult> CheckDbConnection([FromBody] DatabaseConfigDto model)
+        {
+            // Lấy Password tự động từ form (model.Password) thay vì tự gõ tay!
+            string testConnString = $"Host={model.Host};Port={model.Port};Database={model.DatabaseName};Username={model.DatabaseUser};Password={model.Password}";
+            
+            try 
+            {
+                using var connection = new Npgsql.NpgsqlConnection(testConnString);
+                await connection.OpenAsync();
+                
+                return Ok(new { success = true, message = "Kết nối đến Database thành công mĩ mãn!" });
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest(new { success = false, message = "Kết nối thất bại: " + ex.Message });
+            }
+        }
+        // =========================================================
+        // 9. API GỬI EMAIL THỬ NGHIỆM
+        // =========================================================
+        public class TestEmailDto
+        {
+            public string SmtpHost { get; set; }
+            public int SmtpPort { get; set; }
+            public string SmtpUser { get; set; }
+            public string SmtpPassword { get; set; }
+            public string ToEmail { get; set; } // Email của người sẽ nhận thư test
+        }
+
+        [HttpPost("api/Admin/TestEmailConnection")]
+        public IActionResult TestEmailConnection([FromBody] TestEmailDto model)
+        {
+            try
+            {
+                // Sử dụng thư viện SmtpClient tích hợp sẵn của .NET
+                using (var client = new System.Net.Mail.SmtpClient(model.SmtpHost, model.SmtpPort))
+                {
+                    // Nạp tài khoản và mật khẩu
+                    client.Credentials = new System.Net.NetworkCredential(model.SmtpUser, model.SmtpPassword);
+                    client.EnableSsl = true; // Bắt buộc là true đối với Gmail
+
+                    // Soạn một bức thư
+                    var mailMessage = new System.Net.Mail.MailMessage
+                    {
+                        From = new System.Net.Mail.MailAddress(model.SmtpUser, "Hệ Thống EduTest"),
+                        Subject = "Kiểm Tra Kết Nối Email Từ EduTest Pro",
+                        Body = @"
+                            <div style='font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
+                                <h2 style='color: #28a745;'>Chúc mừng Kỹ sư!</h2>
+                                <p>Ống nước SMTP của bạn đã thông toàn diện. Email thử nghiệm đã được gửi đi thành công.</p>
+                                <hr/>
+                                <p style='font-size: 12px; color: gray;'>Đây là email tự động, vui lòng không trả lời.</p>
+                            </div>",
+                        IsBodyHtml = true
+                    };
+
+                    // Gắn địa chỉ người nhận vào
+                    mailMessage.To.Add(model.ToEmail);
+
+                    // Bóp cò! Phát hỏa!
+                    client.Send(mailMessage);
+                }
+
+                return Ok(new { success = true, message = "Email đã bay! Kỹ sư check hòm thư đi nhé!" });
+            }
+            catch (Exception ex)
+            {
+                // Bắt lỗi sai pass, sai cổng, hoặc bị Google chặn
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+        
+   
+public class PdfExportRequest
+        {
+            public string ImageData { get; set; }
+        }
+
+        [HttpPost("api/Admin/ExportReportToPdf")]
+        [DisableRequestSizeLimit]
+        public IActionResult ExportReportToPdf([FromBody] PdfExportRequest request)
+        {
+            try
+            {
+                // Dán bùa License QuestPDF
+                QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+                if (request == null || string.IsNullOrEmpty(request.ImageData))
+                {
+                    return BadRequest("Không có dữ liệu ảnh");
+                }
+
+                // Tách phần header của chuỗi base64 ("data:image/png;base64,") để lấy data thuần
+                var base64Data = request.ImageData.Contains(",") 
+                    ? request.ImageData.Split(',')[1] 
+                    : request.ImageData;
+                    
+                byte[] imageBytes = Convert.FromBase64String(base64Data);
+
+                // Tạo PDF bằng QuestPDF
+                var document = Document.Create(container =>
+                {
+                    container.Page(page =>
+                    {
+                        // Dashboard thì nên xoay ngang tờ giấy (Landscape) cho rộng rãi
+                        page.Size(PageSizes.A4.Landscape());
+                        page.Margin(1, Unit.Centimetre);
+                        
+                        page.Header().Text("BÁO CÁO CHI TIẾT HỆ THỐNG EDUTEST PRO")
+                            .FontSize(20)
+                            .SemiBold()
+                            .FontColor(Colors.Blue.Medium);
+                        
+                        page.Content().PaddingVertical(10).Column(column =>
+                        {
+                            column.Item().Text($"Ngày xuất báo cáo: {DateTime.Now:dd/MM/yyyy HH:mm}");
+                            column.Item().PaddingTop(20).Image(imageBytes).FitArea(); 
+                        });
+                        
+                        page.Footer().AlignCenter().Text(x => { x.Span("Trang "); x.CurrentPageNumber(); });
+                    });
+                });
+
+                // Xuất mảng bytes
+                byte[] pdfData = document.GeneratePdf();
+                
+                return File(pdfData, "application/pdf", $"BaoCao_EduTest_{DateTime.Now:ddMMyyyy_HHmm}.pdf");
+            }
+            catch (Exception ex)
+            {
+                // Bắt gọn mọi lỗi nếu có
+                return StatusCode(500, $"Lỗi tạo PDF: {ex.Message} \n {ex.StackTrace}");
+            }
+        }
+        
+    } 
+} 

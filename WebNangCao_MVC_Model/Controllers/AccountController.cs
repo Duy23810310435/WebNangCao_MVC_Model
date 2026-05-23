@@ -8,6 +8,7 @@ using System.Security.Claims; //Dùng để lấy thông tin UserId từ Claims 
 using Microsoft.AspNetCore.Authentication; //Dùng để gọi SignInAsync, SignOutAsync khi đăng nhập/đăng xuất
 using Microsoft.AspNetCore.Authentication.Cookies; //Dùng để gọi CookieAuthenticationDefaults
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace WebNangCao_MVC_Model.Controllers
 {
@@ -17,6 +18,7 @@ namespace WebNangCao_MVC_Model.Controllers
         private readonly IValidator<LoginViewModel> _loginValidator;
         private readonly IValidator<RegisterViewModel> _registerValidator;
         private readonly AppDbContext _context;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
         //khai báo DB ConText
         // _context là kế thừa từ AppDbContext, có nhiệm vụ kết nối và thao tác với Database PostgreSQL
@@ -36,12 +38,14 @@ namespace WebNangCao_MVC_Model.Controllers
         public AccountController(
             IValidator<LoginViewModel> loginValidator,
             IValidator<RegisterViewModel> registerValidator,
-            AppDbContext context
+            AppDbContext context,
+            IStringLocalizer<SharedResource> localizer
             )
         {
             _loginValidator = loginValidator;
             _registerValidator = registerValidator;
-            _context = context; //gắn vào biến toàn cục của Controller
+            _context = context;
+            _localizer = localizer; //gắn vào biến toàn cục của Controller
         }
 
         // KHU VỰC HIỂN THỊ GIAO DIỆN (GET)
@@ -107,7 +111,7 @@ int maxFailedLogins = config?.MaxFailedLogins ?? 5; // Lấy số 5 từ giao di
             var timeLeft = user.LockoutEnd.Value - DateTime.UtcNow;
             int minutesLeft = (int)Math.Ceiling(timeLeft.TotalMinutes);
 
-            ModelState.AddModelError("Login.Password", $"Tài khoản đã bị khóa do nhập sai quá nhiều lần. Vui lòng thử lại sau {minutesLeft} phút.");
+            ModelState.AddModelError("Login.Password", _localizer["ErrLockedAccount", minutesLeft]);
             model.ActiveTab = "login";
             return View("Index", model);
         }
@@ -139,13 +143,13 @@ int maxFailedLogins = config?.MaxFailedLogins ?? 5; // Lấy số 5 từ giao di
                 user.LockoutEnd = DateTime.UtcNow.AddMinutes(15); // Khóa cụ nó lại 15 phút
                 _context.SaveChanges(); // Lưu xuống DB luôn
 
-                ModelState.AddModelError("Login.Password", $"Bạn đã nhập sai {user.FailedLoginAttempts} lần. Tài khoản bị khóa 15 phút!");
+                ModelState.AddModelError("Login.Password", _localizer["ErrWrongPasswordLimit", user.FailedLoginAttempts]);
             }
             else
             {
                 _context.SaveChanges(); // Lưu số lần sai vào DB để nhịp sau đếm tiếp
                 int attemptsLeft = maxFailedLogins - user.FailedLoginAttempts;
-                ModelState.AddModelError("Login.Password", $"Mật khẩu không chính xác. Bạn còn {attemptsLeft} lần thử.");
+                ModelState.AddModelError("Login.Password", _localizer["ErrWrongPassword", attemptsLeft]);
             }
 
             model.ActiveTab = "login";
@@ -165,7 +169,7 @@ int maxFailedLogins = config?.MaxFailedLogins ?? 5; // Lấy số 5 từ giao di
                 // --- CHÈN THÊM LOGIC CỦA ADMIN: KIỂM TRA ĐÃ ĐƯỢC DUYỆT CHƯA ---
                 if (user.IsActive == false && user.Role?.ToLower() != "admin")
                 {
-                    ModelState.AddModelError("Login.Password", "Tài khoản của bạn đang chờ Admin duyệt. Vui lòng quay lại sau!");
+                    ModelState.AddModelError("Login.Password", _localizer["ErrWaitAdminApprove"]);
                     model.ActiveTab = "login";
                     return View("Index", model);
                 }
@@ -173,7 +177,7 @@ int maxFailedLogins = config?.MaxFailedLogins ?? 5; // Lấy số 5 từ giao di
                 if (user.Role.ToLower() != Role.ToLower())
                 {
                     //nếu không khớp với Role thì đẩy ra lỗi
-                    ModelState.AddModelError("Login.Password", "Tài khoản của bạn không thuộc vai trò này. Vui lòng chọn đúng vai trò");
+                    ModelState.AddModelError("Login.Password", _localizer["ErrWrongRole"]);
                     model.ActiveTab = "login";
                     return View("Index", model);
                 }
@@ -212,14 +216,13 @@ int maxFailedLogins = config?.MaxFailedLogins ?? 5; // Lấy số 5 từ giao di
 }
 else 
 {
-    // CHỐT CHẶN AN TOÀN CUỐI CÙNG: 
     // Nếu Role trong DB là một cái tên lạ hoắc nào đó (bị lỗi data), 
     // thì đá nó về trang chủ, tuyệt đối không được rớt xuống lỗi "Sai mật khẩu" bên dưới!
     return RedirectToAction("Index", "Home"); 
 }
             }
             //nếu user==null(không tìm thấy trong DB)
-            ModelState.AddModelError("login.Password", "Tài khoản hoặc mật khẩu không chính xác.");
+            ModelState.AddModelError("login.Password", _localizer["ErrInvalidLogin"]);
             model.ActiveTab = "login";
             return View("Index", model);
         }
@@ -230,14 +233,12 @@ else
 
             // BƯỚC 1: KIỂM TRA LỖI FORM ĐĂNG KÝ
             ValidationResult result = _registerValidator.Validate(model.Register);
-            // --- CHÈN THÊM LOGIC KIỂM TRA LUẬT CỦA ADMIN ---
             var config = await _context.SystemConfigs.AsNoTracking().FirstOrDefaultAsync();
             int minPass = config?.MinPasswordLength ?? 6;
-            ViewBag.MinPassLength = minPass; // Nạp sẵn phòng khi bị lỗi trả về View
+            ViewBag.MinPassLength = minPass; 
             if (model.Register.Password != null && model.Register.Password.Length < minPass)
             {
-                ModelState.AddModelError("Register.Password", $"Hệ thống yêu cầu mật khẩu tối thiểu {minPass} ký tự.");
-                // Dùng kỹ thuật bùa chú ép cái result.IsValid = false để nó rớt xuống block dưới
+                ModelState.AddModelError("Register.Password", _localizer["ErrMinPasswordLen", minPass]);
                 result.Errors.Add(new ValidationFailure("Password", "Lỗi độ dài")); 
             }
             if (!result.IsValid)
@@ -256,7 +257,7 @@ else
             bool isExist = _context.Users.Any(u => u.Username == model.Register.Username || u.Email == model.Register.Email);
             if (isExist)
             {
-                ModelState.AddModelError("Register.Username", "Tên đăng nhập hoặc Email đã tồn tại!");
+                ModelState.AddModelError("Register.Username", _localizer["ErrUserExist"]);
                 model.ActiveTab = "register";
                 return View("Index", model);
             }
@@ -293,10 +294,9 @@ else
 
                     _context.UserGroups.Add(userGroup);
                     await _context.SaveChangesAsync(); // Lưu bảng trung gian vào DB
-                    // 🔴 CHÈN ĐÚNG 6 DÒNG NÀY VÀO ĐÂY - KHÔNG XOÁ HOẶC SỬA BẤT KỲ CHỮ NÀO CỦA CODE CŨ!
             if (newUser.IsActive == false)
             {
-                ModelState.AddModelError("Login.UsernameOrEmail", "Đăng ký thành công! Vui lòng chờ Admin phê duyệt tài khoản để đăng nhập.");
+                ModelState.AddModelError("Login.UsernameOrEmail", _localizer["MsgRegisterSuccessWaitApprove"]);
                 model.ActiveTab = "login"; // Ép giao diện quay về tab Đăng nhập
                 return View("Index", model); // Đẩy về trang chủ luôn, không cho chạy xuống dưới nữa!
             }

@@ -1,47 +1,48 @@
 ﻿using FluentValidation;
 using WebNangCao_MVC_Model.Models;
+using Microsoft.Extensions.Localization; // 🚨 GỌI THƯ VIỆN DỊCH
 
 namespace WebNangCao_MVC_Model.Validators
 {
-    // --- XÓA class AuthValidators bao bên ngoài đi ---
-
     // Class độc lập 1: LoginValidator
     public class LoginValidator : AbstractValidator<LoginViewModel>
     {
-        public LoginValidator()
+        // 🚨 BƠM PHIÊN DỊCH VIÊN VÀO CONSTRUCTOR
+        public LoginValidator(IStringLocalizer<SharedResource> localizer)
         {
             RuleFor(x => x.UsernameOrEmail)
-                .NotEmpty().WithMessage("Vui lòng nhập email hoặc tên đăng nhập")
-                .MaximumLength(50).WithMessage("Tài khoản quá dài, vui lòng nhập ít lại !")
-                .Matches(@"^\S+$").WithMessage("Tài khoản không được chứa khoảng trắng");
+                .NotEmpty().WithMessage(x => localizer["ValRequireUsernameOrEmail"])
+                .MaximumLength(50).WithMessage(x => localizer["ValUsernameTooLong"])
+                .Matches(@"^\S+$").WithMessage(x => localizer["ValUsernameNoSpaces"]);
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Vui lòng nhập mật khẩu");
+                .NotEmpty().WithMessage(x => localizer["ValRequirePassword"]);
         }
     }
 
     // Class độc lập 2: RegisterValidator
     public class RegisterValidator : AbstractValidator<RegisterViewModel>
     {
-        public RegisterValidator()
+        // 🚨 BƠM PHIÊN DỊCH VIÊN VÀO CONSTRUCTOR
+        public RegisterValidator(IStringLocalizer<SharedResource> localizer)
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Vui lòng nhập họ và tên");
+                .NotEmpty().WithMessage(x => localizer["ValRequireName"]);
 
             RuleFor(x => x.Username)
-                .NotEmpty().WithMessage("Vui lòng nhập tên đăng nhập")
-                .MinimumLength(3).WithMessage("Tên đăng nhập phải có ít nhất 3 ký tự");
+                .NotEmpty().WithMessage(x => localizer["ValRequireUsername"])
+                .MinimumLength(3).WithMessage(x => localizer["ValUsernameMinLength"]);
 
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Vui lòng nhập email")
-                .EmailAddress().WithMessage("Địa chỉ email không hợp lệ");
+                .NotEmpty().WithMessage(x => localizer["ValRequireEmail"])
+                .EmailAddress().WithMessage(x => localizer["ValInvalidEmail"]);
 
             RuleFor(x => x.Password)
-                .NotEmpty().WithMessage("Vui lòng nhập mật khẩu")
-                .MinimumLength(6).WithMessage("Mật khẩu phải có ít nhất 6 ký tự");
+                .NotEmpty().WithMessage(x => localizer["ValRequirePassword"])
+                .MinimumLength(6).WithMessage(x => localizer["ValPasswordMinLength"]);
 
             RuleFor(x => x.ConfirmPassword)
-                .Equal(x => x.Password).WithMessage("Mật khẩu xác nhận không khớp");
+                .Equal(x => x.Password).WithMessage(x => localizer["ValPasswordMismatch"]);
         }
     }
 }

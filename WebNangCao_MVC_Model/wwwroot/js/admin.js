@@ -1,276 +1,155 @@
-    /*const tabButtons = document.querySelectorAll('.tab-btn');
-    const allCards = document.querySelectorAll('.user-card');
-    const activeClasses = ['bg-white', 'text-gray-900', 'shadow-sm', 'active-tab'];
-    const inactiveClasses = ['hover:bg-gray-200/50', 'inactive-tab'];
-    const openbuttonDetails = document.getElementById('system-open-details');
-    const modelDetails = document.getElementById('settings-modal-details');
-    const closebuttonDetails = document.getElementById('system-close-details');
-    const openbuttonAdd = document.getElementById('system-open-add');
-    const modelAdd = document.getElementById('settings-model-add');
-    const closebuttonAdd = document.getElementById('system-close-add');
-    const openbuttonDatabase = document.getElementById('system-open-database');
-    const modelDatabase = document.getElementById('settings-model-database');
-    const closebuttonDatabase = document.getElementById('system-close-database');
-    const openbuttonConfig = document.getElementById('system-open-config');
-    const modelConfig = document.getElementById('settings-model-config');
-    const closebuttonConfig = document.getElementById('system-close-config');
-    // THÊM 2 DÒNG NÀY VÀO ĐỘI HÌNH:
-const openTopConfig = document.getElementById('top-open-config');
-const closebuttonConfigBtn = document.getElementById('system-close-config-btn');
-    // Hàm mở Modal chung
-    const openConfigModal = () => {
-        modelConfig.classList.remove('hidden');
-        modelConfig.classList.add('flex');
-        document.body.style.overflow = 'hidden'; // Khóa cuộn màn hình ở dưới
-    };
+const tabButtons = document.querySelectorAll('.tab-btn');
+const allCards = document.querySelectorAll('.user-card');
+const activeClasses = ['bg-white', 'text-gray-900', 'shadow-sm', 'active-tab'];
+const inactiveClasses = ['hover:bg-gray-200/50', 'inactive-tab'];
 
-    // Hàm đóng Modal chung
-    const closeConfigModal = () => {
-        modelConfig.classList.remove('flex');
-        modelConfig.classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Mở lại cuộn màn hình
-    };
-    // Gắn event cho các nút
-    openTopConfig.addEventListener('click', openConfigModal);
-    openbuttonConfig.addEventListener('click', openConfigModal);
-    
-    closebuttonConfig.addEventListener('click', closeConfigModal);
-    closebuttonConfigBtn.addEventListener('click', closeConfigModal);
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetCategory = button.getAttribute('data-tab');
-                tabButtons.forEach(btn => {
-                    btn.classList.remove(...activeClasses);
-                    btn.classList.add(...inactiveClasses);
-                });
-                if (targetCategory === 'superall') {
-                    const allTab = document.querySelector('.tab-btn[data-tab="all"]');
-                    allTab.classList.remove(...inactiveClasses);
-                    allTab.classList.add(...activeClasses);
-                } else {
-                    button.classList.remove(...inactiveClasses);
-                    button.classList.add(...activeClasses);
-                }
-                allCards.forEach(card => {
-                    const cardCategory = card.getAttribute('data-category');
-                    if (targetCategory === 'all' || targetCategory === 'superall' || cardCategory.includes(targetCategory)) { 
-                        card.style.display = 'flex';
-                    } else { 
-                        card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-    openbuttonDetails.addEventListener('click',() => {
-        modelDetails.classList.remove('hidden');
-        modelDetails.classList.add('flex');
-    });
-    closebuttonDetails.addEventListener('click', () => {
-        modelDetails.classList.remove('flex');
-        modelDetails.classList.add('hidden');
-    });
-    openbuttonAdd.addEventListener('click', () => {
-        modelAdd.classList.remove('hidden');
-        modelAdd.classList.add('flex');
-    });
-    closebuttonAdd.addEventListener('click', () => {
-        modelAdd.classList.remove('flex');
-        modelAdd.classList.add('hidden');
-    });
-    openbuttonConfig.addEventListener('click', () => {
-        modelConfig.classList.remove('hidden');
-        modelConfig.classList.add('flex');
-    });
-    closebuttonConfig.addEventListener('click', () => {
-        modelConfig.classList.remove('flex');
-        modelConfig.classList.add('hidden');
-    });
-    openbuttonDatabase.addEventListener('click', () => {
-        modelDatabase.classList.remove('hidden');
-        modelDatabase.classList.add('flex');
-    });
-    closebuttonDatabase.addEventListener('click', () => {
-        modelDatabase.classList.remove('flex');
-        modelDatabase.classList.add('hidden');
-    });*/
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const allCards = document.querySelectorAll('.user-card');
-    const activeClasses = ['bg-white', 'text-gray-900', 'shadow-sm', 'active-tab'];
-    const inactiveClasses = ['hover:bg-gray-200/50', 'inactive-tab'];
+// Lấy kho từ điển từ HTML
+const t = window.AppTranslations;
 
-    // =========================================
-    // 1. HÀM TIỆN ÍCH ĐÓNG/MỞ MODAL CHUẨN UX
-    // ==========================================
-    const openModal = (modalNode) => {
-        if (!modalNode) return; // Không có HTML thì bỏ qua, không văng lỗi!
-        modalNode.classList.remove('hidden');
-        modalNode.classList.add('flex');
-        document.body.style.overflow = 'hidden'; // Khóa cuộn
-    };
+// 1. HÀM TIỆN ÍCH ĐÓNG/MỞ MODAL 
+const openModal = (modalNode) => {
+    if (!modalNode) return; 
+    modalNode.classList.remove('hidden');
+    modalNode.classList.add('flex');
+    document.body.style.overflow = 'hidden'; 
+};
 
-    const closeModal = (modalNode) => {
-        if (!modalNode) return;
-        modalNode.classList.remove('flex');
-        modalNode.classList.add('hidden');
-        document.body.style.overflow = 'auto'; // Mở lại cuộn
-    };
+const closeModal = (modalNode) => {
+    if (!modalNode) return;
+    modalNode.classList.remove('flex');
+    modalNode.classList.add('hidden');
+    document.body.style.overflow = 'auto'; 
+};
 
-    // Hàm đính kèm tính năng "Bấm ra ngoài phông đen để đóng"
-    const attachBackdropClose = (modalNode) => {
-        if (!modalNode) return;
-        modalNode.addEventListener('click', (e) => {
-            if (e.target === modalNode) closeModal(modalNode);
+const attachBackdropClose = (modalNode) => {
+    if (!modalNode) return;
+    modalNode.addEventListener('click', (e) => {
+        if (e.target === modalNode) closeModal(modalNode);
+    });
+};
+
+// 2. KHỞI TẠO MODAL CẤU HÌNH HỆ THỐNG
+const modelConfig = document.getElementById('settings-model-config');
+const btnOpenTopConfig = document.getElementById('top-open-config');
+const btnOpenSystemConfig = document.getElementById('system-open-config');
+const btnCloseConfigX = document.getElementById('system-close-config');
+const btnCloseConfigCancel = document.getElementById('system-close-config-btn');
+
+if (btnOpenTopConfig) btnOpenTopConfig.addEventListener('click', () => openModal(modelConfig));
+if (btnOpenSystemConfig) btnOpenSystemConfig.addEventListener('click', () => openModal(modelConfig));
+if (btnCloseConfigX) btnCloseConfigX.addEventListener('click', () => closeModal(modelConfig));
+if (btnCloseConfigCancel) btnCloseConfigCancel.addEventListener('click', () => closeModal(modelConfig));
+
+attachBackdropClose(modelConfig);
+
+// 3. KHỞI TẠO MODAL BÁO CÁO CHI TIẾT
+const modelDetails = document.getElementById('settings-modal-details');
+const btnOpenDetails = document.getElementById('system-open-details');
+const btnCloseDetails = document.getElementById('system-close-details');
+
+if (btnOpenDetails) btnOpenDetails.addEventListener('click', () => openModal(modelDetails));
+if (btnCloseDetails) btnCloseDetails.addEventListener('click', () => closeModal(modelDetails));
+
+attachBackdropClose(modelDetails);
+
+// 4. CHUYỂN TAB QUẢN LÝ NGƯỜI DÙNG
+tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        const targetCategory = button.getAttribute('data-tab');
+        
+        tabButtons.forEach(btn => {
+            btn.classList.remove(...activeClasses);
+            btn.classList.add(...inactiveClasses);
         });
-    };
 
-    // ==========================================
-    // 2. KHỞI TẠO MODAL CẤU HÌNH HỆ THỐNG
-    // ==========================================
-    const modelConfig = document.getElementById('settings-model-config');
-    const btnOpenTopConfig = document.getElementById('top-open-config');
-    const btnOpenSystemConfig = document.getElementById('system-open-config');
-    const btnCloseConfigX = document.getElementById('system-close-config');
-    const btnCloseConfigCancel = document.getElementById('system-close-config-btn');
-
-    if (btnOpenTopConfig) btnOpenTopConfig.addEventListener('click', () => openModal(modelConfig));
-    if (btnOpenSystemConfig) btnOpenSystemConfig.addEventListener('click', () => openModal(modelConfig));
-    if (btnCloseConfigX) btnCloseConfigX.addEventListener('click', () => closeModal(modelConfig));
-    if (btnCloseConfigCancel) btnCloseConfigCancel.addEventListener('click', () => closeModal(modelConfig));
-    
-    attachBackdropClose(modelConfig);
-
-    // ==========================================
-    // 3. KHỞI TẠO MODAL BÁO CÁO CHI TIẾT
-    // ==========================================
-    const modelDetails = document.getElementById('settings-modal-details');
-    const btnOpenDetails = document.getElementById('system-open-details');
-    const btnCloseDetails = document.getElementById('system-close-details');
-
-    if (btnOpenDetails) btnOpenDetails.addEventListener('click', () => openModal(modelDetails));
-    if (btnCloseDetails) btnCloseDetails.addEventListener('click', () => closeModal(modelDetails));
-    
-    attachBackdropClose(modelDetails);
-
-    // ==========================================
-    // 4. CHUYỂN TAB QUẢN LÝ NGƯỜI DÙNG
-    // ==========================================
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const targetCategory = button.getAttribute('data-tab');
-            
-            tabButtons.forEach(btn => {
-                btn.classList.remove(...activeClasses);
-                btn.classList.add(...inactiveClasses);
-            });
-
-            if (targetCategory === 'superall') {
-                const allTab = document.querySelector('.tab-btn[data-tab="all"]');
-                if (allTab) {
-                    allTab.classList.remove(...inactiveClasses);
-                    allTab.classList.add(...activeClasses);
-                }
-            } else {
-                button.classList.remove(...inactiveClasses);
-                button.classList.add(...activeClasses);
+        if (targetCategory === 'superall') {
+            const allTab = document.querySelector('.tab-btn[data-tab="all"]');
+            if (allTab) {
+                allTab.classList.remove(...inactiveClasses);
+                allTab.classList.add(...activeClasses);
             }
+        } else {
+            button.classList.remove(...inactiveClasses);
+            button.classList.add(...activeClasses);
+        }
 
-            allCards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                if (targetCategory === 'all' || targetCategory === 'superall' || cardCategory.includes(targetCategory)) { 
-                    card.style.display = 'flex';
-                } else { 
-                    card.style.display = 'none';
-                }
-            });
+        allCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            if (targetCategory === 'all' || targetCategory === 'superall' || cardCategory.includes(targetCategory)) { 
+                card.style.display = 'flex';
+            } else { 
+                card.style.display = 'none';
+            }
         });
     });
-    // ==========================================
-    // 5. CHUYỂN TAB TRONG MODAL CẤU HÌNH
-    // ==========================================
-    const configTabBtns = document.querySelectorAll('.config-tab-btn');
-    const configTabContents = document.querySelectorAll('.config-tab-content');
+});
 
-    const configActiveClasses = ['bg-white', 'shadow-sm', 'border-gray-100', 'text-gray-800'];
-    const configInactiveClasses = ['text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:bg-white/50'];
+// 5. CHUYỂN TAB TRONG MODAL CẤU HÌNH
+const configTabBtns = document.querySelectorAll('.config-tab-btn');
+const configTabContents = document.querySelectorAll('.config-tab-content');
 
-    configTabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            // Lấy ID của tab cần hiển thị
-            const targetId = btn.getAttribute('data-target');
+const configActiveClasses = ['bg-white', 'shadow-sm', 'border-gray-100', 'text-gray-800'];
+const configInactiveClasses = ['text-gray-600', 'border-transparent', 'hover:text-gray-800', 'hover:bg-white/50'];
 
-            // 1. Reset màu tất cả các nút
-            configTabBtns.forEach(b => {
-                b.classList.remove(...configActiveClasses);
-                b.classList.add(...configInactiveClasses);
-            });
+configTabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetId = btn.getAttribute('data-target');
 
-            // 2. Kích hoạt màu cho nút vừa bấm
-            btn.classList.remove(...configInactiveClasses);
-            btn.classList.add(...configActiveClasses);
-
-            // 3. Ẩn tất cả nội dung tab
-            configTabContents.forEach(content => {
-                content.classList.add('hidden');
-            });
-
-            // 4. Hiển thị nội dung tab tương ứng
-            document.getElementById(targetId).classList.remove('hidden');
+        configTabBtns.forEach(b => {
+            b.classList.remove(...configActiveClasses);
+            b.classList.add(...configInactiveClasses);
         });
+
+        btn.classList.remove(...configInactiveClasses);
+        btn.classList.add(...configActiveClasses);
+
+        configTabContents.forEach(content => {
+            content.classList.add('hidden');
+        });
+
+        document.getElementById(targetId).classList.remove('hidden');
     });
-    // ==========================================
-    // 6. XỬ LÝ MODAL THÊM NGƯỜI DÙNG (Trị bệnh trùng ID)
-    // ==========================================
-    const modalAddUser = document.getElementById('settings-model-add-user');
-    const btnsOpenAddUser = document.querySelectorAll('#system-open-add'); // Lấy TẤT CẢ các nút có ID này
-    const btnCloseAddUser = document.getElementById('close-add-user');
+});
 
-    // Nút nào bấm cũng mở Modal hết!
-    btnsOpenAddUser.forEach(btn => {
-        btn.addEventListener('click', () => openModal(modalAddUser));
-    });
-    if (btnCloseAddUser) btnCloseAddUser.addEventListener('click', () => closeModal(modalAddUser));
-    attachBackdropClose(modalAddUser);
+// 6. XỬ LÝ MODAL THÊM NGƯỜI DÙNG 
+const modalAddUser = document.getElementById('settings-model-add-user');
+const btnsOpenAddUser = document.querySelectorAll('#system-open-add'); 
+const btnCloseAddUser = document.getElementById('close-add-user');
 
-    // ==========================================
-    // 7. XỬ LÝ NÚT SAO LƯU DỮ LIỆU (Mở Modal & Nhảy sang Tab Database)
-    // ==========================================
-    const btnsOpenDatabase = document.querySelectorAll('#system-open-database');
-    const btnQuickBackup = document.getElementById('quick-backup-btn');
+btnsOpenAddUser.forEach(btn => {
+    btn.addEventListener('click', () => openModal(modalAddUser));
+});
+if (btnCloseAddUser) btnCloseAddUser.addEventListener('click', () => closeModal(modalAddUser));
+attachBackdropClose(modalAddUser);
 
-    const openBackupTab = () => {
-        openModal(modelConfig); 
-        const dbTabBtn = document.querySelector('.config-tab-btn[data-target="tab-database"]');
-        if (dbTabBtn) dbTabBtn.click();
-    };
+// 7. XỬ LÝ NÚT SAO LƯU DỮ LIỆU
+const btnsOpenDatabase = document.querySelectorAll('#system-open-database');
+const btnQuickBackup = document.getElementById('quick-backup-btn');
 
-    btnsOpenDatabase.forEach(btn => {
-        btn.addEventListener('click', openBackupTab);
-    });
-    if (btnQuickBackup) btnQuickBackup.addEventListener('click', openBackupTab);
+const openBackupTab = () => {
+    openModal(modelConfig); 
+    const dbTabBtn = document.querySelector('.config-tab-btn[data-target="tab-database"]');
+    if (dbTabBtn) dbTabBtn.click();
+};
 
-    // ==========================================
-    // 8. NÃ ALERT XÁC NHẬN KHI BẤM "SAO LƯU NGAY"
-    // ==========================================
-    // ==========================================
+btnsOpenDatabase.forEach(btn => {
+    btn.addEventListener('click', openBackupTab);
+});
+if (btnQuickBackup) btnQuickBackup.addEventListener('click', openBackupTab);
+
 // 8. NÃ ALERT XÁC NHẬN KHI BẤM "SAO LƯU NGAY"
-// ==========================================
 const btnExecuteBackup = document.getElementById('btn-execute-backup');
 if (btnExecuteBackup) {
     btnExecuteBackup.addEventListener('click', () => {
-        // Nã Confirm vào mặt để hỏi lại cho chắc
-        const isConfirmed = confirm('⚠️ CẢNH BÁO TỪ HỆ THỐNG:\nBạn có chắc chắn muốn tiến hành sao lưu và tải toàn bộ dữ liệu xuống máy tính không?');
+        const isConfirmed = confirm(t.MsgConfirmBackup); // 🚨 Đã Localize
         
         if (isConfirmed) {
-            // Đổi chữ cái nút cho xịn
             const originalText = btnExecuteBackup.innerHTML;
-            btnExecuteBackup.innerHTML = "⏳ Đang kết xuất...";
+            btnExecuteBackup.innerHTML = t.MsgExporting; // 🚨 Đã Localize
             btnExecuteBackup.disabled = true;
 
-            // Vì API của mình là HttpGet trả về File, nên chỉ cần gán thẳng window.location.href 
-            // Trình duyệt sẽ tự động call API và tải file về máy mà không bị chuyển trang
             window.location.href = '/api/Admin/BackupData';
 
-            // Nhả lại nút sau 2 giây (đợi file tải xong)
             setTimeout(() => {
                 btnExecuteBackup.innerHTML = originalText;
                 btnExecuteBackup.disabled = false;
@@ -278,27 +157,16 @@ if (btnExecuteBackup) {
         }
     });
 }
-    // Bọc toàn bộ code bằng DOMContentLoaded
+
+// Bọc toàn bộ code bằng DOMContentLoaded
 document.addEventListener("DOMContentLoaded", function () {
     
-    // 1. Tìm nút
+    // NÚT LƯU CẤU HÌNH
     const btnSaveConfig = document.getElementById('btn-save-config');
     
-    // 2. Check xem có tìm thấy nút không (Bật F12 -> Console để xem)
-    if (!btnSaveConfig) {
-        console.error("🔴 BÁO ĐỘNG: Không tìm thấy cái nút nào có ID là btn-save-config cả!");
-        return; // Dừng luôn
-    }
+    if (!btnSaveConfig) return;
 
-    console.log("🟢 ĐÃ TÌM THẤY NÚT LƯU CẤU HÌNH! SẴN SÀNG BÓP CÒ!");
-
-    // 3. Gắn sự kiện Click
     btnSaveConfig.addEventListener('click', async function () {
-        
-        // TEST THỬ XEM NÚT ĐÃ ĂN CHƯA
-        console.log("👉 Vừa bấm nút Lưu Cấu Hình!");
-        
-        // Gom data (giữ nguyên như cũ)
         const payload = {
             SystemName: document.getElementById('conf-sys-name')?.value || "",
             SystemUrl: document.getElementById('conf-sys-url')?.value || "",
@@ -322,7 +190,7 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         const originalText = this.innerHTML;
-        this.innerHTML = "⏳ Đang lưu...";
+        this.innerHTML = t.MsgSaving; 
         this.disabled = true;
 
         try {
@@ -335,12 +203,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const result = await response.json();
 
             if (result.success) {
-                alert("✅ " + result.message);
+                alert("OK " + result.message);
             } else {
-                alert("❌ Lỗi rồi: " + result.message);
+                alert(t.MsgError + result.message); 
             }
         } catch (error) {
-            alert("💥 Rớt mạng hoặc sập Server!");
+            alert(t.MsgNetworkError); 
             console.error(error);
         } finally {
             this.innerHTML = originalText;
@@ -348,12 +216,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
 document.addEventListener("DOMContentLoaded", function () {
     const btnAddUser = document.getElementById('btn-submit-add-user');
 
     if (btnAddUser) {
         btnAddUser.addEventListener('click', async function () {
-            // 1. Gom dữ liệu
             const payload = {
                 FullName: document.getElementById('add-user-name').value,
                 Email: document.getElementById('add-user-email').value,
@@ -361,18 +229,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 Password: document.getElementById('add-user-pass').value
             };
 
-            // 2. Validate nhẹ nghiệm thu
             if (!payload.FullName || !payload.Email || !payload.Password) {
-                alert("Vui lòng điền đầy đủ thông tin!");
+                alert(t.MsgFillAllFields); 
                 return;
             }
 
             const originalText = this.innerHTML;
-            this.innerHTML = "⏳ Đang tạo...";
+            this.innerHTML = t.MsgCreating; 
             this.disabled = true;
 
             try {
-                // 3. Bắn pháo sáng API
                 const response = await fetch('/api/Admin/AddUser', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -382,14 +248,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    alert("✅ " + result.message);
-                    // MỘT BƯỚC KHÔN NGOAN: Load lại trang để Data mới từ DB tự động đổ vào vòng lặp @foreach
+                    alert("OK " + result.message);
                     window.location.reload(); 
                 } else {
-                    alert("❌ Lỗi: " + result.message);
+                    alert("NOT OK" + t.MsgError + result.message); // 🚨 Đã Localize
                 }
             } catch (error) {
-                alert("💥 Sập Server hoặc đứt cáp quang!");
+                alert(t.MsgNetworkError); 
                 console.error(error);
             } finally {
                 this.innerHTML = originalText;
@@ -398,15 +263,14 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
+
 // HÀM BẮN API DUYỆT NGƯỜI DÙNG
 async function approveUser(userId) {
-    // Hỏi lại cho chắc cốp, nhỡ bấm nhầm
-    if (!confirm('Bạn có chắc chắn muốn duyệt và cấp quyền cho tài khoản này?')) {
+    if (!confirm(t.MsgConfirmApprove)) { 
         return;
     }
 
     try {
-        // Bắn API với phương thức POST (Kèm theo cái ID trên URL)
         const response = await fetch(`/api/Admin/ApproveUser/${userId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -415,28 +279,24 @@ async function approveUser(userId) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            alert("✅ " + result.message);
-            // DUYỆT XONG THÌ TẢI LẠI TRANG ĐỂ NÓ NHẢY TỪ TAB VÀNG SANG TAB XANH
+            alert("OK " + result.message);
             window.location.reload(); 
         } else {
-            alert("❌ Lỗi: " + result.message);
+            alert("NOT OK " + t.MsgError + result.message); 
         }
     } catch (error) {
-        alert("💥 Rớt mạng hoặc Server sập!");
+        alert(t.MsgNetworkError);
         console.error(error);
     }
 }
-// ==========================================
+
 // HÀM BẮN API XÓA NGƯỜI DÙNG
-// ==========================================
 async function deleteUser(userId) {
-    // Cảnh báo đỏ rực rỡ trước khi xuống tay
-    if (!confirm('🚨 BÁO ĐỘNG: Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản này không? Hành động này không thể hoàn tác!')) {
+    if (!confirm(t.MsgConfirmDelete)) { 
         return;
     }
 
     try {
-        // Dùng method DELETE thay vì POST
         const response = await fetch(`/api/Admin/DeleteUser/${userId}`, {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' }
@@ -445,27 +305,24 @@ async function deleteUser(userId) {
         const result = await response.json();
 
         if (response.ok && result.success) {
-            alert("✅ " + result.message);
-            window.location.reload(); // Quét lại danh sách
+            alert("OK " + result.message);
+            window.location.reload(); 
         } else {
-            alert("❌ Lỗi: " + result.message);
+            alert("NOT OK " + t.MsgError + result.message); 
         }
     } catch (error) {
-        alert("💥 Rớt mạng hoặc Server sập!");
+        alert(t.MsgNetworkError); 
         console.error(error);
     }
 }
 
-// ==========================================
 // 9. XỬ LÝ MODAL SỬA NGƯỜI DÙNG (EDIT)
-// ==========================================
 const modalEditUser = document.getElementById('settings-model-edit-user');
 const btnCloseEditUser = document.getElementById('close-edit-user');
 
 if (btnCloseEditUser) btnCloseEditUser.addEventListener('click', () => closeModal(modalEditUser));
 attachBackdropClose(modalEditUser);
 
-// NHỊP 1: BẤM NÚT SỬA -> GỌI API LẤY DATA -> ĐỔ VÀO FORM -> HIỆN MODAL
 async function openEditModal(userId) {
     try {
         const response = await fetch(`/api/Admin/GetUser/${userId}`);
@@ -474,25 +331,22 @@ async function openEditModal(userId) {
         if (response.ok && result.success) {
             const u = result.data;
             
-            // Đổ Data vào các ô Input
             document.getElementById('edit-user-id').value = u.id;
             document.getElementById('edit-user-name').value = u.fullName;
             document.getElementById('edit-user-email').value = u.email;
             document.getElementById('edit-user-role').value = u.role.toLowerCase();
             document.getElementById('edit-user-active').value = u.isActive ? "true" : "false";
 
-            // Hiển thị Modal
             openModal(modalEditUser);
         } else {
-            alert("❌ Không thể lấy thông tin người dùng: " + result.message);
+            alert(t.MsgCannotGetUserInfo + result.message); 
         }
     } catch (error) {
-        alert("💥 Lỗi kết nối đến Server!");
+        alert(t.MsgNetworkError); 
         console.error(error);
     }
 }
 
-// NHỊP 2: BẤM LƯU THAY ĐỔI -> GOM DATA -> BẮN LÊN SERVER
 document.addEventListener("DOMContentLoaded", function () {
     const btnSubmitEdit = document.getElementById('btn-submit-edit-user');
 
@@ -507,12 +361,12 @@ document.addEventListener("DOMContentLoaded", function () {
             };
 
             if (!payload.FullName || !payload.Email) {
-                alert("⚠️ Họ tên và Email không được để trống!");
+                alert(t.MsgNameEmailRequired); 
                 return;
             }
 
             const originalText = this.innerHTML;
-            this.innerHTML = "⏳ Đang lưu...";
+            this.innerHTML = t.MsgSaving; 
             this.disabled = true;
 
             try {
@@ -525,18 +379,232 @@ document.addEventListener("DOMContentLoaded", function () {
                 const result = await response.json();
 
                 if (response.ok && result.success) {
-                    alert("✅ " + result.message);
-                    window.location.reload(); // Quét lại danh sách
+                    alert("OK " + result.message);
+                    window.location.reload(); 
                 } else {
-                    alert("❌ Lỗi: " + result.message);
+                    alert("NOT OK " + t.MsgError + result.message); // 🚨 Đã Localize
                 }
             } catch (error) {
-                alert("💥 Sập Server rồi!");
+                alert(t.MsgNetworkError); 
                 console.error(error);
             } finally {
                 this.innerHTML = originalText;
                 this.disabled = false;
             }
+        });
+    }
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+    const btnCheckDb = document.getElementById('btn-check-db');
+
+    if (btnCheckDb) {
+        btnCheckDb.addEventListener('click', async function () {
+            const payload = {
+                Host: document.getElementById('conf-db-host').value,
+                Port: parseInt(document.getElementById('conf-db-port').value) || 5432,
+                DatabaseName: document.getElementById('conf-db-name').value,
+                DatabaseUser: document.getElementById('conf-db-user').value,
+                Password: document.getElementById('conf-db-pass').value
+            };
+
+            const originalText = this.innerHTML;
+            this.innerHTML = t.MsgPinging; 
+            this.disabled = true;
+
+            try {
+                const response = await fetch('/api/Admin/CheckDbConnection', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert(t.MsgDbConnectSuccess); 
+                } else {
+                    alert(t.MsgDbConfigError + result.message); 
+                }
+            } catch (error) {
+                alert(t.MsgSystemNotResponding); 
+                console.error(error);
+            } finally {
+                this.innerHTML = originalText;
+                this.disabled = false;
+            }
+        });
+    }
+});
+
+const btnTestEmail = document.getElementById('btn-test-email');
+
+if (btnTestEmail) {
+    btnTestEmail.addEventListener('click', async function () {
+        const testEmailAddress = prompt(t.MsgPromptEmail);
+        if (!testEmailAddress) return; 
+
+        const payload = {
+            SmtpHost: document.getElementById('conf-email-host').value,
+            SmtpPort: parseInt(document.getElementById('conf-email-port').value) || 587,
+            SmtpUser: document.getElementById('conf-email-user').value,
+            SmtpPassword: document.getElementById('conf-email-pass').value, 
+            ToEmail: testEmailAddress
+        };
+
+        if(!payload.SmtpUser || !payload.SmtpPassword) {
+            alert(t.MsgRequireSmtp); 
+            return;
+        }
+
+        const originalText = this.innerHTML;
+        this.innerHTML = t.MsgSendingMail; 
+        this.disabled = true;
+
+        try {
+            const response = await fetch('/api/Admin/TestEmailConnection', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.success) {
+                alert("OK " + result.message);
+            } else {
+                alert(t.MsgSendMailError + result.message); 
+            }
+        } catch (error) {
+            alert(t.MsgNetworkError); 
+            console.error(error);
+        } finally {
+            this.innerHTML = originalText;
+            this.disabled = false;
+        }
+    });
+}
+
+// TÍNH NĂNG PHÂN TRANG (PAGINATION) BẰNG JS
+const itemsPerPage = 4; 
+let currentPage = 1;
+const paginationContainer = document.getElementById('user-pagination');
+
+function paginateUsers() {
+    if (!paginationContainer) return;
+
+    const activeTabBtn = document.querySelector('.tab-btn.active-tab');
+    if (!activeTabBtn) return;
+    const currentTab = activeTabBtn.getAttribute('data-tab');
+
+    let visibleCards = [];
+    allCards.forEach(card => {
+        const category = card.getAttribute('data-category');
+        if (currentTab === 'all' || currentTab === 'superall' || category.includes(currentTab)) {
+            visibleCards.push(card);
+        } else {
+            card.style.display = 'none'; 
+        }
+    });
+
+    const totalPages = Math.ceil(visibleCards.length / itemsPerPage);
+    paginationContainer.innerHTML = ''; 
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
+    visibleCards.forEach((card, index) => {
+        if (index >= startIndex && index < endIndex) {
+            card.style.display = 'flex'; 
+        } else {
+            card.style.display = 'none'; 
+        }
+    });
+
+    if (totalPages > 1) {
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            
+            btn.className = `w-8 h-8 rounded-lg font-semibold text-sm transition-colors ${
+                i === currentPage
+                    ? 'bg-blue-600 text-white shadow-md' 
+                    : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-100' 
+            }`;
+
+            btn.addEventListener('click', () => {
+                currentPage = i;
+                paginateUsers(); 
+            });
+
+            paginationContainer.appendChild(btn);
+        }
+    }
+}
+
+paginateUsers();
+
+// TÍNH NĂNG XUẤT PDF
+document.addEventListener("DOMContentLoaded", function () {
+    const btnExportPdf = document.getElementById('btn-export-pdf');
+
+    if (btnExportPdf) {
+        btnExportPdf.addEventListener('click', function () {
+            const targetElement = document.getElementById('export-zone'); 
+            const scrollContainer = targetElement.closest('.overflow-y-auto');
+
+            if (!targetElement) {
+                alert(t.MsgDomError);
+                return;
+            }
+
+            const originalText = this.innerText;
+            this.innerText = t.MsgCreatingReport; 
+            this.disabled = true;
+
+            const oldMaxHeight = scrollContainer.style.maxHeight;
+            const oldOverflow = scrollContainer.style.overflowY;
+            
+            scrollContainer.style.maxHeight = 'none';      
+            scrollContainer.style.overflowY = 'visible';   
+
+            html2canvas(targetElement, { 
+                scale: 2, 
+                backgroundColor: '#ffffff' 
+            }).then(canvas => {
+                scrollContainer.style.maxHeight = oldMaxHeight;
+                scrollContainer.style.overflowY = oldOverflow;
+
+                const base64Image = canvas.toDataURL('image/png');
+
+                fetch('/api/Admin/ExportReportToPdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ImageData: base64Image })
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Lỗi HTTP: " + response.status);
+                    return response.blob(); 
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `BaoCao_Dashboard_${new Date().getTime()}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    
+                    this.innerText = originalText;
+                    this.disabled = false;
+                })
+                .catch(err => {
+                    console.error("Lỗi: ", err);
+                    alert(t.MsgPdfExportError); 
+                    this.innerText = originalText;
+                    this.disabled = false;
+                });
+            });
         });
     }
 });

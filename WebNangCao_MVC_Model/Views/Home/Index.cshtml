@@ -1,5 +1,8 @@
-﻿@{
-    ViewData["Title"] = "Trang chủ";
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
+
+@{
+    ViewData["Title"] = Localizer["LpTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <!DOCTYPE html>
@@ -7,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduTest Pro - Nền tảng thi trực tuyến</title>
+    <title>@Localizer["LpTitle"]</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="~/css/LandingPage.css" />
@@ -21,10 +24,9 @@
                 <span class="logo-text">EduTest Pro</span>
             </div>
             <nav class="nav-links">
-                <!--#feature xét theo ID được đặt trong thẻ có liên quan-->
-                <a href="#features">Tính năng</a>
-                <a href="#about">Giới thiệu</a>
-                <a asp-controller="Home" asp-action="GetStarted" class="btn btn-primary">Bắt đầu ngay <i data-lucide="arrow-right"></i></a>
+                <a href="#features">@Localizer["LpNavFeatures"]</a>
+                <a href="#about">@Localizer["LpNavAbout"]</a>
+                <a asp-controller="Home" asp-action="GetStarted" class="btn btn-primary">@Localizer["LpBtnStartNow"] <i data-lucide="arrow-right"></i></a>
             </nav>
         </div>
     </header>
@@ -34,28 +36,28 @@
             <div class="container hero-container">
                 <div class="hero-content">
                     <div class="badge">
-                        <i data-lucide="award"></i> Nền tảng thi trực tuyến hàng đầu
+                        <i data-lucide="award"></i> @Localizer["LpHeroBadge"]
                     </div>
-                    <h1>Hệ thống Thi Trực Tuyến và Đánh Giá Năng Lực</h1>
-                    <p>Giải pháp toàn diện cho việc tạo đề thi, tổ chức thi trực tuyến và đánh giá năng lực học sinh một cách chuyên nghiệp và hiệu quả.</p>
+                    <h1>@Localizer["LpHeroTitle"]</h1>
+                    <p>@Localizer["LpHeroDesc"]</p>
 
                     <div class="hero-buttons">
-                        <a asp-controller="Home" asp-action="GetStarted" class="btn btn-primary">Bắt đầu ngay <i data-lucide="arrow-right"></i></a>
-                        <a asp-controller="Home" asp-action="DemoExam" class="btn btn-outline">Xem demo</a>
+                        <a asp-controller="Home" asp-action="GetStarted" class="btn btn-primary">@Localizer["LpBtnStartNow"] <i data-lucide="arrow-right"></i></a>
+                        <a asp-controller="Home" asp-action="DemoExam" class="btn btn-outline">@Localizer["LpBtnDemo"]</a>
                     </div>
 
                     <div class="hero-stats">
                         <div class="stat">
                             <h3>10K+</h3>
-                            <p>Thí sinh</p>
+                            <p>@Localizer["LpStatCandidates"]</p>
                         </div>
                         <div class="stat">
                             <h3>500+</h3>
-                            <p>Giáo viên</p>
+                            <p>@Localizer["LpStatTeachers"]</p>
                         </div>
                         <div class="stat">
                             <h3>50K+</h3>
-                            <p>Đề thi</p>
+                            <p>@Localizer["LpStatExams"]</p>
                         </div>
                     </div>
                 </div>
@@ -65,24 +67,24 @@
                         <div class="mockup-header">
                             <div class="mockup-icon"><i data-lucide="check-circle-2"></i></div>
                             <div>
-                                <h4>Kiểm tra năng lực</h4>
-                                <span>Đang tiến hành</span>
+                                <h4>@Localizer["LpMockupTitle"]</h4>
+                                <span>@Localizer["LpMockupStatus"]</span>
                             </div>
                         </div>
                         <div class="mockup-progress">
                             <div class="progress-info">
-                                <span>Hoàn thành</span>
+                                <span>@Localizer["LpMockupComplete"]</span>
                                 <span>75%</span>
                             </div>
                             <div class="progress-bar"><div class="progress-fill"></div></div>
                         </div>
                         <div class="mockup-details">
                             <div class="detail-box">
-                                <span>Câu hỏi</span>
+                                <span>@Localizer["LpMockupQuestions"]</span>
                                 <strong>30/40</strong>
                             </div>
                             <div class="detail-box">
-                                <span>Thời gian</span>
+                                <span>@Localizer["LpMockupTime"]</span>
                                 <strong class="text-green">25:30</strong>
                             </div>
                         </div>
@@ -94,40 +96,40 @@
         <section id="features" class="features">
             <div class="container">
                 <div class="section-header">
-                    <h2>Tính năng nổi bật</h2>
-                    <p>Hệ thống được thiết kế để đáp ứng mọi nhu cầu trong quá trình tổ chức và quản lý kỳ thi</p>
+                    <h2>@Localizer["LpFeaturesTitle"]</h2>
+                    <p>@Localizer["LpFeaturesDesc"]</p>
                 </div>
 
                 <div class="features-grid">
                     <div class="feature-card">
                         <div class="feature-icon bg-blue-light text-blue"><i data-lucide="book-open"></i></div>
-                        <h3>Tạo đề thi dễ dàng</h3>
-                        <p>Công cụ tạo đề thi trực quan với ngân hàng câu hỏi phong phú và đa dạng.</p>
+                        <h3>@Localizer["LpFeat1Title"]</h3>
+                        <p>@Localizer["LpFeat1Desc"]</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon bg-green-light text-green"><i data-lucide="laptop"></i></div>
-                        <h3>Thi trực tuyến</h3>
-                        <p>Tổ chức kỳ thi trực tuyến an toàn với giám sát tự động và chống gian lận.</p>
+                        <h3>@Localizer["LpFeat2Title"]</h3>
+                        <p>@Localizer["LpFeat2Desc"]</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon bg-purple-light text-purple"><i data-lucide="bar-chart-2"></i></div>
-                        <h3>Báo cáo chi tiết</h3>
-                        <p>Phân tích kết quả thi với biểu đồ trực quan và thống kê toàn diện.</p>
+                        <h3>@Localizer["LpFeat3Title"]</h3>
+                        <p>@Localizer["LpFeat3Desc"]</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon bg-red-light text-red"><i data-lucide="shield-check"></i></div>
-                        <h3>Bảo mật cao</h3>
-                        <p>Hệ thống bảo mật đa lớp đảm bảo an toàn thông tin và kết quả thi.</p>
+                        <h3>@Localizer["LpFeat4Title"]</h3>
+                        <p>@Localizer["LpFeat4Desc"]</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon bg-yellow-light text-yellow"><i data-lucide="zap"></i></div>
-                        <h3>Chấm điểm tự động</h3>
-                        <p>Chấm điểm nhanh chóng và chính xác với thuật toán thông minh.</p>
+                        <h3>@Localizer["LpFeat5Title"]</h3>
+                        <p>@Localizer["LpFeat5Desc"]</p>
                     </div>
                     <div class="feature-card">
                         <div class="feature-icon bg-blue-light text-blue"><i data-lucide="users"></i></div>
-                        <h3>Quản lý người dùng</h3>
-                        <p>Quản lý thí sinh, giáo viên và phân quyền linh hoạt theo vai trò.</p>
+                        <h3>@Localizer["LpFeat6Title"]</h3>
+                        <p>@Localizer["LpFeat6Desc"]</p>
                     </div>
                 </div>
             </div>
@@ -136,21 +138,21 @@
         <section id="about" class="about">
             <div class="container">
                 <div class="section-header">
-                    <h2>Về EduTest Pro</h2>
-                    <p>EduTest Pro là nền tảng thi trực tuyến và đánh giá năng lực hàng đầu, được thiết kế đặc biệt cho các trường học và tổ chức giáo dục. Chúng tôi cam kết mang đến giải pháp công nghệ hiện đại, giúp nâng cao chất lượng giảng dạy và học tập.</p>
+                    <h2>@Localizer["LpAboutTitle"]</h2>
+                    <p>@Localizer["LpAboutDesc"]</p>
                 </div>
                 <div class="about-stats">
                     <div class="stat-item">
                         <h3>5+</h3>
-                        <p>Năm kinh nghiệm</p>
+                        <p>@Localizer["LpAboutExp"]</p>
                     </div>
                     <div class="stat-item">
                         <h3>100+</h3>
-                        <p>Trường học tin dùng</p>
+                        <p>@Localizer["LpAboutSchools"]</p>
                     </div>
                     <div class="stat-item">
                         <h3>99.9%</h3>
-                        <p>Độ tin cậy</p>
+                        <p>@Localizer["LpAboutReliability"]</p>
                     </div>
                 </div>
             </div>
@@ -164,32 +166,32 @@
                     <div class="logo-icon"><i data-lucide="graduation-cap"></i></div>
                     <span class="logo-text">EduTest Pro</span>
                 </div>
-                <p>Giải pháp thi trực tuyến và đánh giá năng lực hàng đầu cho giáo dục hiện đại.</p>
+                <p>@Localizer["LpFooterDesc"]</p>
             </div>
             <div class="footer-links">
-                <h4>Liên kết nhanh</h4>
+                <h4>@Localizer["LpFooterQuickLinks"]</h4>
                 <ul>
-                    <li><a href="#">Về chúng tôi</a></li>
-                    <li><a href="#">Tính năng</a></li>
-                    <li><a href="#">Bảng giá</a></li>
-                    <li><a href="#">Hỗ trợ</a></li>
+                    <li><a href="#">@Localizer["LpFooterAboutUs"]</a></li>
+                    <li><a href="#">@Localizer["LpNavFeatures"]</a></li>
+                    <li><a href="#">@Localizer["LpFooterPricing"]</a></li>
+                    <li><a href="#">@Localizer["LpFooterSupport"]</a></li>
                 </ul>
             </div>
             <div class="footer-links">
-                <h4>Tài nguyên</h4>
+                <h4>@Localizer["LpFooterResources"]</h4>
                 <ul>
-                    <li><a href="#">Tài liệu hướng dẫn</a></li>
-                    <li><a href="#">Video hướng dẫn</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Câu hỏi thường gặp</a></li>
+                    <li><a href="#">@Localizer["LpFooterDocs"]</a></li>
+                    <li><a href="#">@Localizer["LpFooterVideo"]</a></li>
+                    <li><a href="#">@Localizer["LpFooterBlog"]</a></li>
+                    <li><a href="#">@Localizer["LpFooterFAQ"]</a></li>
                 </ul>
             </div>
             <div class="footer-contact">
-                <h4>Liên hệ</h4>
+                <h4>@Localizer["LpFooterContact"]</h4>
                 <ul>
                     <li><i data-lucide="mail"></i> support@edutest.vn</li>
                     <li><i data-lucide="phone"></i> 1900 1234</li>
-                    <li><i data-lucide="map-pin"></i> 123 Đường ABC, Quận 1, TP.HCM</li>
+                    <li><i data-lucide="map-pin"></i> @Localizer["LpFooterAddress"]</li>
                 </ul>
             </div>
         </div>

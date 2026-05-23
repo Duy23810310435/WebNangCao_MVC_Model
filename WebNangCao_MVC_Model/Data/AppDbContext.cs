@@ -88,12 +88,10 @@ modelBuilder.Entity<ActivityLog>()
                 Email = "admin123@gmail.com",
                 Role = "Admin",
                 PasswordHash = "$2a$12$y92vwbAsONQcJkeBGvrvP.W0Np6VHv2ouFiAeSkpLFC9iAcHzp2.q", //Mật khẩu là admin123 (Nhưng được mã hoá)
-                // NẾU CÓ CỘT NÀY, PHẢI ÉP CỨNG NGÀY THÁNG NHƯ SAU:
                 CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc),
                 LastUpdateAt  = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc),
                 LastLoginAt = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc)
             };
-            //Mặc định trong database luôn phải có tài khoản admin được tạo từ đầu
             modelBuilder.Entity<User>().HasData(adminAccount);
         }
     }
