@@ -2,8 +2,11 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using WebNangCao_MVC_Model.Validators;
 using WebNangCao_MVC_Model.Data;
+using WebNangCao_MVC_Model.Middlewares;
 using Microsoft.EntityFrameworkCore; //Dùng để cấu hình DbContext với PostgreSQL
 using Microsoft.AspNetCore.Authentication.Cookies; //Dùng để cấu hình Cookie Authentication
+using QuestPDF.Infrastructure; // DÒNG NÀY ĐỂ CÓ LicenseType
+using QuestPDF.Fluent;
 //using static WebNangCao_MVC_Model.Validators.AuthValidators;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +16,17 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-// Add services to the container.
+// 1. Đăng ký dịch vụ Localization và chỉ đường tới thư mục "Resources"
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+// 2. Nâng cấp Controller & View để hỗ trợ phiên dịch
 builder.Services.AddControllersWithViews(options => 
 {
     // Bịt miệng thằng .NET, không cho nó tự động quăng lỗi tiếng Anh
     options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true;
-});
+})
+.AddViewLocalization() // 🚨 Bật tính năng dịch trên giao diện HTML (.cshtml)
+.AddDataAnnotationsLocalization(); // 🚨 Bật tính năng dịch cho các báo lỗi trong Model
 
 //Cấu hình Cookie Authentication
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -36,6 +44,13 @@ builder.Services.AddValidatorsFromAssemblyContaining<LoginValidator>(); // Tự 
 
 
 var app = builder.Build();
+var supportedCultures = new[] { "en-US", "vi-VN" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("vi-VN") // Trụ sở chính ở Việt Nam
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
+app.UseRequestLocalization(localizationOptions); // Bật cờ cho phép đa ngôn ngữ
 
 // gọi hàm NapDuLieuVaoDB.cs để nạp dữ liệu vào DB
 using (var scope = app.Services.CreateScope())
@@ -64,13 +79,14 @@ using (var scope = app.Services.CreateScope())
         // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
         app.UseHsts();
     }
+    QuestPDF.Settings.License = LicenseType.Community;
     
     app.UseHttpsRedirection();
 
     app.UseStaticFiles();
 
     app.UseRouting();
-
+    app.UseMiddleware<GlobalLanguageMiddleware>();
     app.UseAuthentication(); // 1. Khám xét người dùng (Đọc thẻ Cookie xem là ai)
     app.UseAuthorization();  // 2. Kiểm tra quyền hạn (Có được phép vào trang này không)
 

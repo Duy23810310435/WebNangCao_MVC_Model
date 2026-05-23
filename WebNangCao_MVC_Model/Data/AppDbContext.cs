@@ -19,6 +19,9 @@ namespace WebNangCao_MVC_Model.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
         public DbSet<ExamResultDetail> ExamResultDetails { get; set; }
+        public DbSet<ActivityLog> ActivityLogs { get; set; }
+        // Đăng ký bảng Cấu hình hệ thống
+        public DbSet<SystemConfig> SystemConfigs { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
@@ -28,6 +31,14 @@ namespace WebNangCao_MVC_Model.Data
             // bảng UserGroup giúp liên kết nhiều-nhiều giữa User và Group, nên cần khóa chính kép để đảm bảo tính duy nhất của mỗi cặp UserId-GroupId
             modelBuilder.Entity<UserGroup>()
                 .HasKey(ug => new { ug.UserId, ug.GroupId });
+            modelBuilder.Entity<User>()
+    .Property(u => u.CreatedAt)
+    // "now()" là hàm lấy giờ UTC hiện tại của PostgreSQL
+    .HasDefaultValueSql("now()"); 
+
+modelBuilder.Entity<ActivityLog>()
+    .Property(l => l.Timestamp)
+    .HasDefaultValueSql("now()");
 
             // Cấu hình liên kết: 1 User có nhiều UserGroup
             modelBuilder.Entity<UserGroup>()
@@ -58,6 +69,16 @@ namespace WebNangCao_MVC_Model.Data
                     j => j.HasOne<Question>().WithMany().HasForeignKey("QuestionId"),
                     j => j.HasOne<Exam>().WithMany().HasForeignKey("ExamId")
                 );
+            // ==========================================
+            // BƠM ĐỘNG CƠ INDEX (CẮT GIẢM THỜI GIAN LOAD)
+            // ==========================================
+            modelBuilder.Entity<User>()
+                .HasIndex(u => new { u.Role, u.IsActive, u.CreatedAt })
+                .HasDatabaseName("IX_Users_Role_IsActive_CreatedAt");
+
+            modelBuilder.Entity<Exam>()
+                .HasIndex(e => e.CreatedAt)
+                .HasDatabaseName("IX_Exams_CreatedAt");
             //Tạo tài khoản cho admin
             var adminAccount = new User
             {
@@ -67,10 +88,10 @@ namespace WebNangCao_MVC_Model.Data
                 Email = "admin123@gmail.com",
                 Role = "Admin",
                 PasswordHash = "$2a$12$y92vwbAsONQcJkeBGvrvP.W0Np6VHv2ouFiAeSkpLFC9iAcHzp2.q", //Mật khẩu là admin123 (Nhưng được mã hoá)
-                // NẾU CÓ CỘT NÀY, PHẢI ÉP CỨNG NGÀY THÁNG NHƯ SAU:
-        CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc)
+                CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc),
+                LastUpdateAt  = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc),
+                LastLoginAt = new DateTime(2026, 4, 15, 0, 0, 0, DateTimeKind.Utc)
             };
-            //Mặc định trong database luôn phải có tài khoản admin được tạo từ đầu
             modelBuilder.Entity<User>().HasData(adminAccount);
         }
     }

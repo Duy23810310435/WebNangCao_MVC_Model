@@ -1,10 +1,11 @@
-﻿@model WebNangCao_MVC_Model.Models.Question
+﻿@using WebNangCao_MVC_Model.ViewModels
+@model WebNangCao_MVC_Model.Models.Question
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Chỉnh sửa câu hỏi";
+    ViewData["Title"] = Localizer["EditQuestionTitle"];
     Layout = "~/Views/Shared/_Layout.cshtml";
-
-    // Lấy ExamId từ Controller truyền sang (nếu có) để làm link quay lại
     int currentExamId = ViewBag.ExamId ?? 0;
 }
 
@@ -13,19 +14,18 @@
 <div class="lib-page-wrapper">
     <div class="lib-main-container" style="max-width: 850px;">
         <div class="lib-panel">
-
             <div class="lib-header">
                 <div>
                     <h2 class="fw-bold" style="display: flex; align-items: center; gap: 10px;">
                         <i data-lucide="file-edit" style="color: #4361ee;"></i>
-                        Chỉnh sửa câu hỏi
+                        @Localizer["EditQuestionTitle"]
                     </h2>
                     <p class="text-muted" style="margin-top: 5px;">
-                        ID Câu hỏi: <span class="badge-id">#@Model.Id</span>
+                        @Localizer["QuestionId"] <span class="badge-id">#@Model.Id</span>
                     </p>
                 </div>
                 <a href="/Student/ClassifyExam?examId=@currentExamId" class="btn-lib btn-secondary">
-                    <i data-lucide="chevron-left"></i> Quay lại kho
+                    <i data-lucide="chevron-left"></i> @Localizer["BackToStore"]
                 </a>
             </div>
 
@@ -35,17 +35,17 @@
 
                 <div class="form-section">
                     <div class="form-group mb-4">
-                        <label class="form-label fw-bold"><i data-lucide="help-circle"></i> Nội dung câu hỏi</label>
-                        <textarea asp-for="Content" class="form-control-custom" rows="4" placeholder="Nhập câu hỏi tại đây...">@Model.Content</textarea>
+                        <label class="form-label fw-bold"><i data-lucide="help-circle"></i> @Localizer["QuestionContent"]</label>
+                        <textarea asp-for="Content" class="form-control-custom" rows="4" placeholder="@Localizer["ContentPlaceholder"]">@Model.Content</textarea>
                     </div>
 
                     <div class="form-group mb-4" style="max-width: 300px;">
-                        <label class="form-label fw-bold"><i data-lucide="bar-chart"></i> Độ khó hiện tại</label>
+                        <label class="form-label fw-bold"><i data-lucide="bar-chart"></i> @Localizer["CurrentDifficulty"]</label>
                         <select asp-for="Difficulty" class="form-control-custom select-custom">
-                            <option value="Chưa phân loại">Chưa phân loại</option>
-                            <option value="Dễ">Dễ</option>
-                            <option value="Trung bình">Trung bình</option>
-                            <option value="Khó">Khó</option>
+                            <option value="Chưa phân loại">@Localizer["NotClassified"]</option>
+                            <option value="Dễ">@Localizer["DifficultyEasy"]</option>
+                            <option value="Trung bình">@Localizer["DifficultyMedium"]</option>
+                            <option value="Khó">@Localizer["DifficultyHard"]</option>
                         </select>
                     </div>
                 </div>
@@ -54,8 +54,8 @@
 
                 <div class="form-section">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold m-0"><i data-lucide="list-checks"></i> Danh sách các đáp án</h4>
-                        <span class="text-muted" style="font-size: 0.85rem;">Tích chọn ô bên phải để đánh dấu đáp án đúng</span>
+                        <h4 class="fw-bold m-0"><i data-lucide="list-checks"></i> @Localizer["AnswerListTitle"]</h4>
+                        <span class="text-muted" style="font-size: 0.85rem;">@Localizer["CheckCorrectAnswerHint"]</span>
                     </div>
 
                     <div class="answers-container">
@@ -71,7 +71,7 @@
                                     <div class="answer-index">@(i + 1)</div>
 
                                     <div class="answer-textarea">
-                                        <textarea name="answers[@i].Content" class="form-control-plain" placeholder="Nội dung đáp án...">@answerList[i].Content</textarea>
+                                        <textarea name="answers[@i].Content" class="form-control-plain" placeholder="@Localizer["AnswerPlaceholder"]">@answerList[i].Content</textarea>
                                     </div>
 
                                     <div class="answer-check-zone">
@@ -89,7 +89,7 @@
 
                 <div class="form-actions mt-5">
                     <button type="submit" class="btn-lib btn-primary btn-lg w-100" style="justify-content: center; height: 50px; font-size: 1rem;">
-                        <i data-lucide="save"></i> Cập nhật và lưu thay đổi
+                        <i data-lucide="save"></i> @Localizer["BtnUpdate"]
                     </button>
                 </div>
             </form>

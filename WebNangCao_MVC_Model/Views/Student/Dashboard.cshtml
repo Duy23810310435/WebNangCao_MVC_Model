@@ -1,12 +1,14 @@
 ﻿@{
-    Layout = null; // Truy cập ...localhost:XXXX/Student/Dashboard
+    Layout = null; 
 }
 @model WebNangCao_MVC_Model.ViewModels.StudentDashboardViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<SharedResource> Localizer
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard Thí Sinh</title>
+    <title>@Localizer["StudentDashboardTitle"]</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="~/css/student-dashboard.css" />
@@ -17,10 +19,10 @@
     <header class="top-header">
         <a asp-controller="Account" asp-action="Index" class="btn-back">
             <i data-lucide="arrow-left" class="back-icon"></i>
-            Quay lại
+            @Localizer["Back"]
         </a>
         <div class="user-info">
-            <span class="greeting">Xin chào, </span>
+            <span class="greeting">@Localizer["Welcome"] </span>
             @if (User.Identity != null && User.Identity.IsAuthenticated)
             {
                 <span class="user-name">@User.Identity.Name</span>
@@ -35,14 +37,14 @@
                         <span>student@example.com</span>
                     </div>
                     <ul class="dropdown-list">
-                        <li><a href="#"><i data-lucide="user"></i> Hồ sơ cá nhân</a></li>
-                        <li><a href="#"><i data-lucide="settings"></i> Cài đặt</a></li>
+                        <li><a href="#"><i data-lucide="user"></i> @Localizer["UserProfile"]</a></li>
+                        <li><a href="#"><i data-lucide="settings"></i> @Localizer["Settings"]</a></li>
                         <li class="divider"></li>
                         <li>
                             <a href="/Account/Logout"
-                               onclick="return confirm('Bạn có chắc chắn muốn đăng xuất?');"
+                               onclick="return confirm('@Localizer["ConfirmLogout"]');"
                                class="text-danger">
-                                <i data-lucide="log-out"></i> Đăng xuất
+                                <i data-lucide="log-out"></i> @Localizer["Logout"]
                             </a>
                         </li>
                     </ul>
@@ -70,15 +72,15 @@
 
         <section class="page-title" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h1>Dashboard Thí Sinh</h1>
-                <p>Tìm kiếm và tham gia các bài thi</p>
+                <h1>@Localizer["StudentDashboardTitle"]</h1>
+                <p>@Localizer["SearchAndJoinExams"]</p>
             </div>
             <div style="display: flex; gap: 10px;">
                 <button type="button" id="btnOpenPersonalExamModal" class="btn-create-exam" style="background: #4f46e5; color: white; border: none; padding: 10px 16px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 8px;">
-                    <i data-lucide="file-plus-2"></i> Tạo đề thi cá nhân
+                    <i data-lucide="file-plus-2"></i> @Localizer["CreatePersonalExam"]
                 </button>
                 <button type="button" id="btnOpenJoinModal" class="btn-join-class">
-                    <i data-lucide="plus-circle"></i> Tham gia lớp học
+                    <i data-lucide="plus-circle"></i> @Localizer["JoinClass"]
                 </button>
             </div>
         </section>
@@ -86,39 +88,39 @@
         <section class="stats-grid">
             <div class="stat-card">
                 <div class="stat-info">
-                    <span class="stat-label">Tổng bài thi</span>
+                    <span class="stat-label">@Localizer["TotalExamsCard"]</span>
                     <span class="stat-value">@Model.TotalExams</span>
                 </div>
                 <div class="stat-icon bg-blue"><i data-lucide="file-text"></i></div>
             </div>
             <div class="stat-card">
                 <div class="stat-info">
-                    <span class="stat-label">Điểm trung bình</span>
+                    <span class="stat-label">@Localizer["AverageScore"]</span>
                     <span class="stat-value">@Model.AverageScore</span>
                 </div>
                 <div class="stat-icon bg-green"><i data-lucide="trophy"></i></div>
             </div>
             <div class="stat-card">
                 <div class="stat-info">
-                    <span class="stat-label">Hoàn thành</span>
+                    <span class="stat-label">@Localizer["Completed"]</span>
                     <span class="stat-value">@Model.CompletedExams/@Model.TotalExams</span>
                 </div>
                 <div class="stat-icon bg-purple"><i data-lucide="check-circle"></i></div>
             </div>
             <div class="stat-card">
                 <div class="stat-info">
-                    <span class="stat-label">Sắp tới</span>
+                    <span class="stat-label">@Localizer["Upcoming"]</span>
                     <span class="stat-value">@Model.UpcomingExams</span>
                 </div>
                 <div class="stat-icon bg-orange"><i data-lucide="clock"></i></div>
             </div>
         </section>
-        <!--giao diện hiển thị nhóm lớp đã tham gia-->
+
         <section class="class-section" id="classSection">
             <div class="exam-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div>
-                    <h2><i data-lucide="users"></i> Lớp học đã tham gia</h2>
-                    <p>Danh sách các lớp bạn đang là thành viên</p>
+                    <h2><i data-lucide="users"></i> @Localizer["JoinedClassesTitle"]</h2>
+                    <p>@Localizer["JoinedClassesDesc"]</p>
                 </div>
                 <button type="button" class="btn-toggle-section" onclick="toggleSection('classSection')">
                     <i data-lucide="chevron-up" class="icon-toggle"></i>
@@ -136,15 +138,15 @@
                                     <div class="class-icon"><i data-lucide="graduation-cap"></i></div>
                                     <div>
                                         <h3 title="@cls.ClassName">@cls.ClassName</h3>
-                                        <span class="class-id">Mã: @cls.IdGroup</span>
+                                        <span class="class-id">@Localizer["ClassCode"]: @cls.IdGroup</span>
                                     </div>
                                 </div>
                                 <div class="class-card-body">
-                                    <p><i data-lucide="user"></i> GV: @cls.TeacherName</p>
-                                    <p><i data-lucide="file-text"></i> @cls.ExamCount bài thi</p>
+                                    <p><i data-lucide="user"></i> @Localizer["TeacherLabel"]: @cls.TeacherName</p>
+                                    <p><i data-lucide="file-text"></i> @cls.ExamCount @Localizer["ExamsCountLabel"]</p>
                                 </div>
                                 <div class="class-card-footer">
-                                    <a href="javascript:void(0);" class="btn-view-class">Vào lớp học</a>
+                                    <a href="javascript:void(0);" class="btn-view-class">@Localizer["EnterClass"]</a>
                                 </div>
                             </div>
                         }
@@ -153,7 +155,7 @@
                     {
                         <div class="empty-state-sm">
                             <i data-lucide="folder-open"></i>
-                            <p>Bạn chưa tham gia lớp học nào.</p>
+                            <p>@Localizer["NoJoinedClasses"]</p>
                         </div>
                     }
                 </div>
@@ -162,28 +164,27 @@
 
         <section class="exam-section">
             <div class="exam-header">
-                <h2><i data-lucide="list"></i> Danh sách các bài thi</h2>
-                <p>Tìm thấy @(Model.Exams != null ? Model.Exams.Count : 0) bài thi</p>
+                <h2><i data-lucide="list"></i> @Localizer["ExamListTitle"]</h2>
+                <p>@Localizer["FoundExamsCount", Model.Exams != null ? Model.Exams.Count : 0]</p>
             </div>
 
             <div class="search-filter-bar">
                 <div class="search-box">
                     <i data-lucide="search"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm bài thi theo tên hoặc môn học..." />
+                    <input type="text" id="searchInput" placeholder="@Localizer["SearchExamPlaceholder"]" />
                 </div>
                 <button class="btn-toggle-filter" id="btnToggleFilter">
-                    <i data-lucide="filter"></i> Bộ lọc
+                    <i data-lucide="filter"></i> @Localizer["Filter"]
                 </button>
             </div>
 
             <div class="advanced-filter" id="advancedFilter">
                 <div class="filter-group">
-                    <label>Môn học</label>
+                    <label>@Localizer["SubjectLabel"]</label>
                     <select id="filterSubject">
-                        <option value="all">Tất cả môn học</option>
+                        <option value="all">@Localizer["AllSubjects"]</option>
                         @if (Model.Exams != null && Model.Exams.Any())
                         {
-                            // Lấy ra các môn học không bị null/rỗng và loại bỏ trùng lặp
                             var subjects = Model.Exams
                             .Where(e => !string.IsNullOrWhiteSpace(e.SubjectName))
                             .Select(e => e.SubjectName)
@@ -198,12 +199,11 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Trạng thái</label>
+                    <label>@Localizer["StatusLabel"]</label>
                     <select id="filterStatus">
-                        <option value="all">Tất cả trạng thái</option>
+                        <option value="all">@Localizer["AllStatuses"]</option>
                         @if (Model.Exams != null && Model.Exams.Any())
                         {
-                            // Lấy ra các trạng thái thực tế đang có và loại bỏ trùng lặp
                             var statuses = Model.Exams
                             .Where(e => !string.IsNullOrWhiteSpace(e.Status))
                             .Select(e => e.Status)
@@ -218,12 +218,11 @@
                 </div>
 
                 <div class="filter-group">
-                    <label>Độ khó</label>
+                    <label>@Localizer["DifficultyLabel"]</label>
                     <select id="filterDifficulty">
-                        <option value="all">Tất cả độ khó</option>
+                        <option value="all">@Localizer["AllDifficulties"]</option>
                         @if (Model.Exams != null && Model.Exams.Any())
                         {
-                            // Lấy ra các mức độ khó đang có và loại bỏ trùng lặp
                             var difficulties = Model.Exams
                             .Where(e => !string.IsNullOrWhiteSpace(e.Difficulty))
                             .Select(e => e.Difficulty)
@@ -239,10 +238,10 @@
             </div>
 
             <div class="status-tabs">
-                <button class="tab-btn active" data-tab="all">Tất cả (@Model.TotalExams)</button>
-                <button class="tab-btn" data-tab="Có thể làm">Có thể làm (@Model.UpcomingExams)</button>
-                <button class="tab-btn" data-tab="Sắp tới">Sắp tới (@Model.UpcomingExams)</button>
-                <button class="tab-btn" data-tab="Đã hoàn thành">Đã hoàn thành (@Model.CompletedExams)</button>
+                <button class="tab-btn active" data-tab="all">@Localizer["TabAll"] (@Model.TotalExams)</button>
+                <button class="tab-btn" data-tab="Có thể làm">@Localizer["TabAvailable"] (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Sắp tới">@Localizer["Upcoming"] (@Model.UpcomingExams)</button>
+                <button class="tab-btn" data-tab="Đã hoàn thành">@Localizer["TabCompleted"] (@Model.CompletedExams)</button>
             </div>
 
             <div class="exam-grid">
@@ -255,7 +254,7 @@
                             "dễ" or "Dễ" => "tag-green",
                             "trung bình" or "Trung bình" => "tag-orange",
                             "khó" or "Khó"=> "tag-red",
-                            _ => "tag-blue" // Mặc định nếu không khớp
+                            _ => "tag-blue" 
                         };
 
                         <div class="exam-card data-item"
@@ -268,20 +267,20 @@
                                 <h3 title="@exam.Title">@exam.Title</h3>
                                 @if (exam.Status == "Có thể làm")
                                 {
-                                    <span class="badge badge-success" title="Bạn có thể bắt đầu làm bài ngay bây giờ">
-                                        <i data-lucide="unlock" style="width: 14px; height: 14px; margin-right: 4px;"></i> Có thể làm
+                                    <span class="badge badge-success" title="@Localizer["TooltipAvailable"]">
+                                        <i data-lucide="unlock" style="width: 14px; height: 14px; margin-right: 4px;"></i> @Localizer["TabAvailable"]
                                     </span>
                                 }
                                 else if (exam.Status == "Sắp tới")
                                 {
-                                    <span class="badge badge-blue" title="Chưa đến thời gian làm bài">
-                                        <i data-lucide="lock" style="width: 14px; height: 14px; margin-right: 4px;"></i> Sắp tới
+                                    <span class="badge badge-blue" title="@Localizer["TooltipNotYet"]">
+                                        <i data-lucide="lock" style="width: 14px; height: 14px; margin-right: 4px;"></i> @Localizer["Upcoming"]
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-gray" title="Bạn đã hoàn thành bài thi này">
-                                        <i data-lucide="check-circle-2" style="width: 14px; height: 14px; margin-right: 4px;"></i> Đã hoàn thành
+                                    <span class="badge badge-gray" title="@Localizer["TooltipCompleted"]">
+                                        <i data-lucide="check-circle-2" style="width: 14px; height: 14px; margin-right: 4px;"></i> @Localizer["TabCompleted"]
                                     </span>
                                 }
                             </div>
@@ -292,17 +291,17 @@
                             </div>
 
                             <div class="card-details">
-                                <div class="detail-item" title="Thời gian bắt đầu">
+                                <div class="detail-item" title="@Localizer["TooltipStartTime"]">
                                     <i data-lucide="calendar"></i> @exam.StartTime.ToString("dd/MM/yyyy HH:mm")
                                 </div>
-                                <div class="detail-item" title="Thời lượng làm bài">
-                                    <i data-lucide="clock"></i> @exam.Duration phút
+                                <div class="detail-item" title="@Localizer["TooltipDuration"]">
+                                    <i data-lucide="clock"></i> @exam.Duration @Localizer["Minutes"]
                                 </div>
-                                <div class="detail-item" title="Số lượng câu hỏi">
-                                    <i data-lucide="file-text"></i> @exam.TotalQuestions câu hỏi
+                                <div class="detail-item" title="@Localizer["TooltipQuestionCount"]">
+                                    <i data-lucide="file-text"></i> @exam.TotalQuestions @Localizer["QuestionsCountLabel"]
                                 </div>
-                                <div class="detail-item" title="Tên lớp học">
-                                    <i data-lucide="users"></i> @exam.GroupName (Mã lớp: @exam.IdGroup)
+                                <div class="detail-item" title="@Localizer["TooltipClassName"]">
+                                    <i data-lucide="users"></i> @exam.GroupName (@Localizer["ClassCodeLabel"] @exam.IdGroup)
                                 </div>
                             </div>
 
@@ -314,40 +313,38 @@
                                        asp-route-id="@exam.Id"
                                        class="btn-primary-action"
                                        style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%;">
-                                        <i data-lucide="play-circle"></i> Bắt đầu làm bài
+                                        <i data-lucide="play-circle"></i> @Localizer["StartExam"]
                                     </a>
                                 }
                                 else if (exam.Status == "Sắp tới")
                                 {
                                     <button class="btn-disabled" disabled style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                        <i data-lucide="history"></i> Chưa tới giờ thi
+                                        <i data-lucide="history"></i> @Localizer["NotExamTimeYet"]
                                     </button>
                                 }
                                 else
                                 {
                                     <button class="btn-disabled" disabled style="background-color: #f1f5f9; color: #64748b; border: 1px dashed #cbd5e1; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
-                                        <i data-lucide="check-circle"></i> Đã hoàn thành
+                                        <i data-lucide="check-circle"></i> @Localizer["TabCompleted"]
                                     </button>
                                 }
                             </div>
                         </div>
                     }
                 }
-                //dùng cho tài khoản mới hoàn toàn mà chưa có bài thi nào
-
                 else
                 {
                     <div class="empty-state" style="grid-column: 1 / -1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0;">
                         <i data-lucide="inbox" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
-                        <h3 style="margin: 0 0 8px 0; color: #334155;">Không có bài thi nào</h3>
-                        <p style="margin: 0; font-size: 14px;">Bạn chưa có bài thi nào từ các lớp đã tham gia.</p>
+                        <h3 style="margin: 0 0 8px 0; color: #334155;">@Localizer["NoExamsAvailable"]</h3>
+                        <p style="margin: 0; font-size: 14px;">@Localizer["NoExamsAvailableDesc"]</p>
                     </div>
                 }
             </div>
             <div id="jsEmptyState" style="display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 20px; color: #64748b; background: #f8fafc; border-radius: 12px; border: 1px dashed #e2e8f0; margin-bottom: 20px;">
                 <i data-lucide="search-x" style="width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; color: #94a3b8;"></i>
-                <h3 style="margin: 0 0 8px 0; color: #334155;">Không tìm thấy bài thi phù hợp</h3>
-                <p style="margin: 0; font-size: 14px;">Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</p>
+                <h3 style="margin: 0 0 8px 0; color: #334155;">@Localizer["NoMatchingExams"]</h3>
+                <p style="margin: 0; font-size: 14px;">@Localizer["NoMatchingExamsDesc"]</p>
             </div>
 
             <div class="pagination-container">
@@ -369,39 +366,39 @@
     <div class="custom-modal-overlay" id="joinClassModal">
         <div class="custom-modal">
             <div class="modal-header">
-                <h3>Gia nhập lớp học mới</h3>
+                <h3>@Localizer["JoinNewClassTitle"]</h3>
                 <button type="button" id="btnCloseJoinModal" class="btn-icon-close"><i data-lucide="x"></i></button>
             </div>
             <form action="/Student/JoinClass" method="post">
                 <div class="modal-body">
-                    <label for="groupId" style="display:block; margin-bottom:8px; font-weight:600;">Mã Lớp Học (ID):</label>
-                    <input type="number" id="groupId" name="groupId" placeholder="Nhập mã lớp..." required min="1" class="form-control-custom">
-                    <small style="color:#64748b; display:block; margin-top:8px;">Ví dụ: 1, 2, 3...</small>
+                    <label for="groupId" style="display:block; margin-bottom:8px; font-weight:600;">@Localizer["ClassIdLabel"]</label>
+                    <input type="number" id="groupId" name="groupId" placeholder="@Localizer["EnterClassIdPlaceholder"]" required min="1" class="form-control-custom">
+                    <small style="color:#64748b; display:block; margin-top:8px;">@Localizer["ExampleClassId"]</small>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" id="btnCancelJoinModal" class="btn-cancel">Hủy</button>
-                    <button type="submit" class="btn-submit">Xác nhận tham gia</button>
+                    <button type="button" id="btnCancelJoinModal" class="btn-cancel">@Localizer["Cancel"]</button>
+                    <button type="submit" class="btn-submit">@Localizer["ConfirmJoin"]</button>
                 </div>
             </form>
         </div>
     </div>
-    <!--Modal thêm bài làm cá nhân-->
+
     <div class="custom-modal-overlay" id="personalExamModal">
         <div class="custom-modal" style="width: 500px;">
             <div class="modal-header">
-                <h3>Tạo Đề Thi Cá Nhân (Upload Excel)</h3>
+                <h3>@Localizer["CreatePersonalExamTitle"]</h3>
                 <button type="button" id="btnClosePersonalModal" class="btn-icon-close"><i data-lucide="x"></i></button>
             </div>
             <div class="modal-body">
                 <div id="dropZone" style="border: 2px dashed #cbd5e1; border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; background: #f8fafc; transition: all 0.3s;">
                     <i data-lucide="upload-cloud" style="width: 48px; height: 48px; color: #64748b; margin-bottom: 16px;"></i>
-                    <h4 style="margin: 0 0 8px 0; color: #334155;">Kéo thả file Excel vào đây</h4>
-                    <p style="margin: 0; font-size: 14px; color: #64748b;">hoặc click để chọn file (.xlsx, .xls)</p>
+                    <h4 style="margin: 0 0 8px 0; color: #334155;">@Localizer["DragDropExcel"]</h4>
+                    <p style="margin: 0; font-size: 14px; color: #64748b;">@Localizer["OrClickToSelect"]</p>
                     <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;" />
                 </div>
 
                 <div id="errorContainer" style="display: none; margin-top: 16px; max-height: 200px; overflow-y: auto; background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px;">
-                    <h5 style="margin: 0 0 8px 0; color: #ef4444;"><i data-lucide="alert-triangle" style="width: 16px; height: 16px;"></i> Phát hiện lỗi trong file:</h5>
+                    <h5 style="margin: 0 0 8px 0; color: #ef4444;"><i data-lucide="alert-triangle" style="width: 16px; height: 16px;"></i> @Localizer["ErrorInFile"]</h5>
                     <ul id="errorList" style="margin: 0; padding-left: 20px; color: #b91c1c; font-size: 13px;"></ul>
                 </div>
 
@@ -409,17 +406,17 @@
                     <p style="font-size: 13px; color: #64748b;">
                         @if (ViewBag.LatestExamId != null)
                         {
-                            <span>Bạn có một đề thi đang tạo: </span>
+                            <span>@Localizer["PendingExamMsg"]</span>
                             <br />
                             <a href="@Url.Action("ClassifyExam", "Student", new { examId = ViewBag.LatestExamId })"
                                style="color: #4f46e5; font-weight: 600;">
-                                Tiếp tục phân loại [@ViewBag.LatestExamTitle]
+                                @Localizer["ContinueClassifying"] [@ViewBag.LatestExamTitle]
                             </a>
                         }
                         else
                         {
                             <a href="/Student/PersonalExamsList" style="color: #64748b; font-weight: 600;">
-                                Xem danh sách đề thi đã tạo
+                                @Localizer["ViewCreatedExams"]
                             </a>
                         }
                     </p>

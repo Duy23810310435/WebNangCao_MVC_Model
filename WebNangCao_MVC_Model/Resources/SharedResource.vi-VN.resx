@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AuthTitle" xml:space="preserve"><value>Đăng nhập / Đăng ký</value></data>
+  <data name="SystemDescription" xml:space="preserve"><value>Hệ thống đánh giá năng lực trực tuyến</value></data>
+  <data name="LoginTab" xml:space="preserve"><value>Đăng nhập</value></data>
+  <data name="RegisterTab" xml:space="preserve"><value>Đăng ký</value></data>
+  <data name="RoleStudent" xml:space="preserve"><value>Học viên</value></data>
+  <data name="RoleInstructor" xml:space="preserve"><value>Giảng viên</value></data>
+  <data name="RoleAdmin" xml:space="preserve"><value>Quản trị viên</value></data>
+  <data name="UsernameOrEmail" xml:space="preserve"><value>Tài khoản / Email</value></data>
+  <data name="PlaceholderEmail" xml:space="preserve"><value>Nhập email...</value></data>
+  <data name="Password" xml:space="preserve"><value>Mật khẩu</value></data>
+  <data name="PlaceholderPassword" xml:space="preserve"><value>Nhập mật khẩu...</value></data>
+  <data name="BtnLogin" xml:space="preserve"><value>Đăng nhập ngay</value></data>
+  <data name="FullName" xml:space="preserve"><value>Họ và tên</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Username" xml:space="preserve"><value>Tên đăng nhập</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Xác nhận mật khẩu</value></data>
+  <data name="BtnRegister" xml:space="preserve"><value>Tạo tài khoản</value></data>
+  <data name="AuthError" xml:space="preserve"><value>Vi phạm xác thực tài khoản</value></data>
+  <data name="RegisterError" xml:space="preserve"><value>Vui lòng kiểm tra lại thông tin</value></data>
+
+  <data name="Logout" xml:space="preserve"><value>Đăng Xuất</value></data>
+  <data name="Welcome" xml:space="preserve"><value>Xin chào,</value></data>
+  <data name="DashboardTitle" xml:space="preserve"><value>Dashboard Quản trị viên</value></data>
+  <data name="DashboardSubtitle" xml:space="preserve"><value>Quản lý và giám sát toàn bộ hệ thống</value></data>
+  <data name="SystemSettings" xml:space="preserve"><value>Cài Đặt Hệ Thống</value></data>
+  
+  <data name="TotalUsers" xml:space="preserve"><value>Tổng Người Dùng</value></data>
+  <data name="ActiveUsersCount" xml:space="preserve"><value>Người dùng đang hoạt động</value></data>
+  <data name="TotalExams" xml:space="preserve"><value>Tổng Đề Thi</value></data>
+  <data name="TotalExamsComplete" xml:space="preserve"><value>Tổng Đề Thi Hoàn Thành</value></data>
+  <data name="TimerOnline" xml:space="preserve"><value>Thời Gian Online</value></data>
+
+
+  <data name="CurrentlyActive" xml:space="preserve"><value>đang hoạt động</value></data>
+  <data name="ExamsToday" xml:space="preserve"><value>Bài thi hôm nay</value></data>
+  <data name="CurrentlyHappening" xml:space="preserve"><value>đang diễn ra</value></data>
+  <data name="System" xml:space="preserve"><value>Hệ thống</value></data>
+  <data name="NormalOperation" xml:space="preserve"><value>Hoạt động bình thường</value></data>
+  
+  <data name="UserManagement" xml:space="preserve"><value>Quản lý người dùng</value></data>
+  <data name="UserListDescription" xml:space="preserve"><value>Danh sách người dùng trong hệ thống</value></data>
+  <data name="ViewAll" xml:space="preserve"><value>Xem tất cả</value></data>
+  <data name="TabAll" xml:space="preserve"><value>Tất cả</value></data>
+  <data name="TabTeacher" xml:space="preserve"><value>Giáo Viên</value></data>
+  <data name="TabStudent" xml:space="preserve"><value>Học Sinh</value></data>
+  <data name="TabPending" xml:space="preserve"><value>Chờ Duyệt</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Hoạt Động</value></data>
+  <data name="BtnEdit" xml:space="preserve"><value>Sửa</value></data>
+  <data name="BtnDelete" xml:space="preserve"><value>Xóa</value></data>
+  <data name="BtnApprove" xml:space="preserve"><value>Duyệt</value></data>
+
+  <data name="SystemAnalysis" xml:space="preserve"><value>Phân tích hệ thống</value></data>
+  <data name="ActivityStats7Days" xml:space="preserve"><value>Thống kê hoạt động trong 7 ngày qua</value></data>
+  <data name="StatsLogin" xml:space="preserve"><value>Đăng nhập</value></data>
+  <data name="ComparedToLastWeek" xml:space="preserve"><value>so với tuần trước</value></data>
+  <data name="StatsExam" xml:space="preserve"><value>Bài thi</value></data>
+  <data name="StatsNewExam" xml:space="preserve"><value>Đề thi mới</value></data>
+  <data name="StatsPositive" xml:space="preserve"><value>Tích cực</value></data>
+  <data name="SystemStatus" xml:space="preserve"><value>Trạng thái hệ thống</value></data>
+  <data name="SystemActivity" xml:space="preserve"><value>Hoạt động hệ thống</value></data>
+  <data name="QuickActions" xml:space="preserve"><value>Hành động nhanh</value></data>
+  <data name="AddUser" xml:space="preserve"><value>Thêm người dùng</value></data>
+  <data name="ConfigSystem" xml:space="preserve"><value>Cấu hình hệ thống</value></data>
+  <data name="BackupData" xml:space="preserve"><value>Sao lưu dữ liệu</value></data>
+  <data name="ViewDetailedReport" xml:space="preserve"><value>Xem báo cáo chi tiết</value></data>
+  <data name="SystemStatus" xml:space="preserve"><value>Trạng thái hệ thống</value></data>
+  <data name="Teacher Nguyen creates new exam questions" xml:space="preserve"><value>Giáo viên Nguyễn tạo đề thi mới</value></data>
+  <data name="minutes ago" xml:space="preserve"><value>phút trước</value></data>
+  <data name="Discard" xml:space="preserve"><value>Huỷ</value></data>
+
+  <data name="newly registered students" xml:space="preserve"><value>học sinh mới đăng ký</value></data>
+  <data name="hours ago" xml:space="preserve"><value>giờ trước</value></data>
+  <data name="Warning: Server is under high load.
+" xml:space="preserve"><value>Cảnh báo: Server tải cao</value></data>
+  <data name="Data backup system complete
+" xml:space="preserve"><value>Hệ thống sao lưu dữ liệu hoàn tất</value></data>
+<data name="BackupData" xml:space="preserve"><value>Sao lưu dữ liệu</value></data>
+  <data name="DetailedReport" xml:space="preserve"><value>Xem báo cáo chi tiết</value></data>
+
+
+
+
+  
+
+  <data name="DetailedReportTitle" xml:space="preserve"><value>Báo cáo chi tiết hệ thống</value></data>
+  <data name="DetailedReportSubtitle" xml:space="preserve"><value>Thống kê và phân tích toàn diện</value></data>
+  <data name="ExportPDF" xml:space="preserve"><value>Xuất PDF</value></data>
+  <data name="Overview" xml:space="preserve"><value>Tổng quan</value></data>
+  <data name="Users" xml:space="preserve"><value>Người Dùng</value></data>
+  <data name="Suggestions" xml:space="preserve"><value>Đề Xuất</value></data>
+  <data name="WeeklyActivity" xml:space="preserve"><value>Hoạt động theo ngày trong tuần</value></data>
+  <data name="ReportGeneratedAt" xml:space="preserve"><value>Báo cáo được tạo:</value></data>
+  <data name="CustomizeTimeRange" xml:space="preserve"><value>Tùy chỉnh khoảng thời gian</value></data>
+  <data name="BtnClose" xml:space="preserve"><value>Đóng</value></data>
+  <data name="AddNewUserTitle" xml:space="preserve"><value>Thêm người dùng mới</value></data>
+  <data name="Role" xml:space="preserve"><value>Vai trò</value></data>
+  <data name="TempPassword" xml:space="preserve"><value>Mật khẩu tạm thời</value></data>
+  <data name="BtnCancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="EditUserTitle" xml:space="preserve"><value>Sửa thông tin người dùng</value></data>
+  <data name="StatusLockUnlock" xml:space="preserve"><value>Trạng thái (Khóa/Mở)</value></data>
+  <data name="StatusLockedPending" xml:space="preserve"><value>Tạm khóa / Chờ duyệt</value></data>
+  <data name="BtnSaveChanges" xml:space="preserve"><value>Lưu thay đổi</value></data>
+  <data name="SystemConfig" xml:space="preserve"><value>Cấu hình hệ thống</value></data>
+
+  <data name="ManageSystemSettings" xml:space="preserve"><value>Quản lý các thiết lập hệ thống</value></data>
+  <data name="TabGeneral" xml:space="preserve"><value>Chung</value></data>
+  <data name="TabSecurity" xml:space="preserve"><value>Bảo mật</value></data>
+  <data name="SystemName" xml:space="preserve"><value>Tên hệ thống</value></data>
+  <data name="SystemURL" xml:space="preserve"><value>URL hệ thống</value></data>
+  <data name="DefaultLanguage" xml:space="preserve"><value>Ngôn ngữ mặc định</value></data>
+  <data name="Timezone" xml:space="preserve"><value>Múi giờ</value></data>
+  <data name="EmailNotification" xml:space="preserve"><value>Thông báo Email</value></data>
+  <data name="SendEmailNotification" xml:space="preserve"><value>Gửi thông báo qua email</value></data>
+  <data name="SmsNotification" xml:space="preserve"><value>Thông báo SMS</value></data>
+  <data name="SendSmsNotification" xml:space="preserve"><value>Gửi thông báo qua SMS</value></data>
+  <data name="PushNotification" xml:space="preserve"><value>Thông báo Push</value></data>
+  <data name="SendPushNotification" xml:space="preserve"><value>Gửi thông báo đẩy</value></data>
+  <data name="DatabaseWarning" xml:space="preserve"><value>Cảnh báo: Thay đổi cấu hình database có thể ảnh hưởng đến hoạt động của hệ thống. Hãy đảm bảo bạn đã sao lưu dữ liệu trước khi thay đổi.</value></data>
+  <data name="CheckConnection" xml:space="preserve"><value>Kiểm tra kết nối</value></data>
+  <data name="BackupNow" xml:space="preserve"><value>Sao lưu ngay</value></data>
+  <data name="SendTestEmail" xml:space="preserve"><value>Gửi email thử nghiệm</value></data>
+  <data name="TimeoutMinutes" xml:space="preserve"><value>Thời gian timeout (phút)</value></data>
+  <data name="MinPasswordLength" xml:space="preserve"><value>Độ dài mật khẩu tối thiểu</value></data>
+  <data name="MaxFailedLogins" xml:space="preserve"><value>Số lần đăng nhập sai tối đa</value></data>
+  <data name="TwoFactorAuth" xml:space="preserve"><value>Xác thực hai yếu tố (2FA)</value></data>
+  <data name="RequireTwoFactorAuth" xml:space="preserve"><value>Bắt buộc xác thực hai bước khi đăng nhập</value></data>
+  <data name="AdvancedSecuritySettings" xml:space="preserve"><value>Cài đặt bảo mật nâng cao</value></data>
+  <data name="ForcePasswordChange90Days" xml:space="preserve"><value>Bắt buộc đổi mật khẩu sau 90 ngày</value></data>
+  <data name="BlockUnknownIPs" xml:space="preserve"><value>Chặn truy cập từ IP lạ</value></data>
+  <data name="LogAllActivities" xml:space="preserve"><value>Ghi log tất cả hoạt động</value></data>
+  <data name="SaveConfig" xml:space="preserve"><value>Lưu cấu hình</value></data>
+  <data name="ErrLockedAccount" xml:space="preserve"><value>Tài khoản đã bị khóa do nhập sai quá nhiều lần. Vui lòng thử lại sau {0} phút.</value></data>
+  <data name="ErrWrongPasswordLimit" xml:space="preserve"><value>Bạn đã nhập sai {0} lần. Tài khoản bị khóa 15 phút!</value></data>
+  <data name="ErrWrongPassword" xml:space="preserve"><value>Mật khẩu không chính xác. Bạn còn {0} lần thử.</value></data>
+  <data name="ErrWaitAdminApprove" xml:space="preserve"><value>Tài khoản của bạn đang chờ Admin duyệt. Vui lòng quay lại sau!</value></data>
+  <data name="ErrWrongRole" xml:space="preserve"><value>Tài khoản của bạn không thuộc vai trò này. Vui lòng chọn đúng vai trò</value></data>
+  <data name="ErrInvalidLogin" xml:space="preserve"><value>Tài khoản hoặc mật khẩu không chính xác.</value></data>
+  <data name="ErrMinPasswordLen" xml:space="preserve"><value>Hệ thống yêu cầu mật khẩu tối thiểu {0} ký tự.</value></data>
+  <data name="ErrUserExist" xml:space="preserve"><value>Tên đăng nhập hoặc Email đã tồn tại!</value></data>
+  <data name="MsgRegisterSuccessWaitApprove" xml:space="preserve"><value>Đăng ký thành công! Vui lòng chờ Admin phê duyệt tài khoản để đăng nhập.</value></data>
+  <data name="MsgConfirmBackup" xml:space="preserve"><value>⚠️ CẢNH BÁO TỪ HỆ THỐNG:\nBạn có chắc chắn muốn tiến hành sao lưu và tải toàn bộ dữ liệu xuống máy tính không?</value></data>
+  <data name="MsgExporting" xml:space="preserve"><value>⏳ Đang kết xuất...</value></data>
+  <data name="MsgSaving" xml:space="preserve"><value>⏳ Đang lưu...</value></data>
+  <data name="MsgError" xml:space="preserve"><value>Lỗi rồi: </value></data>
+  <data name="MsgNetworkError" xml:space="preserve"><value>Rớt mạng hoặc sập Server!</value></data>
+  <data name="MsgFillAllFields" xml:space="preserve"><value>⚠️ Vui lòng điền đầy đủ thông tin!</value></data>
+  <data name="MsgCreating" xml:space="preserve"><value>Đang tạo...</value></data>
+  <data name="MsgConfirmApprove" xml:space="preserve"><value>Bạn có chắc chắn muốn duyệt và cấp quyền cho tài khoản này?</value></data>
+  <data name="MsgConfirmDelete" xml:space="preserve"><value>BÁO ĐỘNG: Bạn có chắc chắn muốn XÓA VĨNH VIỄN tài khoản này không? Hành động này không thể hoàn tác!</value></data>
+  <data name="MsgCannotGetUserInfo" xml:space="preserve"><value>Không thể lấy thông tin người dùng: </value></data>
+  <data name="MsgNameEmailRequired" xml:space="preserve"><value>⚠️ Họ tên và Email không được để trống!</value></data>
+  <data name="MsgPinging" xml:space="preserve"><value>Đang Ping...</value></data>
+  <data name="MsgDbConnectSuccess" xml:space="preserve"><value>Kết nối Database thành công mĩ mãn!</value></data>
+  <data name="MsgDbConfigError" xml:space="preserve"><value>Lỗi cấu hình Database: </value></data>
+  <data name="MsgSystemNotResponding" xml:space="preserve"><value>Hệ thống không phản hồi!</value></data>
+  <data name="MsgPromptEmail" xml:space="preserve"><value>Nhập địa chỉ Email bạn muốn gửi thử tới:</value></data>
+  <data name="MsgRequireSmtp" xml:space="preserve"><value>⚠️ Yêu cầu nhập đầy đủ SMTP User và Password!</value></data>
+  <data name="MsgSendingMail" xml:space="preserve"><value>Đang gửi mail...</value></data>
+  <data name="MsgSendMailError" xml:space="preserve"><value>Lỗi gửi mail: </value></data>
+  <data name="MsgDomError" xml:space="preserve"><value>Lỗi DOM: Không tìm thấy vùng export-zone!</value></data>
+  <data name="MsgCreatingReport" xml:space="preserve"><value>Đang tạo báo cáo...</value></data>
+  <data name="MsgPdfExportError" xml:space="preserve"><value>Có lỗi xảy ra khi xuất PDF!</value></data>
+  <data name="LpTitle" xml:space="preserve"><value>EduTest Pro - Nền tảng thi trực tuyến</value></data>
+  <data name="LpNavFeatures" xml:space="preserve"><value>Tính năng</value></data>
+  <data name="LpNavAbout" xml:space="preserve"><value>Giới thiệu</value></data>
+  <data name="LpBtnStartNow" xml:space="preserve"><value>Bắt đầu ngay</value></data>
+  
+  <data name="LpHeroBadge" xml:space="preserve"><value>Nền tảng thi trực tuyến hàng đầu</value></data>
+  <data name="LpHeroTitle" xml:space="preserve"><value>Hệ thống Thi Trực Tuyến và Đánh Giá Năng Lực</value></data>
+  <data name="LpHeroDesc" xml:space="preserve"><value>Giải pháp toàn diện cho việc tạo đề thi, tổ chức thi trực tuyến và đánh giá năng lực học sinh một cách chuyên nghiệp và hiệu quả.</value></data>
+  <data name="LpBtnDemo" xml:space="preserve"><value>Xem demo</value></data>
+  <data name="LpStatCandidates" xml:space="preserve"><value>Thí sinh</value></data>
+  <data name="LpStatTeachers" xml:space="preserve"><value>Giáo viên</value></data>
+  <data name="LpStatExams" xml:space="preserve"><value>Đề thi</value></data>
+  
+  <data name="LpMockupTitle" xml:space="preserve"><value>Kiểm tra năng lực</value></data>
+  <data name="LpMockupStatus" xml:space="preserve"><value>Đang tiến hành</value></data>
+  <data name="LpMockupComplete" xml:space="preserve"><value>Hoàn thành</value></data>
+  <data name="LpMockupQuestions" xml:space="preserve"><value>Câu hỏi</value></data>
+  <data name="LpMockupTime" xml:space="preserve"><value>Thời gian</value></data>
+
+  <data name="LpFeaturesTitle" xml:space="preserve"><value>Tính năng nổi bật</value></data>
+  <data name="LpFeaturesDesc" xml:space="preserve"><value>Hệ thống được thiết kế để đáp ứng mọi nhu cầu trong quá trình tổ chức và quản lý kỳ thi</value></data>
+  <data name="LpFeat1Title" xml:space="preserve"><value>Tạo đề thi dễ dàng</value></data>
+  <data name="LpFeat1Desc" xml:space="preserve"><value>Công cụ tạo đề thi trực quan với ngân hàng câu hỏi phong phú và đa dạng.</value></data>
+  <data name="LpFeat2Title" xml:space="preserve"><value>Thi trực tuyến</value></data>
+  <data name="LpFeat2Desc" xml:space="preserve"><value>Tổ chức kỳ thi trực tuyến an toàn với giám sát tự động và chống gian lận.</value></data>
+  <data name="LpFeat3Title" xml:space="preserve"><value>Báo cáo chi tiết</value></data>
+  <data name="LpFeat3Desc" xml:space="preserve"><value>Phân tích kết quả thi với biểu đồ trực quan và thống kê toàn diện.</value></data>
+  <data name="LpFeat4Title" xml:space="preserve"><value>Bảo mật cao</value></data>
+  <data name="LpFeat4Desc" xml:space="preserve"><value>Hệ thống bảo mật đa lớp đảm bảo an toàn thông tin và kết quả thi.</value></data>
+  <data name="LpFeat5Title" xml:space="preserve"><value>Chấm điểm tự động</value></data>
+  <data name="LpFeat5Desc" xml:space="preserve"><value>Chấm điểm nhanh chóng và chính xác với thuật toán thông minh.</value></data>
+  <data name="LpFeat6Title" xml:space="preserve"><value>Quản lý người dùng</value></data>
+  <data name="LpFeat6Desc" xml:space="preserve"><value>Quản lý thí sinh, giáo viên và phân quyền linh hoạt theo vai trò.</value></data>
+
+  <data name="LpAboutTitle" xml:space="preserve"><value>Về EduTest Pro</value></data>
+  <data name="LpAboutDesc" xml:space="preserve"><value>EduTest Pro là nền tảng thi trực tuyến và đánh giá năng lực hàng đầu, được thiết kế đặc biệt cho các trường học và tổ chức giáo dục. Chúng tôi cam kết mang đến giải pháp công nghệ hiện đại, giúp nâng cao chất lượng giảng dạy và học tập.</value></data>
+  <data name="LpAboutExp" xml:space="preserve"><value>Năm kinh nghiệm</value></data>
+  <data name="LpAboutSchools" xml:space="preserve"><value>Trường học tin dùng</value></data>
+  <data name="LpAboutReliability" xml:space="preserve"><value>Độ tin cậy</value></data>
+
+  <data name="LpFooterDesc" xml:space="preserve"><value>Giải pháp thi trực tuyến và đánh giá năng lực hàng đầu cho giáo dục hiện đại.</value></data>
+  <data name="LpFooterQuickLinks" xml:space="preserve"><value>Liên kết nhanh</value></data>
+  <data name="LpFooterAboutUs" xml:space="preserve"><value>Về chúng tôi</value></data>
+  <data name="LpFooterPricing" xml:space="preserve"><value>Bảng giá</value></data>
+  <data name="LpFooterSupport" xml:space="preserve"><value>Hỗ trợ</value></data>
+  <data name="LpFooterResources" xml:space="preserve"><value>Tài nguyên</value></data>
+  <data name="LpFooterDocs" xml:space="preserve"><value>Tài liệu hướng dẫn</value></data>
+  <data name="LpFooterVideo" xml:space="preserve"><value>Video hướng dẫn</value></data>
+  <data name="LpFooterBlog" xml:space="preserve"><value>Blog</value></data>
+  <data name="LpFooterFAQ" xml:space="preserve"><value>Câu hỏi thường gặp</value></data>
+  <data name="LpFooterContact" xml:space="preserve"><value>Liên hệ</value></data>
+  <data name="LpFooterAddress" xml:space="preserve"><value>123 Đường ABC, Quận 1, TP.HCM</value></data>
+  <data name="ValRequireUsernameOrEmail" xml:space="preserve"><value>Vui lòng nhập email hoặc tên đăng nhập</value></data>
+  <data name="ValUsernameTooLong" xml:space="preserve"><value>Tài khoản quá dài, vui lòng nhập ít lại !</value></data>
+  <data name="ValUsernameNoSpaces" xml:space="preserve"><value>Tài khoản không được chứa khoảng trắng</value></data>
+  <data name="ValRequirePassword" xml:space="preserve"><value>Vui lòng nhập mật khẩu</value></data>
+  <data name="ValRequireName" xml:space="preserve"><value>Vui lòng nhập họ và tên</value></data>
+  <data name="ValRequireUsername" xml:space="preserve"><value>Vui lòng nhập tên đăng nhập</value></data>
+  <data name="ValUsernameMinLength" xml:space="preserve"><value>Tên đăng nhập phải có ít nhất 3 ký tự</value></data>
+  <data name="ValRequireEmail" xml:space="preserve"><value>Vui lòng nhập email</value></data>
+  <data name="ValInvalidEmail" xml:space="preserve"><value>Địa chỉ email không hợp lệ</value></data>
+  <data name="ValPasswordMinLength" xml:space="preserve"><value>Mật khẩu phải có ít nhất 6 ký tự</value></data>
+  <data name="ValPasswordMismatch" xml:space="preserve"><value>Mật khẩu xác nhận không khớp</value></data>
+  <data name="StudentDashboardTitle" xml:space="preserve"><value>Dashboard Thí Sinh</value></data>
+  <data name="Back" xml:space="preserve"><value>Quay lại</value></data>
+  <data name="UserProfile" xml:space="preserve"><value>Hồ sơ cá nhân</value></data>
+  <data name="Settings" xml:space="preserve"><value>Cài đặt</value></data>
+  <data name="ConfirmLogout" xml:space="preserve"><value>Bạn có chắc chắn muốn đăng xuất?</value></data>
+  <data name="SearchAndJoinExams" xml:space="preserve"><value>Tìm kiếm và tham gia các bài thi</value></data>
+  <data name="CreatePersonalExam" xml:space="preserve"><value>Tạo đề thi cá nhân</value></data>
+  <data name="JoinClass" xml:space="preserve"><value>Tham gia lớp học</value></data>
+  
+  <data name="TotalExamsCard" xml:space="preserve"><value>Tổng bài thi</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>Điểm trung bình</value></data>
+  <data name="Completed" xml:space="preserve"><value>Hoàn thành</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>Sắp tới</value></data>
+  
+  <data name="JoinedClassesTitle" xml:space="preserve"><value>Lớp học đã tham gia</value></data>
+  <data name="JoinedClassesDesc" xml:space="preserve"><value>Danh sách các lớp bạn đang là thành viên</value></data>
+  <data name="ClassCode" xml:space="preserve"><value>Mã</value></data>
+  <data name="TeacherLabel" xml:space="preserve"><value>GV</value></data>
+  <data name="ExamsCountLabel" xml:space="preserve"><value>bài thi</value></data>
+  <data name="EnterClass" xml:space="preserve"><value>Vào lớp học</value></data>
+  <data name="NoJoinedClasses" xml:space="preserve"><value>Bạn chưa tham gia lớp học nào.</value></data>
+  
+  <data name="ExamListTitle" xml:space="preserve"><value>Danh sách các bài thi</value></data>
+  <data name="FoundExamsCount" xml:space="preserve"><value>Tìm thấy {0} bài thi</value></data>
+  <data name="SearchExamPlaceholder" xml:space="preserve"><value>Tìm kiếm bài thi theo tên hoặc môn học...</value></data>
+  <data name="Filter" xml:space="preserve"><value>Bộ lọc</value></data>
+  <data name="SubjectLabel" xml:space="preserve"><value>Môn học</value></data>
+  <data name="AllSubjects" xml:space="preserve"><value>Tất cả môn học</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Trạng thái</value></data>
+  <data name="AllStatuses" xml:space="preserve"><value>Tất cả trạng thái</value></data>
+  <data name="DifficultyLabel" xml:space="preserve"><value>Độ khó</value></data>
+  <data name="AllDifficulties" xml:space="preserve"><value>Tất cả độ khó</value></data>
+  
+  <data name="TabAvailable" xml:space="preserve"><value>Có thể làm</value></data>
+  <data name="TabCompleted" xml:space="preserve"><value>Đã hoàn thành</value></data>
+  
+  <data name="TooltipAvailable" xml:space="preserve"><value>Bạn có thể bắt đầu làm bài ngay bây giờ</value></data>
+  <data name="TooltipNotYet" xml:space="preserve"><value>Chưa đến thời gian làm bài</value></data>
+  <data name="TooltipCompleted" xml:space="preserve"><value>Bạn đã hoàn thành bài thi này</value></data>
+  <data name="TooltipStartTime" xml:space="preserve"><value>Thời gian bắt đầu</value></data>
+  <data name="TooltipDuration" xml:space="preserve"><value>Thời lượng làm bài</value></data>
+  <data name="Minutes" xml:space="preserve"><value>phút</value></data>
+  <data name="TooltipQuestionCount" xml:space="preserve"><value>Số lượng câu hỏi</value></data>
+  <data name="QuestionsCountLabel" xml:space="preserve"><value>câu hỏi</value></data>
+  <data name="TooltipClassName" xml:space="preserve"><value>Tên lớp học</value></data>
+  <data name="ClassCodeLabel" xml:space="preserve"><value>Mã lớp:</value></data>
+  
+  <data name="StartExam" xml:space="preserve"><value>Bắt đầu làm bài</value></data>
+  <data name="NotExamTimeYet" xml:space="preserve"><value>Chưa tới giờ thi</value></data>
+  
+  <data name="NoExamsAvailable" xml:space="preserve"><value>Không có bài thi nào</value></data>
+  <data name="NoExamsAvailableDesc" xml:space="preserve"><value>Bạn chưa có bài thi nào từ các lớp đã tham gia.</value></data>
+  <data name="NoMatchingExams" xml:space="preserve"><value>Không tìm thấy bài thi phù hợp</value></data>
+  <data name="NoMatchingExamsDesc" xml:space="preserve"><value>Thử thay đổi điều kiện bộ lọc hoặc tìm kiếm từ khóa khác xem sao.</value></data>
+  
+  <data name="JoinNewClassTitle" xml:space="preserve"><value>Gia nhập lớp học mới</value></data>
+  <data name="ClassIdLabel" xml:space="preserve"><value>Mã Lớp Học (ID):</value></data>
+  <data name="EnterClassIdPlaceholder" xml:space="preserve"><value>Nhập mã lớp...</value></data>
+  <data name="ExampleClassId" xml:space="preserve"><value>Ví dụ: 1, 2, 3...</value></data>
+  <data name="ConfirmJoin" xml:space="preserve"><value>Xác nhận tham gia</value></data>
+  
+  <data name="CreatePersonalExamTitle" xml:space="preserve"><value>Tạo Đề Thi Cá Nhân (Upload Excel)</value></data>
+  <data name="DragDropExcel" xml:space="preserve"><value>Kéo thả file Excel vào đây</value></data>
+  <data name="OrClickToSelect" xml:space="preserve"><value>hoặc click để chọn file (.xlsx, .xls)</value></data>
+  <data name="ErrorInFile" xml:space="preserve"><value>Phát hiện lỗi trong file:</value></data>
+  <data name="PendingExamMsg" xml:space="preserve"><value>Bạn có một đề thi đang tạo: </value></data>
+  <data name="ContinueClassifying" xml:space="preserve"><value>Tiếp tục phân loại</value></data>
+  <data name="ViewCreatedExams" xml:space="preserve"><value>Xem danh sách đề thi đã tạo</value></data>
+  <data name="InstDashboardTitle" xml:space="preserve"><value>Dashboard Giảng Viên</value></data>
+  <data name="InstDashboardSub" xml:space="preserve"><value>Quản lý lớp học, đề thi và đánh giá kết quả</value></data>
+  <data name="InstRole" xml:space="preserve"><value>Giảng Viên</value></data>
+  
+  <data name="InstTotalExams" xml:space="preserve"><value>Tổng đề thi</value></data>
+  <data name="InstTotalStudents" xml:space="preserve"><value>Học sinh</value></data>
+  <data name="InstTotalClasses" xml:space="preserve"><value>Lớp học</value></data>
+  <data name="InstAvgScore" xml:space="preserve"><value>Điểm TB</value></data>
+  
+  <data name="CreateClass" xml:space="preserve"><value>Tạo lớp học</value></data>
+  <data name="CreateExam" xml:space="preserve"><value>Tạo đề thi</value></data>
+  <data name="CreateClassNew" xml:space="preserve"><value>Tạo lớp mới</value></data>
+  <data name="CreateExamNew" xml:space="preserve"><value>Tạo đề mới</value></data>
+
+  <data name="MyClassesTitle" xml:space="preserve"><value>Lớp học của tôi</value></data>
+  <data name="MyClassesSub" xml:space="preserve"><value>Quản lý các lớp học bạn đã tạo</value></data>
+  <data name="StudentsCount" xml:space="preserve"><value>sinh viên đang học</value></data>
+  <data name="ManageStudents" xml:space="preserve"><value>Quản lý HS</value></data>
+  <data name="AssignExams" xml:space="preserve"><value>Giao đề thi</value></data>
+  <data name="NoClassesYet" xml:space="preserve"><value>Chưa có lớp học nào</value></data>
+  
+  <data name="ManageExamsTitle" xml:space="preserve"><value>Quản lý đề thi</value></data>
+  <data name="ManageExamsSub" xml:space="preserve"><value>Danh sách các đề thi bạn đã tạo</value></data>
+  
+  <data name="InstTabAll" xml:space="preserve"><value>Tất cả</value></data>
+  <data name="InstTabOngoing" xml:space="preserve"><value>Đang diễn ra</value></data>
+  <data name="InstTabScheduled" xml:space="preserve"><value>Đã lên lịch</value></data>
+  <data name="InstExamQuestions" xml:space="preserve"><value>câu</value></data>
+  <data name="InstExamDuration" xml:space="preserve"><value>phút</value></data>
+  <data name="InstSubmissions" xml:space="preserve"><value>Bài nộp:</value></data>
+  <data name="InstTooltipView" xml:space="preserve"><value>Xem</value></data>
+  <data name="InstTooltipEdit" xml:space="preserve"><value>Chỉnh sửa</value></data>
+  <data name="InstTooltipDelete" xml:space="preserve"><value>Xóa</value></data>
+  <data name="NoExamsYet" xml:space="preserve"><value>Chưa có bài thi nào</value></data>
+
+  <data name="RecentGradingTitle" xml:space="preserve"><value>Chấm điểm gần đây</value></data>
+  <data name="JustCreated" xml:space="preserve"><value>Vừa tạo</value></data>
+  <data name="NoGradingData" xml:space="preserve"><value>Chưa có dữ liệu chấm điểm</value></data>
+  
+  <data name="QuickStatsTitle" xml:space="preserve"><value>Thống kê nhanh</value></data>
+  <data name="StatTotalClasses" xml:space="preserve"><value>Tổng lớp</value></data>
+  <data name="StatTotalStudents" xml:space="preserve"><value>Tổng sinh viên</value></data>
+  <data name="StatTotalExams" xml:space="preserve"><value>Tổng đề thi</value></data>
+  <data name="ExamAttemptTitle" xml:space="preserve"><value>Làm bài thi</value></data>
+  <data name="TimeLabel" xml:space="preserve"><value>Thời gian:</value></data>
+  <data name="SubmitExam" xml:space="preserve"><value>Nộp bài</value></data>
+  <data name="Progress" xml:space="preserve"><value>Tiến độ:</value></data>
+  <data name="QuestionTitle" xml:space="preserve"><value>Câu hỏi</value></data>
+  <data name="FlagForReview" xml:space="preserve"><value>Đánh dấu xem lại</value></data>
+  <data name="PrevQuestion" xml:space="preserve"><value>Câu trước</value></data>
+  <data name="NextQuestion" xml:space="preserve"><value>Câu sau</value></data>
+  
+  <data name="QuestionList" xml:space="preserve"><value>Danh sách câu hỏi</value></data>
+  <data name="TabDone" xml:space="preserve"><value>Đã làm</value></data>
+  <data name="TabFlagged" xml:space="preserve"><value>Đánh dấu</value></data>
+  <data name="Answered" xml:space="preserve"><value>Đã trả lời</value></data>
+  <data name="Unanswered" xml:space="preserve"><value>Chưa trả lời</value></data>
+  <data name="Flagged" xml:space="preserve"><value>Đánh dấu</value></data>
+  
+  <data name="ShortcutHints" xml:space="preserve"><value>Phím tắt:</value></data>
+  <data name="HintSelect" xml:space="preserve"><value>Chọn đáp án</value></data>
+  <data name="HintDeselect" xml:space="preserve"><value>Bỏ chọn</value></data>
+  <data name="HintNav" xml:space="preserve"><value>Chuyển câu</value></data>
+  <data name="HintFlag" xml:space="preserve"><value>Cắm cờ</value></data>
+  <data name="HintSubmit" xml:space="preserve"><value>Nộp bài</value></data>
+  <data name="HintCancel" xml:space="preserve"><value>Hủy xác nhận nộp bài</value></data>
+  
+  <data name="ConfirmSubmitTitle" xml:space="preserve"><value>Xác nhận nộp bài</value></data>
+  <data name="ConfirmSubmitDesc" xml:space="preserve"><value>Bạn có chắc chắn muốn nộp bài?</value></data>
+  <data name="ContinueExam" xml:space="preserve"><value>Tiếp tục làm bài</value></data>
+  
+  <data name="SubmitSuccessTitle" xml:space="preserve"><value>Nộp bài thành công!</value></data>
+  <data name="SubmitSuccessDesc" xml:space="preserve"><value>Hệ thống đã ghi nhận kết quả của bạn.</value></data>
+  <data name="ScoreLabel" xml:space="preserve"><value>Điểm số</value></data>
+  <data name="TotalCorrect" xml:space="preserve"><value>Tổng số câu đúng:</value></data>
+  <data name="LevelEasy" xml:space="preserve"><value>Mức độ Dễ:</value></data>
+  <data name="LevelMedium" xml:space="preserve"><value>Mức độ Trung bình:</value></data>
+  <data name="LevelHard" xml:space="preserve"><value>Mức độ Khó:</value></data>
+  <data name="ViewDetails" xml:space="preserve"><value>Xem chi tiết</value></data>
+  
+  <data name="WarningUnanswered" xml:space="preserve"><value>Bạn còn {0} câu chưa trả lời. Bài làm sẽ không thể chỉnh sửa sau khi nộp.</value></data>
+  <data name="ReviewScoreLabel" xml:space="preserve"><value>Điểm</value></data>
+  <data name="ReviewResultDetailed" xml:space="preserve"><value>Chi Tiết</value></data>
+  <data name="ReviewResultExam" xml:space="preserve"><value>Bài Thi</value></data>
+  <data name="ReviewTitle" xml:space="preserve"><value>Kết Quả {0}</value></data>
+  <data name="ReviewAttemptId" xml:space="preserve"><value>Mã bài làm:</value></data>
+  <data name="ReviewCorrectAnswers" xml:space="preserve"><value>Số câu đúng:</value></data>
+  <data name="ReviewStatusLabel" xml:space="preserve"><value>Trạng thái:</value></data>
+  <data name="ReviewStatusCompleted" xml:space="preserve"><value>Hoàn thành</value></data>
+  
+  <data name="ReviewBtnRetake" xml:space="preserve"><value>Làm lại ngay</value></data>
+  <data name="ReviewBtnSave" xml:space="preserve"><value>Lưu bài thi</value></data>
+  <data name="ReviewBtnDeletePersonal" xml:space="preserve"><value>Xóa bài thi cá nhân</value></data>
+  <data name="ReviewBtnHome" xml:space="preserve"><value>Về trang chủ</value></data>
+  <data name="ReviewBtnPrint" xml:space="preserve"><value>In đề thi</value></data>
+  
+  <data name="ReviewQuestionNumber" xml:space="preserve"><value>Câu {0}</value></data>
+  <data name="ReviewYourChoice" xml:space="preserve"><value>Lựa chọn của bạn</value></data>
+  
+  <data name="ReviewBtnDeleteAll" xml:space="preserve"><value>Xóa vĩnh viễn bài &amp; Câu hỏi</value></data>
+  <data name="ReviewBtnSaveAndReturn" xml:space="preserve"><value>Lưu &amp; Về danh sách ôn tập</value></data>
+  
+  <data name="SwalSaveSuccessTitle" xml:space="preserve"><value>Đã lưu bài thi!</value></data>
+  <data name="SwalSaveSuccessText" xml:space="preserve"><value>Bạn có thể làm lại bài này bất cứ lúc nào trong danh sách ôn tập.</value></data>
+  <data name="SwalDeleteWarningTitle" xml:space="preserve"><value>Cảnh báo nguy hiểm!</value></data>
+  <data name="SwalDeleteWarningText" xml:space="preserve"><value>Bạn đang xóa bài thi TỰ TẠO. Hành động này sẽ xóa sạch bài làm và XÓA LUÔN CÁC CÂU HỎI. Không thể khôi phục!</value></data>
+  <data name="SwalBtnConfirmDelete" xml:space="preserve"><value>Đồng ý, xóa hết!</value></data>
+  <data name="SwalBtnCancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="SwalDeleteSuccessTitle" xml:space="preserve"><value>Đã xóa!</value></data>
+  <data name="SwalDeleteSuccessText" xml:space="preserve"><value>Toàn bộ dữ liệu bài tự tạo đã bị xóa.</value></data>
+  <data name="SwalDeleteErrorTitle" xml:space="preserve"><value>Lỗi!</value></data>
+  <data name="SwalDeleteErrorText" xml:space="preserve"><value>Không thể xóa dữ liệu: </value></data>
+  <data name="CreateClassPageTitle" xml:space="preserve"><value>Tạo Lớp Học Mới</value></data>
+  <data name="CreateClassSub" xml:space="preserve"><value>Tạo lớp học để quản lý học sinh</value></data>
+  <data name="CheckFieldsError" xml:space="preserve"><value>Vui lòng kiểm tra lại các trường thông tin bên dưới</value></data>
+  <data name="RequireFieldsError" xml:space="preserve"><value>Vui lòng điền đầy đủ thông tin bắt buộc</value></data>
+  
+  <data name="GroupNameLabel" xml:space="preserve"><value>Tên lớp học</value></data>
+  <data name="GroupNamePlaceholder" xml:space="preserve"><value>VD: Lớp Toán 12A1</value></data>
+  <data name="NameLengthHint" xml:space="preserve"><value>3-100 ký tự</value></data>
+  
+  <data name="DescLabel" xml:space="preserve"><value>Mô tả</value></data>
+  <data name="DescPlaceholder" xml:space="preserve"><value>VD: Lớp ôn thi đại học khối A</value></data>
+  <data name="DescLengthHint" xml:space="preserve"><value>10-500 ký tự</value></data>
+  
+  <data name="CancelBtn" xml:space="preserve"><value>Hủy</value></data>
+  
+  <data name="ClassSuccessTitle" xml:space="preserve"><value>Tạo lớp học thành công!</value></data>
+  <data name="ClassSuccessSub" xml:space="preserve"><value>Lớp học của bạn đã được khởi tạo và sẵn sàng để sử dụng.</value></data>
+  <data name="BackToClassesBtn" xml:space="preserve"><value>Quay lại danh sách lớp học</value></data>
+  <data name="ManageClassesTitle" xml:space="preserve"><value>Quản Lý Lớp Học</value></data>
+  <data name="BtnAddNewClass" xml:space="preserve"><value>Thêm Lớp Mới</value></data>
+  
+  <data name="ColClassName" xml:space="preserve"><value>Tên Lớp</value></data>
+  <data name="ColDescription" xml:space="preserve"><value>Mô Tả</value></data>
+  <data name="ColStudentCount" xml:space="preserve"><value>Số Sinh Viên</value></data>
+  <data name="ColActions" xml:space="preserve"><value>Hành Động</value></data>
+  
+  <data name="BtnEditClass" xml:space="preserve"><value>Sửa</value></data>
+  <data name="BtnDeleteClass" xml:space="preserve"><value>Xóa</value></data>
+  <data name="ConfirmDeleteClass" xml:space="preserve"><value>Bạn chắc chắn muốn xóa?</value></data>
+  
+  <data name="NoClassesMsg" xml:space="preserve"><value>Chưa có lớp học nào.</value></data>
+  <data name="CreateNewClassLink" xml:space="preserve"><value>Tạo lớp mới</value></data>
+  <data name="CreateExamTitle" xml:space="preserve"><value>Tạo Đề Thi Mới</value></data>
+  <data name="CreateExamSub" xml:space="preserve"><value>Thiết lập thông tin và câu hỏi cho đề thi</value></data>
+  <data name="BasicInfoLabel" xml:space="preserve"><value>Thông tin cơ bản</value></data>
+  <data name="ExamNameLabel" xml:space="preserve"><value>Tên đề thi</value></data>
+  <data name="ExamNamePlaceholder" xml:space="preserve"><value>VD: Kiểm tra giữa kỳ</value></data>
+  <data name="SelectClassLabel" xml:space="preserve"><value>Chọn lớp học</value></data>
+  <data name="SelectClassOption" xml:space="preserve"><value>-- Chọn lớp --</value></data>
+  <data name="StartTimeLabel" xml:space="preserve"><value>Thời gian bắt đầu</value></data>
+  <data name="EndTimeLabel" xml:space="preserve"><value>Thời gian kết thúc</value></data>
+  <data name="DurationLabel" xml:space="preserve"><value>Thời lượng làm bài (phút)</value></data>
+  <data name="AdditionalSettingsLabel" xml:space="preserve"><value>Cài đặt thêm</value></data>
+  <data name="ActivateExamLabel" xml:space="preserve"><value>Kích hoạt đề thi</value></data>
+  <data name="ActivateExamDesc" xml:space="preserve"><value>Học sinh có thể bắt đầu làm bài thi</value></data>
+  <data name="QuestionsLabel" xml:space="preserve"><value>Câu hỏi</value></data>
+  <data name="BtnAddQuestion" xml:space="preserve"><value>Thêm Câu Hỏi</value></data>
+  <data name="BtnCancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="BtnCreateExam" xml:space="preserve"><value>Tạo Đề Thi</value></data>
+
+  <data name="RequireExamTitle" xml:space="preserve"><value>Vui lòng nhập tên đề thi</value></data>
+  <data name="RequireClass" xml:space="preserve"><value>Vui lòng chọn lớp học</value></data>
+  <data name="RequireStartTime" xml:space="preserve"><value>Vui lòng chọn thời gian bắt đầu</value></data>
+  <data name="RequireEndTime" xml:space="preserve"><value>Vui lòng chọn thời gian kết thúc</value></data>
+  <data name="RequireDuration" xml:space="preserve"><value>Vui lòng nhập thời lượng hợp lệ</value></data>
+  <data name="RequireAtLeastOneQuestion" xml:space="preserve"><value>Vui lòng thêm ít nhất một câu hỏi</value></data>
+  <data name="RequireQuestionContent" xml:space="preserve"><value>Câu hỏi {0}: Vui lòng nhập nội dung câu hỏi</value></data>
+  <data name="RequireAllAnswers" xml:space="preserve"><value>Câu hỏi {0}: Vui lòng nhập tất cả đáp án</value></data>
+  <data name="QuestionNumLabel" xml:space="preserve"><value>Câu hỏi {0}</value></data>
+  <data name="BtnDelete" xml:space="preserve"><value>Xóa</value></data>
+  <data name="QuestionContentLabel" xml:space="preserve"><value>Nội dung câu hỏi</value></data>
+  <data name="QuestionContentPlaceholder" xml:space="preserve"><value>Nhập nội dung câu hỏi...</value></data>
+  <data name="DifficultyLevelLabel" xml:space="preserve"><value>Mức độ khó</value></data>
+  <data name="CorrectAnswerLabel" xml:space="preserve"><value>Đáp án đúng</value></data>
+  <data name="AnswerA" xml:space="preserve"><value>Đáp án A</value></data>
+  <data name="AnswerB" xml:space="preserve"><value>Đáp án B</value></data>
+  <data name="AnswerC" xml:space="preserve"><value>Đáp án C</value></data>
+  <data name="AnswerD" xml:space="preserve"><value>Đáp án D</value></data>
+  <data name="AnswersListLabel" xml:space="preserve"><value>Các đáp án</value></data>
+  <data name="EnterAnswerA" xml:space="preserve"><value>Nhập đáp án A</value></data>
+  <data name="EnterAnswerB" xml:space="preserve"><value>Nhập đáp án B</value></data>
+  <data name="EnterAnswerC" xml:space="preserve"><value>Nhập đáp án C</value></data>
+  <data name="EnterAnswerD" xml:space="preserve"><value>Nhập đáp án D</value></data>
+  <data name="ManageExamsTitle" xml:space="preserve"><value>Quản Lý Bài Thi</value></data>
+  <data name="Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="ExamControl" xml:space="preserve"><value>Kiểm soát đề thi</value></data>
+  <data name="ExamsCount" xml:space="preserve"><value>{0} đề thi</value></data>
+  <data name="BtnExportReport" xml:space="preserve"><value>Xuất báo cáo</value></data>
+  <data name="BtnCreateNewExam" xml:space="preserve"><value>Tạo đề thi mới</value></data>
+  
+  <data name="StatusOngoing" xml:space="preserve"><value>Đang diễn ra</value></data>
+  <data name="StatusScheduled" xml:space="preserve"><value>Đã lên lịch</value></data>
+  <data name="StatusPaused" xml:space="preserve"><value>Tạm dừng</value></data>
+  <data name="StatusCompleted" xml:space="preserve"><value>Hoàn thành</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Nháp</value></data>
+  <data name="StatusAll" xml:space="preserve"><value>Tất cả trạng thái</value></data>
+  <data name="UpdatedAt" xml:space="preserve"><value>Cập nhật lúc {0}</value></data>
+  
+  <data name="SearchExamPlaceholder" xml:space="preserve"><value>Tìm đề thi, lớp...</value></data>
+  <data name="EmptyExamsTitle" xml:space="preserve"><value>Không có đề thi nào</value></data>
+  
+  <data name="CardQuestions" xml:space="preserve"><value>{0} câu</value></data>
+  <data name="CardDuration" xml:space="preserve"><value>{0} phút</value></data>
+  <data name="CardStudents" xml:space="preserve"><value>{0} HS</value></data>
+  <data name="CardSubmitted" xml:space="preserve"><value>Đã nộp</value></data>
+  <data name="CardAvgScore" xml:space="preserve"><value>Điểm TB: {0}</value></data>
+  <data name="CardNoAvgScore" xml:space="preserve"><value>Chưa có điểm TB</value></data>
+  
+  <data name="DetailSelectExam" xml:space="preserve"><value>Chọn một đề thi để xem chi tiết</value></data>
+  <data name="DetailQuestionsLabel" xml:space="preserve"><value>câu hỏi</value></data>
+  <data name="DetailDurationLabel" xml:space="preserve"><value>phút</value></data>
+  <data name="DetailCreatedLabel" xml:space="preserve"><value>Tạo ngày {0}</value></data>
+  <data name="BtnViewExam" xml:space="preserve"><value>Xem đề</value></data>
+  <data name="BtnEditExam" xml:space="preserve"><value>Chỉnh sửa</value></data>
+  
+  <data name="TabControl" xml:space="preserve"><value>Điều khiển</value></data>
+  <data name="TabSubmissions" xml:space="preserve"><value>Bài nộp</value></data>
+  <data name="TabStats" xml:space="preserve"><value>Thống kê</value></data>
+  
+  <data name="CtrlPanelTitle" xml:space="preserve"><value>Bảng điều khiển trạng thái</value></data>
+  <data name="BtnRefresh" xml:space="preserve"><value>Làm mới</value></data>
+  <data name="CtrlActionLabel" xml:space="preserve"><value>Hành động điều khiển:</value></data>
+  <data name="BtnActivate" xml:space="preserve"><value>Kích hoạt</value></data>
+  <data name="BtnPause" xml:space="preserve"><value>Tạm dừng</value></data>
+  <data name="BtnEnd" xml:space="preserve"><value>Kết thúc</value></data>
+  <data name="BtnSchedule" xml:space="preserve"><value>Lên lịch</value></data>
+  
+  <data name="ProgressRealtime" xml:space="preserve"><value>Tiến độ thời gian thực</value></data>
+  <data name="ProgSubmitted" xml:space="preserve"><value>Đã nộp</value></data>
+  <data name="ProgPending" xml:space="preserve"><value>Chưa nộp</value></data>
+  <data name="ProgTotal" xml:space="preserve"><value>Tổng cộng</value></data>
+  <data name="ProgPercent" xml:space="preserve"><value>hoàn thành</value></data>
+  
+  <data name="SettingTitle" xml:space="preserve"><value>Cài đặt đề thi</value></data>
+  <data name="SetShuffleQ" xml:space="preserve"><value>Xáo trộn câu hỏi</value></data>
+  <data name="SetShuffleQDesc" xml:space="preserve"><value>Ngẫu nhiên thứ tự</value></data>
+  <data name="SetShuffleA" xml:space="preserve"><value>Xáo trộn đáp án</value></data>
+  <data name="SetShuffleADesc" xml:space="preserve"><value>Ngẫu nhiên A,B,C,D</value></data>
+  <data name="SetShowResult" xml:space="preserve"><value>Hiện kết quả sau nộp</value></data>
+  <data name="SetShowResultDesc" xml:space="preserve"><value>Thí sinh xem điểm</value></data>
+  <data name="SetReview" xml:space="preserve"><value>Cho phép xem lại</value></data>
+  <data name="SetReviewDesc" xml:space="preserve"><value>Xem đáp án sau</value></data>
+  <data name="SetStrict" xml:space="preserve"><value>Chế độ nghiêm ngặt</value></data>
+  <data name="SetStrictDesc" xml:space="preserve"><value>Chống copy, tab</value></data>
+  
+  <data name="DiffTitle" xml:space="preserve"><value>Phân bổ độ khó</value></data>
+  <data name="DiffEasy" xml:space="preserve"><value>Dễ</value></data>
+  <data name="DiffMedium" xml:space="preserve"><value>Trung bình</value></data>
+  <data name="DiffHard" xml:space="preserve"><value>Khó</value></data>
+  <data name="DiffCount" xml:space="preserve"><value>câu</value></data>
+  
+  <data name="SubEmpty" xml:space="preserve"><value>Chưa có bài nộp nào</value></data>
+  <data name="SubListTitle" xml:space="preserve"><value>Danh sách bài nộp</value></data>
+  <data name="SubSearchPlaceholder" xml:space="preserve"><value>Tìm học sinh...</value></data>
+  <data name="BtnExportExcel" xml:space="preserve"><value>Xuất Excel</value></data>
+  <data name="ColStudent" xml:space="preserve"><value>Học sinh</value></data>
+  <data name="ColStudentId" xml:space="preserve"><value>Mã HS</value></data>
+  <data name="ColSubmitTime" xml:space="preserve"><value>Nộp lúc</value></data>
+  <data name="ColDuration" xml:space="preserve"><value>Thời gian</value></data>
+  <data name="ColCorrectTotal" xml:space="preserve"><value>Đúng/Tổng</value></data>
+  <data name="ColScore" xml:space="preserve"><value>Điểm số</value></data>
+  <data name="ColResult" xml:space="preserve"><value>Kết quả</value></data>
+  
+  <data name="StatsEmpty" xml:space="preserve"><value>Chưa có dữ liệu thống kê</value></data>
+  <data name="StatsDetailMsg" xml:space="preserve"><value>Thống kê chi tiết sẽ được hiển thị tại đây</value></data>
+  
+  <data name="ConfirmActionTitle" xml:space="preserve"><value>Xác nhận thao tác</value></data>
+  <data name="BtnCancel" xml:space="preserve"><value>Hủy</value></data>
+  <data name="BtnConfirm" xml:space="preserve"><value>Xác nhận</value></data>
+  
+  <data name="JsStatusActive" xml:space="preserve"><value>Đề thi đang diễn ra</value></data>
+  <data name="JsStatusActiveInfo" xml:space="preserve"><value>{0}/{1} học sinh đã nộp bài</value></data>
+  <data name="JsStatusScheduled" xml:space="preserve"><value>Đề thi đã được lên lịch</value></data>
+  <data name="JsStatusScheduledInfo" xml:space="preserve"><value>Bắt đầu lúc: {0}</value></data>
+  <data name="JsStatusPaused" xml:space="preserve"><value>Đề thi đang tạm dừng</value></data>
+  <data name="JsStatusPausedInfo" xml:space="preserve"><value>Thí sinh không thể nộp bài</value></data>
+  <data name="JsStatusCompleted" xml:space="preserve"><value>Đề thi đã kết thúc</value></data>
+  <data name="JsStatusCompletedInfo" xml:space="preserve"><value>Tất cả thí sinh đã hoàn thành</value></data>
+  <data name="JsStatusDraft" xml:space="preserve"><value>Đề thi đang ở chế độ nháp</value></data>
+  <data name="JsStatusDraftInfo" xml:space="preserve"><value>Chưa được kích hoạt</value></data>
+  
+  <data name="JsConfirmActivate" xml:space="preserve"><value>Kích hoạt đề thi? Học sinh sẽ có thể bắt đầu làm bài.</value></data>
+  <data name="JsConfirmPause" xml:space="preserve"><value>Tạm dừng đề thi? Học sinh đang làm sẽ bị gián đoạn.</value></data>
+  <data name="JsConfirmEnd" xml:space="preserve"><value>Kết thúc đề thi? Hành động này không thể hoàn tác.</value></data>
+  <data name="JsConfirmSchedule" xml:space="preserve"><value>Lên lịch đề thi cho lần sau?</value></data>
+  <data name="JsConfirmDelete" xml:space="preserve"><value>Bạn chắc chắn muốn xóa đề thi này?</value></data>
+  
+  <data name="JsAlertExportReport" xml:space="preserve"><value>Xuất báo cáo</value></data>
+  <data name="JsAlertExportExcel" xml:space="preserve"><value>Xuất Excel</value></data>
+  <data name="ResultTitle" xml:space="preserve"><value>Kết Quả Bài Thi</value></data>
+  <data name="ResultOf" xml:space="preserve"><value>Kết Quả: {0}</value></data>
+  <data name="BtnBack" xml:space="preserve"><value>Quay Lại</value></data>
+  
+  <data name="ColStudentName" xml:space="preserve"><value>Tên Sinh Viên</value></data>
+  <data name="ColScore" xml:space="preserve"><value>Điểm</value></data>
+  <data name="ColSubmitTime" xml:space="preserve"><value>Thời Gian Nộp Bài</value></data>
+  <data name="ColResult" xml:space="preserve"><value>Kết Quả</value></data>
+  
+  <data name="StatsHeader" xml:space="preserve"><value>Thống Kê</value></data>
+  <data name="StatCompletedStudents" xml:space="preserve"><value>Số Sinh Viên Hoàn Thành</value></data>
+  <data name="StatAvgScore" xml:space="preserve"><value>Điểm Trung Bình</value></data>
+  <data name="StatPass" xml:space="preserve"><value>Đạt</value></data>
+  <data name="StatFail" xml:space="preserve"><value>Không Đạt</value></data>
+  
+  <data name="NoResultsMsg" xml:space="preserve"><value>Chưa có sinh viên nào hoàn thành bài thi này.</value></data>
+  <data name="EditQuestionTitle" xml:space="preserve"><value>Chỉnh sửa câu hỏi</value></data>
+  <data name="QuestionId" xml:space="preserve"><value>ID Câu hỏi:</value></data>
+  <data name="BackToStore" xml:space="preserve"><value>Quay lại kho</value></data>
+  <data name="QuestionContent" xml:space="preserve"><value>Nội dung câu hỏi</value></data>
+  <data name="ContentPlaceholder" xml:space="preserve"><value>Nhập câu hỏi tại đây...</value></data>
+  <data name="CurrentDifficulty" xml:space="preserve"><value>Độ khó hiện tại</value></data>
+  <data name="NotClassified" xml:space="preserve"><value>Chưa phân loại</value></data>
+  <data name="DifficultyEasy" xml:space="preserve"><value>Dễ</value></data>
+  <data name="DifficultyMedium" xml:space="preserve"><value>Trung bình</value></data>
+  <data name="DifficultyHard" xml:space="preserve"><value>Khó</value></data>
+  <data name="AnswerListTitle" xml:space="preserve"><value>Danh sách các đáp án</value></data>
+  <data name="CheckCorrectAnswerHint" xml:space="preserve"><value>Tích chọn ô bên phải để đánh dấu đáp án đúng</value></data>
+  <data name="AnswerPlaceholder" xml:space="preserve"><value>Nội dung đáp án...</value></data>
+  <data name="UserChoiceTag" xml:space="preserve"><value>Lựa chọn của bạn</value></data>
+  <data name="BtnUpdate" xml:space="preserve"><value>Cập nhật và lưu thay đổi</value></data>
+</root>

@@ -12,8 +12,8 @@ using WebNangCao_MVC_Model.Data;
 namespace WebNangCao_MVC_Model.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260415035208_AddDifficultyToExam")]
-    partial class AddDifficultyToExam
+    [Migration("20260427095225_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,6 +38,37 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("ExamQuestion");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ActivityLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Details")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("Timestamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("now()");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActivityLogs");
                 });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Answer", b =>
@@ -66,6 +97,49 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.ToTable("Answers", (string)null);
                 });
 
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.BackupHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CreatedByUserId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ErrorMessage")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<long>("FileSizeKB")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedByUserId");
+
+                    b.ToTable("BackupHistories", (string)null);
+                });
+
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Exam", b =>
                 {
                     b.Property<int>("Id")
@@ -73,6 +147,9 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Difficulty")
                         .IsRequired()
@@ -84,7 +161,7 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("IdGroup")
+                    b.Property<int?>("IdGroup")
                         .HasColumnType("integer")
                         .HasColumnName("GroupId");
 
@@ -93,8 +170,17 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasColumnType("boolean")
                         .HasDefaultValue(true);
 
+                    b.Property<bool>("IsSelfCreated")
+                        .HasColumnType("boolean");
+
+                    b.Property<double>("PassingScore")
+                        .HasColumnType("double precision");
+
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("StudentId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("SubjectName")
                         .IsRequired()
@@ -123,14 +209,30 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Property<int>("ExamId")
                         .HasColumnType("integer");
 
+                    b.Property<string>("IpAddress")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsPassed")
+                        .HasColumnType("boolean");
+
                     b.Property<double>("Score")
                         .HasColumnType("double precision");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("StudentId")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("SubmitTime")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("TabSwitchCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TimeTakenSeconds")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -181,7 +283,12 @@ namespace WebNangCao_MVC_Model.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("TeacherId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
 
                     b.ToTable("Groups");
                 });
@@ -209,6 +316,127 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.ToTable("Questions", (string)null);
                 });
 
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.SystemConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("BlockUnknownIps")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("DefaultLanguage")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("EmailProvider")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<bool>("EnableEmailNotification")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EnablePushNotification")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("EnableSmsNotification")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("ForcePasswordChange90Days")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("LogAllActivities")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("MaxFailedLogins")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("MinPasswordLength")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("Require2FA")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("SessionTimeoutMinutes")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SmtpHost")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SmtpPassword")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("SmtpPort")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("SmtpUser")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SystemName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("SystemUrl")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<string>("Timezone")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UpdatedByUserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UpdatedByUserId");
+
+                    b.ToTable("SystemConfigs", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BlockUnknownIps = false,
+                            DefaultLanguage = "vi-VN",
+                            EmailProvider = "SMTP",
+                            EnableEmailNotification = true,
+                            EnablePushNotification = true,
+                            EnableSmsNotification = false,
+                            ForcePasswordChange90Days = false,
+                            LogAllActivities = true,
+                            MaxFailedLogins = 5,
+                            MinPasswordLength = 8,
+                            Require2FA = false,
+                            SessionTimeoutMinutes = 30,
+                            SmtpHost = "smtp.gmail.com",
+                            SmtpPassword = "",
+                            SmtpPort = 587,
+                            SmtpUser = "noreply@edutest.pro",
+                            SystemName = "EduTest Pro",
+                            SystemUrl = "https://edutest.pro",
+                            Timezone = "Asia/Ho_Chi_Minh",
+                            UpdatedAt = new DateTime(2026, 4, 27, 0, 0, 0, 0, DateTimeKind.Utc),
+                            UpdatedByUserId = 1
+                        });
+                });
+
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -217,10 +445,14 @@ namespace WebNangCao_MVC_Model.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BanReason")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+                        .HasDefaultValueSql("now()");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -232,6 +464,18 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsBanned")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastLoginAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
@@ -242,6 +486,9 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasDefaultValue("student");
+
+                    b.Property<int>("TotalOnlineMinutes")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -257,6 +504,24 @@ namespace WebNangCao_MVC_Model.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BanReason = "",
+                            CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "admin123@gmail.com",
+                            FullName = "SuperAdmin",
+                            IsActive = true,
+                            IsBanned = false,
+                            LastLoginAt = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            LastUpdateAt = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            PasswordHash = "$2a$12$y92vwbAsONQcJkeBGvrvP.W0Np6VHv2ouFiAeSkpLFC9iAcHzp2.q",
+                            Role = "Admin",
+                            TotalOnlineMinutes = 0,
+                            Username = "admin"
+                        });
                 });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.UserGroup", b =>
@@ -292,6 +557,17 @@ namespace WebNangCao_MVC_Model.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.ActivityLog", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Answer", b =>
                 {
                     b.HasOne("WebNangCao_MVC_Model.Models.Question", "Question")
@@ -303,13 +579,21 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.Navigation("Question");
                 });
 
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.BackupHistory", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "CreatedByUser")
+                        .WithMany()
+                        .HasForeignKey("CreatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("CreatedByUser");
+                });
+
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.Exam", b =>
                 {
                     b.HasOne("WebNangCao_MVC_Model.Models.Group", "Group")
                         .WithMany()
-                        .HasForeignKey("IdGroup")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IdGroup");
 
                     b.Navigation("Group");
                 });
@@ -342,6 +626,25 @@ namespace WebNangCao_MVC_Model.Migrations
                         .IsRequired();
 
                     b.Navigation("ExamResult");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.Group", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "Teacher")
+                        .WithMany()
+                        .HasForeignKey("TeacherId");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("WebNangCao_MVC_Model.Models.SystemConfig", b =>
+                {
+                    b.HasOne("WebNangCao_MVC_Model.Models.User", "UpdatedByUser")
+                        .WithMany()
+                        .HasForeignKey("UpdatedByUserId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("UpdatedByUser");
                 });
 
             modelBuilder.Entity("WebNangCao_MVC_Model.Models.UserGroup", b =>
