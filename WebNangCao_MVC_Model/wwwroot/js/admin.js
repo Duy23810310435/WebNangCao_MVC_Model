@@ -323,6 +323,9 @@ const btnCloseEditUser = document.getElementById('close-edit-user');
 if (btnCloseEditUser) btnCloseEditUser.addEventListener('click', () => closeModal(modalEditUser));
 attachBackdropClose(modalEditUser);
 
+// Thêm 1 biến toàn cục ở đầu file để lưu cái thẻ đang edit
+let currentUserCardToEdit = null;
+
 async function openEditModal(userId) {
     try {
         const response = await fetch(`/api/Admin/GetUser/${userId}`);
@@ -336,6 +339,12 @@ async function openEditModal(userId) {
             document.getElementById('edit-user-email').value = u.email;
             document.getElementById('edit-user-role').value = u.role.toLowerCase();
             document.getElementById('edit-user-active').value = u.isActive ? "true" : "false";
+
+            // LƯU LẠI CÁI THẺ DIV ĐANG EDIT (Dựa vào nút Edit vừa bấm)
+            // Có thể dùng event.target để tìm tổ tiên của nút là thẻ .user-card
+            if(window.event && window.event.target) {
+                currentUserCardToEdit = window.event.target.closest('.user-card');
+            }
 
             openModal(modalEditUser);
         } else {
@@ -380,9 +389,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 if (response.ok && result.success) {
                     alert("OK " + result.message);
-                    window.location.reload(); 
+                    
+                    if(currentUserCardToEdit) {
+                        // 1. Đổi data-category để JS phân trang nhận diện lại
+                        currentUserCardToEdit.setAttribute('data-category', payload.Role);
+                        
+                        // 2. Đổi Tên, Email
+                        currentUserCardToEdit.querySelector('h6.font-bold').innerText = payload.FullName;
+                        currentUserCardToEdit.querySelector('h6.text-gray-500').innerText = payload.Email;
+                        
+                        // 3. Đổi Avatar chữ cái đầu
+                        const firstChar = payload.FullName.substring(0, 1).toUpperCase();
+                        const avatarDiv = currentUserCardToEdit.querySelector('.rounded-full');
+                        avatarDiv.innerText = firstChar;
+                        
+                        // 4. Đổi Màu sắc + Text Role
+                        const roleSpan = currentUserCardToEdit.querySelector('span:first-child');
+                        if (payload.Role === 'instructor') {
+                            avatarDiv.classList.replace('bg-blue-500', 'bg-teal-500');
+                            roleSpan.className = "px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-md";
+                            roleSpan.innerText = "Giáo Viên"; // Hoặc t.TabTeacher
+                        } else {
+                            avatarDiv.classList.replace('bg-teal-500', 'bg-blue-500');
+                            roleSpan.className = "px-2 py-1 bg-gray-100 text-gray-700 text-xs font-semibold rounded-md";
+                            roleSpan.innerText = "Học Sinh"; // Hoặc t.TabStudent
+                        }
+                        
+                        // Chạy lại phân trang để nó sắp xếp vào đúng tab
+                        paginateUsers();
+                    } else {
+                        // Backup fallback nếu không tìm thấy thẻ
+                        window.location.reload(); 
+                    }
+                    
+                    closeModal(modalEditUser);
                 } else {
-                    alert("NOT OK " + t.MsgError + result.message); // 🚨 Đã Localize
+                    alert("NOT OK " + t.MsgError + result.message); 
                 }
             } catch (error) {
                 alert(t.MsgNetworkError); 
