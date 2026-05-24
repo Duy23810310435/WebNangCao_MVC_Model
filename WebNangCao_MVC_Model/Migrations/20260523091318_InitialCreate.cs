@@ -43,7 +43,9 @@ namespace WebNangCao_MVC_Model.Migrations
                     TotalOnlineMinutes = table.Column<int>(type: "integer", nullable: false),
                     IsBanned = table.Column<bool>(type: "boolean", nullable: false),
                     BanReason = table.Column<string>(type: "text", nullable: false),
-                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false),
+                    FailedLoginAttempts = table.Column<int>(type: "integer", nullable: false),
+                    LockoutEnd = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -311,8 +313,8 @@ namespace WebNangCao_MVC_Model.Migrations
 
             migrationBuilder.InsertData(
                 table: "Users",
-                columns: new[] { "Id", "BanReason", "CreatedAt", "Email", "FullName", "IsActive", "IsBanned", "LastLoginAt", "LastUpdateAt", "PasswordHash", "Role", "TotalOnlineMinutes", "Username" },
-                values: new object[] { 1, "", new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), "admin123@gmail.com", "SuperAdmin", true, false, new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), "$2a$12$y92vwbAsONQcJkeBGvrvP.W0Np6VHv2ouFiAeSkpLFC9iAcHzp2.q", "Admin", 0, "admin" });
+                columns: new[] { "Id", "BanReason", "CreatedAt", "Email", "FailedLoginAttempts", "FullName", "IsActive", "IsBanned", "LastLoginAt", "LastUpdateAt", "LockoutEnd", "PasswordHash", "Role", "TotalOnlineMinutes", "Username" },
+                values: new object[] { 1, "", new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), "admin123@gmail.com", 0, "SuperAdmin", true, false, new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc), null, "$2a$12$y92vwbAsONQcJkeBGvrvP.W0Np6VHv2ouFiAeSkpLFC9iAcHzp2.q", "Admin", 0, "admin" });
 
             migrationBuilder.InsertData(
                 table: "SystemConfigs",
@@ -355,6 +357,11 @@ namespace WebNangCao_MVC_Model.Migrations
                 column: "StudentId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Exams_CreatedAt",
+                table: "Exams",
+                column: "CreatedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Exams_GroupId",
                 table: "Exams",
                 column: "GroupId");
@@ -379,6 +386,11 @@ namespace WebNangCao_MVC_Model.Migrations
                 table: "Users",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Role_IsActive_CreatedAt",
+                table: "Users",
+                columns: new[] { "Role", "IsActive", "CreatedAt" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",

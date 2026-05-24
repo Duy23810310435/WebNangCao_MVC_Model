@@ -12,7 +12,7 @@ using WebNangCao_MVC_Model.Data;
 namespace WebNangCao_MVC_Model.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260427095225_InitialCreate")]
+    [Migration("20260523091318_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -192,6 +192,9 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("IX_Exams_CreatedAt");
 
                     b.HasIndex("IdGroup");
 
@@ -459,6 +462,9 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("integer");
+
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -474,6 +480,9 @@ namespace WebNangCao_MVC_Model.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("LockoutEnd")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("PasswordHash")
@@ -503,6 +512,9 @@ namespace WebNangCao_MVC_Model.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
+                    b.HasIndex("Role", "IsActive", "CreatedAt")
+                        .HasDatabaseName("IX_Users_Role_IsActive_CreatedAt");
+
                     b.ToTable("Users", (string)null);
 
                     b.HasData(
@@ -512,6 +524,7 @@ namespace WebNangCao_MVC_Model.Migrations
                             BanReason = "",
                             CreatedAt = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "admin123@gmail.com",
+                            FailedLoginAttempts = 0,
                             FullName = "SuperAdmin",
                             IsActive = true,
                             IsBanned = false,
