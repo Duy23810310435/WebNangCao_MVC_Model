@@ -122,7 +122,7 @@
 
                         <div class="flex w-full bg-gray-100 p-1 rounded-xl mt-8" id="tab-container">
                             <button class="tab-btn active-tab flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-500 ease-in-out bg-white text-gray-900 shadow-sm" data-tab="all">@Localizer["TabAll"]</button>
-                            <button class="tab-btn inactive-tab flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-500 ease-in-out hover:text-gray-700 hover:bg-gray-200/50" data-tab="teacher">@Localizer["TabTeacher"]</button>
+                            <button class="tab-btn inactive-tab flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-500 ease-in-out hover:text-gray-700 hover:bg-gray-200/50" data-tab="instructor">@Localizer["TabTeacher"]</button>
                             <button class="tab-btn inactive-tab flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-500 ease-in-out hover:text-gray-700 hover:bg-gray-200/50" data-tab="student">@Localizer["TabStudent"]</button>
                             <button class="tab-btn inactive-tab flex-1 py-2 px-4 text-sm font-semibold rounded-lg transition-all duration-500 ease-in-out hover:text-gray-700 hover:bg-gray-200/50" data-tab="pending">@Localizer["TabPending"]</button>
                         </div>
@@ -644,8 +644,7 @@
                     <label class="text-sm font-bold text-gray-700">@Localizer["Role"]</label>
                     <select id="edit-user-role" class="px-4 py-2 bg-gray-50 border rounded-xl outline-none">
                         <option value="student">@Localizer["RoleStudent"]</option>
-                        <option value="teacher">@Localizer["RoleInstructor"]</option>
-                        <option value="admin">@Localizer["RoleAdmin"]</option>
+                        <option value="instructor">@Localizer["RoleInstructor"]</option>
                     </select>
                 </div>
                 <div class="flex flex-col gap-2">
@@ -915,4 +914,3 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="~/js/admin.js" asp-append-version="true"></script>
-    <script src="~/js/admin.js" asp-append-version="true"></script>
