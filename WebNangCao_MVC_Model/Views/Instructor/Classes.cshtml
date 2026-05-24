@@ -5,57 +5,74 @@
     ViewData["Title"] = "Quản Lý Lớp Học";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2><i class="fas fa-users"></i> Quản Lý Lớp Học</h2>
+<div class="space-y-6">
+    <!-- Header Section -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">
+                <i class="fas fa-book-open mr-2"></i>Quản lý lớp học
+            </h2>
+            <p class="text-gray-600">Tạo và quản lý các lớp học của bạn</p>
         </div>
-        <div class="col-md-4 text-end">
-            <a href="@Url.Action("CreateClass")" class="btn btn-success">
-                <i class="fas fa-plus"></i> Thêm Lớp Mới
-            </a>
-        </div>
+        <a href="@Url.Action("CreateClass")" class="btn btn-primary bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition-all">
+            <i class="fas fa-plus mr-2"></i>Tạo lớp học mới
+        </a>
     </div>
 
     @if (Model.Any())
     {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Tên Lớp</th>
-                        <th>Mô Tả</th>
-                        <th>Số Sinh Viên</th>
-                        <th>Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var cls in Model)
-                    {
-                        <tr>
-                            <td><strong>@cls.GroupName</strong></td>
-                            <td>@cls.Description</td>
-                            <td><span class="badge bg-info">@cls.StudentCount</span></td>
-                            <td>
-                                <a href="@Url.Action("EditClass", new { id = cls.Id })" class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i> Sửa
-                                </a>
-                                <form method="post" action="@Url.Action("DeleteClass", new { id = cls.Id })" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn chắc chắn muốn xóa?')">
-                                        <i class="fas fa-trash"></i> Xóa
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+        <!-- Classes Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var cls in Model)
+            {
+                <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
+                    <!-- Card Header -->
+                    <div class="p-6 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">@cls.GroupName</h3>
+                    </div>
+
+                    <!-- Card Content -->
+                    <div class="p-6 space-y-4">
+                        <!-- Description -->
+                        <p class="text-sm text-gray-600 line-clamp-2">@cls.Description</p>
+
+                        <!-- Stats -->
+                        <div class="flex items-center gap-4 text-sm text-gray-500">
+                            <div class="flex items-center gap-1">
+                                <i class="fas fa-users w-4 h-4"></i>
+                                <span>@cls.StudentCount học viên</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex gap-2 pt-2">
+                            <a href="@Url.Action("EditClass", new { id = cls.Id })" class="flex-1 btn btn-sm btn-outline text-gray-700 border border-gray-300 hover:bg-gray-50 rounded px-3 py-2 text-center font-medium transition-colors inline-flex items-center justify-center gap-2">
+                                <i class="fas fa-eye"></i>
+                                <span>Chi tiết</span>
+                            </a>
+                            <a href="@Url.Action("EditClass", new { id = cls.Id })" class="btn btn-sm btn-outline border border-gray-300 hover:bg-gray-50 rounded px-3 py-2 font-medium transition-colors">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="post" action="@Url.Action("DeleteClass", new { id = cls.Id })" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-outline text-red-600 border border-red-300 hover:bg-red-50 rounded px-3 py-2 font-medium transition-colors" onclick="return confirm('Bạn chắc chắn muốn xóa lớp học này?')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
         </div>
     }
     else
     {
-        <div class="alert alert-info">
-            <p>Chưa có lớp học nào. <a href="@Url.Action("CreateClass")">Tạo lớp mới</a></p>
+        <!-- Empty State -->
+        <div class="col-span-full text-center py-12 bg-white rounded-lg border border-gray-200">
+            <i class="fas fa-users w-12 h-12 text-gray-400 mx-auto mb-3"></i>
+            <p class="text-gray-500 font-medium">Chưa có lớp học nào</p>
+            <p class="text-sm text-gray-400 mt-1">
+                Nhấn <a href="@Url.Action("CreateClass")" class="text-blue-600 hover:text-blue-700 font-medium">"Tạo lớp học mới"</a> để bắt đầu
+            </p>
         </div>
     }
 </div>
