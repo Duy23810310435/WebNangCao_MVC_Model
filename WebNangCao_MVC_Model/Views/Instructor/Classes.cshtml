@@ -5,74 +5,1175 @@
     ViewData["Title"] = "Quản Lý Lớp Học";
 }
 
-<div class="space-y-6">
-    <!-- Header Section -->
-    <div class="flex items-center justify-between">
-        <div>
-            <h2 class="text-2xl font-bold text-gray-900 mb-2">
-                <i class="fas fa-book-open mr-2"></i>Quản lý lớp học
-            </h2>
-            <p class="text-gray-600">Tạo và quản lý các lớp học của bạn</p>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    :root {
+        --primary: #3b82f6;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --dark: #1f2937;
+        --light: #f3f4f6;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background: #f8f9fb;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .class-container {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Top Bar */
+    .top-bar {
+        background: white;
+        border-bottom: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .top-bar-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 1rem 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4rem;
+    }
+
+    .breadcrumb-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .breadcrumb-section button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        color: #6b7280;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: color 0.2s;
+    }
+
+    .breadcrumb-section button:hover {
+        color: var(--primary);
+    }
+
+    .breadcrumb-divider {
+        width: 1px;
+        height: 1.25rem;
+        background: #d1d5db;
+    }
+
+    .page-title-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .page-icon {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        background: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+
+    .page-title-text h1 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .page-title-text p {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.125rem;
+    }
+
+    .top-bar-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .btn-outline {
+        background: white;
+        color: #4b5563;
+        border: 1px solid #e5e7eb;
+    }
+
+    .btn-outline:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #2563eb;
+    }
+
+    .btn-sm {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.75rem;
+    }
+
+    .btn-success {
+        background: var(--success);
+        color: white;
+    }
+
+    .btn-success:hover {
+        background: #059669;
+    }
+
+    .btn-danger {
+        background: var(--danger);
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    .btn-ghost {
+        background: none;
+        border: none;
+        color: #6b7280;
+        padding: 0.375rem 0.5rem;
+    }
+
+    .btn-ghost:hover {
+        color: var(--danger);
+    }
+
+    /* Summary Stats */
+    .summary-bar {
+        background: white;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .summary-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0.75rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .stat-item strong {
+        font-size: 0.875rem;
+        color: var(--dark);
+    }
+
+    .stat-item.active { background: #dcfce7; color: var(--success); }
+    .stat-item.upcoming { background: #dbeafe; color: var(--primary); }
+
+    /* Main Content */
+    .main-content {
+        max-width: 1440px;
+        margin: 0 auto;
+        width: 100%;
+        padding: 1.5rem;
+        display: flex;
+        gap: 1.5rem;
+        flex: 1;
+    }
+
+    /* Left Sidebar - Class List */
+    .class-list-sidebar {
+        width: 380px;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .filter-panel {
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-input-wrapper {
+        position: relative;
+    }
+
+    .search-input-wrapper i {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+        font-size: 0.875rem;
+    }
+
+    .search-input-wrapper input {
+        width: 100%;
+        padding: 0.625rem 0.75rem 0.625rem 2rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .search-input-wrapper input:focus {
+        outline: none;
+        ring: 2px;
+        ring-color: var(--primary);
+        border-color: var(--primary);
+    }
+
+    .filter-count {
+        font-size: 0.75rem;
+        color: #9ca3af;
+    }
+
+    .class-cards {
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 0.5rem;
+    }
+
+    .class-card {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .class-card:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .class-card.active {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+    }
+
+    .class-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .class-card-title {
+        flex: 1;
+    }
+
+    .class-card-title h3 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: #111827;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .class-card-title-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin-top: 0.25rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .class-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        border-radius: 9999px;
+        font-size: 0.7rem;
+        font-weight: 500;
+        white-space: nowrap;
+    }
+
+    .class-badge.active { background: #dcfce7; color: var(--success); }
+    .class-badge.upcoming { background: #dbeafe; color: var(--primary); }
+
+    .class-card-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.75rem;
+        font-size: 0.75rem;
+        color: #6b7280;
+    }
+
+    .class-card-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .status-dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 9999px;
+        background: var(--success);
+    }
+
+    /* Right Panel - Detail */
+    .detail-panel {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .detail-header {
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        padding: 1.25rem;
+    }
+
+    .detail-header-content {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .detail-header-info {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .detail-header-icon {
+        width: 3rem;
+        height: 3rem;
+        border-radius: 0.75rem;
+        background: var(--primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        flex-shrink: 0;
+    }
+
+    .detail-header-text h2 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .detail-header-title-row {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .detail-description {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+
+    .detail-header-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .detail-header-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: #4b5563;
+    }
+
+    .detail-header-meta-item i {
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    .detail-header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+    /* Tabs */
+    .tabs-container {
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        padding: 0.375rem;
+    }
+
+    .tabs-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+        background: #f3f4f6;
+        padding: 0.25rem;
+        border-radius: 0.5rem;
+    }
+
+    .tab-trigger {
+        background: transparent;
+        border: none;
+        padding: 0.625rem;
+        cursor: pointer;
+        border-radius: 0.375rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .tab-trigger:hover {
+        color: var(--primary);
+    }
+
+    .tab-trigger.active {
+        background: white;
+        color: var(--primary);
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .tabs-content {
+        padding: 1.25rem;
+        display: none;
+    }
+
+    .tabs-content.active {
+        display: block;
+    }
+
+    /* Overview Tab */
+    .overview-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .info-section {
+        background: white;
+        border-radius: 0.75rem;
+        border: 1px solid #e5e7eb;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: #111827;
+        font-size: 0.975rem;
+    }
+
+    .section-title i {
+        color: var(--primary);
+        font-size: 1rem;
+    }
+
+    .info-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.875rem;
+    }
+
+    .info-item:last-child {
+        border-bottom: none;
+    }
+
+    .info-label {
+        color: #6b7280;
+    }
+
+    .info-value {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    /* Members Tab */
+    .members-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .members-search {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .members-search input {
+        width: 200px;
+        padding: 0.375rem 0.75rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+    }
+
+    .members-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .members-table thead tr {
+        background: #f9fafb;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .members-table th {
+        padding: 0.75rem;
+        text-align: left;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .members-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid #f3f4f6;
+        font-size: 0.875rem;
+    }
+
+    .members-table tbody tr:hover {
+        background: #fafbfc;
+    }
+
+    .member-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+    }
+
+    .member-avatar {
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 50%;
+        background: #dbeafe;
+        color: #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    /* Empty State */
+    .empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1rem;
+        text-align: center;
+    }
+
+    .empty-state-icon {
+        font-size: 3rem;
+        color: #d1d5db;
+        margin-bottom: 0.75rem;
+    }
+
+    .empty-state-text {
+        color: #9ca3af;
+        font-size: 0.875rem;
+    }
+
+    .no-class-state {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .no-class-state-content {
+        text-align: center;
+    }
+
+    .no-class-state-icon {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 0.75rem;
+        background: #f3f4f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+        font-size: 2rem;
+        color: #d1d5db;
+    }
+
+    .no-class-state-text {
+        color: #9ca3af;
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: 0 20px 25px rgba(0, 0, 0, 0.15);
+        padding: 1.5rem;
+        max-width: 28rem;
+        width: 100%;
+        animation: slideUp 0.2s ease;
+    }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .modal-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.75rem;
+        background: #fed7aa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #d97706;
+        flex-shrink: 0;
+    }
+
+    .modal-title {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .modal-message {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+
+    /* Responsive */
+    @@media (max-width: 1024px) {
+        .main-content {
+            flex-direction: column;
+        }
+
+        .class-list-sidebar {
+            width: 100%;
+        }
+
+        .overview-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .tabs-list {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 640px) {
+        .detail-header-actions {
+            width: 100%;
+            flex-wrap: wrap;
+        }
+
+        .members-search input {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="class-container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-content">
+            <div class="breadcrumb-section">
+                <a href="@Url.Action("Dashboard", "Instructor")" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <i class="bi bi-arrow-left"></i> Dashboard
+                </a>
+                <div class="breadcrumb-divider"></div>
+                <div class="page-title-section">
+                    <div class="page-icon">
+                        <i class="bi bi-people"></i>
+                    </div>
+                    <div class="page-title-text">
+                        <h1>Quản lý lớp học</h1>
+                        <p>@Model.Count lớp học</p>
+                    </div>
+                </div>
+            </div>
+            <div class="top-bar-actions">
+                <button class="btn btn-outline" onclick="exportReport()">
+                    <i class="bi bi-download"></i> Xuất báo cáo
+                </button>
+                <a href="@Url.Action("CreateClass")" class="btn btn-primary">
+                    <i class="bi bi-plus"></i> Tạo lớp học mới
+                </a>
+            </div>
         </div>
-        <a href="@Url.Action("CreateClass")" class="btn btn-primary bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-2 rounded-lg font-medium shadow-sm hover:shadow-md transition-all">
-            <i class="fas fa-plus mr-2"></i>Tạo lớp học mới
-        </a>
     </div>
 
-    @if (Model.Any())
-    {
-        <!-- Classes Grid -->
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach (var cls in Model)
-            {
-                <div class="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
-                    <!-- Card Header -->
-                    <div class="p-6 border-b border-gray-200">
-                        <h3 class="text-lg font-semibold text-gray-900">@cls.GroupName</h3>
+    <!-- Summary Bar -->
+    <div class="summary-bar">
+        <div class="summary-content">
+            @{
+                var activeCount = Model.Count(c => c.StudentCount > 0);
+                var totalStudents = Model.Sum(c => c.StudentCount);
+            }
+            <div class="stat-item active">
+                <strong>@activeCount</strong>
+                <span>Lớp hoạt động</span>
+            </div>
+            <div class="stat-item upcoming">
+                <strong>@totalStudents</strong>
+                <span>Tổng học sinh</span>
+            </div>
+            <div style="margin-left: auto; display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #9ca3af;">
+                <i class="bi bi-clock-history"></i>
+                Cập nhật lúc @DateTime.Now.ToString("HH:mm")
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Left: Class List -->
+        <div class="class-list-sidebar">
+            <!-- Filters -->
+            <div class="filter-panel">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm lớp học..." onkeyup="filterClasses()">
+                </div>
+                <div class="filter-count">
+                    <span id="classCount">@Model.Count</span> / @Model.Count lớp học
+                </div>
+            </div>
+
+            <!-- Class Cards -->
+            <div class="class-cards" id="classList">
+                @if (!Model.Any())
+                {
+                    <div class="empty-state">
+                        <div class="empty-state-icon"><i class="bi bi-people"></i></div>
+                        <p class="empty-state-text">Không có lớp học nào</p>
                     </div>
+                }
+                else
+                {
+                    @foreach (var cls in Model)
+                    {
+                        <div class="class-card" onclick="selectClass(@cls.Id, '@cls.GroupName', '@(cls.Description ?? "")', @cls.StudentCount)">
+                            <div class="class-card-header">
+                                <div class="class-card-title">
+                                    <h3>@cls.GroupName</h3>
+                                    <div class="class-card-title-meta">
+                                        <span>@cls.Description</span>
+                                    </div>
+                                </div>
+                                <div class="class-badge active">
+                                    <span>Hoạt động</span>
+                                </div>
+                            </div>
 
-                    <!-- Card Content -->
-                    <div class="p-6 space-y-4">
-                        <!-- Description -->
-                        <p class="text-sm text-gray-600 line-clamp-2">@cls.Description</p>
+                            <div class="class-card-meta">
+                                <div class="class-card-meta-item">
+                                    <i class="bi bi-people"></i>
+                                    <span>@cls.StudentCount học sinh</span>
+                                </div>
+                            </div>
 
-                        <!-- Stats -->
-                        <div class="flex items-center gap-4 text-sm text-gray-500">
-                            <div class="flex items-center gap-1">
-                                <i class="fas fa-users w-4 h-4"></i>
-                                <span>@cls.StudentCount học viên</span>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.625rem; padding-top: 0.625rem; border-top: 1px solid #f3f4f6;">
+                                <span style="font-size: 0.75rem; color: #6b7280;">Lớp học</span>
+                                <div class="status-dot"></div>
                             </div>
                         </div>
+                    }
+                }
+            </div>
+        </div>
 
-                        <!-- Actions -->
-                        <div class="flex gap-2 pt-2">
-                            <a href="@Url.Action("EditClass", new { id = cls.Id })" class="flex-1 btn btn-sm btn-outline text-gray-700 border border-gray-300 hover:bg-gray-50 rounded px-3 py-2 text-center font-medium transition-colors inline-flex items-center justify-center gap-2">
-                                <i class="fas fa-eye"></i>
-                                <span>Chi tiết</span>
-                            </a>
-                            <a href="@Url.Action("EditClass", new { id = cls.Id })" class="btn btn-sm btn-outline border border-gray-300 hover:bg-gray-50 rounded px-3 py-2 font-medium transition-colors">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <form method="post" action="@Url.Action("DeleteClass", new { id = cls.Id })" style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-outline text-red-600 border border-red-300 hover:bg-red-50 rounded px-3 py-2 font-medium transition-colors" onclick="return confirm('Bạn chắc chắn muốn xóa lớp học này?')">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </form>
+        <!-- Right: Detail Panel -->
+        <div class="detail-panel" id="detailPanel" style="display: none;">
+            <!-- Class Header -->
+            <div class="detail-header">
+                <div class="detail-header-content">
+                    <div class="detail-header-info">
+                        <div class="detail-header-icon">
+                            <i class="bi bi-people"></i>
+                        </div>
+                        <div class="detail-header-text">
+                            <div class="detail-header-title-row">
+                                <h2 id="detailTitle">-</h2>
+                                <div class="class-badge active">Hoạt động</div>
+                            </div>
+                            <p class="detail-description" id="detailDescription">-</p>
+                            <div class="detail-header-meta">
+                                <div class="detail-header-meta-item">
+                                    <i class="bi bi-people"></i>
+                                    <span id="detailStudentCount">- học sinh</span>
+                                </div>
+                                <div class="detail-header-meta-item">
+                                    <i class="bi bi-calendar"></i>
+                                    <span id="detailCreated">-</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-header-actions">
+                        <button class="btn btn-outline btn-sm" onclick="viewClass()">
+                            <i class="bi bi-eye"></i> Xem
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="editClass()">
+                            <i class="bi bi-pencil"></i> Chỉnh sửa
+                        </button>
+                        <button class="btn btn-ghost btn-sm" onclick="deleteClass()" style="color: #ef4444;">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tabs-list">
+                    <button class="tab-trigger active" onclick="switchTab('overview')">
+                        <i class="bi bi-info-circle"></i> Tổng quan
+                    </button>
+                    <button class="tab-trigger" onclick="switchTab('members')">
+                        <i class="bi bi-people"></i> Thành viên
+                        <span style="margin-left: 0.25rem; background: #dbeafe; color: #2563eb; font-size: 0.7rem; padding: 0.125rem 0.375rem; border-radius: 9999px;" id="memberCount">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Content: Overview -->
+            <div id="overviewTab" class="tabs-content active">
+                <div class="overview-grid">
+                    <div class="info-section">
+                        <div class="section-title">
+                            <i class="bi bi-info-circle"></i> Thông tin cơ bản
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <span class="info-label">Tên lớp:</span>
+                                <span class="info-value" id="infoName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Mô tả:</span>
+                                <span class="info-value" id="infoDescription">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Tổng học sinh:</span>
+                                <span class="info-value" id="infoStudents">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="section-title">
+                            <i class="bi bi-bar-chart"></i> Thống kê
+                        </div>
+                        <div>
+                            <div class="info-item">
+                                <span class="info-label">Trạng thái:</span>
+                                <span class="info-value" style="color: var(--success);">Hoạt động</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ngày tạo:</span>
+                                <span class="info-value" id="infoCreated">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Học sinh tích cực:</span>
+                                <span class="info-value" id="infoActive">-</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            }
+            </div>
+
+            <!-- Tab Content: Members -->
+            <div id="membersTab" class="tabs-content">
+                <div style="display: none;" class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-people"></i></div>
+                    <p class="empty-state-text">Chưa có thành viên nào</p>
+                </div>
+
+                <div id="membersContent" style="display: none;">
+                    <div class="members-header">
+                        <h3 style="font-weight: 600; color: #111827;">Danh sách thành viên</h3>
+                        <div class="members-search">
+                            <div style="position: relative; flex: 1;">
+                                <i class="bi bi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.875rem;"></i>
+                                <input type="text" id="memberSearch" placeholder="Tìm học sinh..." style="padding-left: 2rem; width: 100%;">
+                            </div>
+                        </div>
+                    </div>
+                    <table class="members-table">
+                        <thead>
+                            <tr>
+                                <th>Học sinh</th>
+                                <th>Mã HS</th>
+                                <th>Email</th>
+                                <th style="text-align: center;">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-    }
-    else
-    {
-        <!-- Empty State -->
-        <div class="col-span-full text-center py-12 bg-white rounded-lg border border-gray-200">
-            <i class="fas fa-users w-12 h-12 text-gray-400 mx-auto mb-3"></i>
-            <p class="text-gray-500 font-medium">Chưa có lớp học nào</p>
-            <p class="text-sm text-gray-400 mt-1">
-                Nhấn <a href="@Url.Action("CreateClass")" class="text-blue-600 hover:text-blue-700 font-medium">"Tạo lớp học mới"</a> để bắt đầu
-            </p>
+
+        <!-- No Class Selected -->
+        <div id="noClassSelected" class="detail-panel no-class-state">
+            <div class="no-class-state-content">
+                <div class="no-class-state-icon"><i class="bi bi-people"></i></div>
+                <p class="no-class-state-text">Chọn một lớp học để xem chi tiết</p>
+            </div>
         </div>
-    }
+    </div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h3 class="modal-title">Xác nhận thao tác</h3>
+                    <p class="modal-message" id="modalMessage">-</p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeConfirm()">Hủy</button>
+                <button class="btn btn-primary" style="flex: 1;" id="confirmBtn" onclick="confirmAction()">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-header-actions">
+        <a href="@Url.Action("Exams", "Instructor")" class="add-btn" title="Xem tất cả đề thi">
+            👁️ Xem tất cả
+        </a>
+        <a href="@Url.Action("CreateExam")" class="add-btn">
+            ➕ Tạo mới
+        </a>
+    </div>
 </div>
+
+<script>
+    let selectedClassId = null;
+    let selectedClassData = {};
+    let pendingAction = null;
+
+    // Select class
+    function selectClass(id, name, description, studentCount) {
+        selectedClassId = id;
+        selectedClassData = {
+            id, name, description, studentCount
+        };
+
+        // Update detail panel
+        document.getElementById('detailPanel').style.display = 'flex';
+        document.getElementById('noClassSelected').style.display = 'none';
+
+        document.getElementById('detailTitle').textContent = name;
+        document.getElementById('detailDescription').textContent = description || 'Không có mô tả';
+        document.getElementById('detailStudentCount').textContent = studentCount + ' học sinh';
+        document.getElementById('detailCreated').textContent = 'Ngày ' + new Date().toLocaleDateString('vi-VN');
+
+        // Update info section
+        document.getElementById('infoName').textContent = name;
+        document.getElementById('infoDescription').textContent = description || 'Không có mô tả';
+        document.getElementById('infoStudents').textContent = studentCount;
+        document.getElementById('memberCount').textContent = studentCount;
+        document.getElementById('infoActive').textContent = Math.floor(studentCount * 0.8) + '/' + studentCount;
+        document.getElementById('infoCreated').textContent = new Date().toLocaleDateString('vi-VN');
+
+        // Highlight selected card
+        document.querySelectorAll('.class-card').forEach(el => el.classList.remove('active'));
+        event.target.closest('.class-card').classList.add('active');
+
+        // Reset tabs
+        switchTab('overview');
+    }
+
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tabs-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-trigger').forEach(el => el.classList.remove('active'));
+
+        // Show selected tab
+        document.getElementById(tabName + 'Tab').classList.add('active');
+        event.target.closest('.tab-trigger').classList.add('active');
+    }
+
+    function filterClasses() {
+        const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+        const cards = document.querySelectorAll('.class-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+            const title = card.querySelector('.class-card-title h3').textContent.toLowerCase();
+            const matchSearch = title.includes(searchQuery);
+
+            if (matchSearch) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        document.getElementById('classCount').textContent = visibleCount;
+    }
+
+    function editClass() {
+        if (selectedClassId) {
+            window.location.href = `/Instructor/EditClass?id=${selectedClassId}`;
+        }
+    }
+
+    function viewClass() {
+        if (selectedClassId) {
+            window.location.href = `/Instructor/ClassDetails?id=${selectedClassId}`;
+        }
+    }
+
+    function deleteClass() {
+        document.getElementById('modalMessage').textContent = 'Bạn chắc chắn muốn xóa lớp học này? Hành động này không thể hoàn tác.';
+        pendingAction = 'delete';
+        document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function confirmAction() {
+        if (!pendingAction || !selectedClassId) return;
+
+        if (pendingAction === 'delete') {
+            fetch(`/Instructor/DeleteClass?id=${selectedClassId}`, { method: 'POST' })
+                .then(() => window.location.reload())
+                .catch(e => console.error('Error:', e));
+        }
+
+        closeConfirm();
+    }
+
+    function closeConfirm() {
+        document.getElementById('confirmModal').classList.remove('active');
+        pendingAction = null;
+    }
+
+    function exportReport() {
+        alert('Xuất báo cáo');
+    }
+</script>

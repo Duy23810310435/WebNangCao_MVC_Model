@@ -10,13 +10,20 @@ namespace WebNangCao_MVC_Model.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.AddColumn<string>(
+                name: "Difficulty",
+                table: "Exams",
+                type: "text",
+                nullable: false,
+                defaultValue: "Trung bình");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-
+            migrationBuilder.DropColumn(
+                name: "Difficulty",
+                table: "Exams");
         }
     }
 }
