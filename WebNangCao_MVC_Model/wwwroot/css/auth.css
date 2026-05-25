@@ -269,7 +269,18 @@ body {
     font-size: 13px;
     margin-bottom: 15px;
 }
+.text-danger, .field-validation-error {
+    color: #ff4d4f !important;
+    font-size: 13px;
+    margin-top: 5px;
+    display: block; /* Ép nó rớt dòng hiển thị cho rõ */
+}
 
+/* Highlight luôn cái viền ô input thành màu đỏ cho khách hàng sợ */
+.input-validation-error {
+    border-color: #ff4d4f !important;
+    box-shadow: 0 0 5px rgba(255, 77, 79, 0.5);
+}
 /* Utility Class để ẩn hiện */
 .hidden {
     display: none !important;

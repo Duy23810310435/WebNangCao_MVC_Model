@@ -1,22 +1,27 @@
-﻿@model WebNangCao_MVC_Model.ViewModels.ReviewResultViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
+@model WebNangCao_MVC_Model.ViewModels.ReviewResultViewModel
 
 <div class="review-container">
     <header class="review-header">
         <div class="score-circle">
             <span class="score-value" id="animatedScore" data-target="@Model.Score">0</span>
-            <span class="score-label">Điểm</span>
+            <span class="score-label">@Localizer["ReviewScoreLabel"]</span>
         </div>
         <div class="summary-info">
-            <h1>Kết Quả @(Model.IsSelfCreated ? "Chi Tiết" : "Bài Thi")</h1>
-            <p>Mã bài làm: <strong>#@Model.ResultId</strong></p>
+            @{
+                string resultType = Model.IsSelfCreated ? Localizer["ReviewResultDetailed"].Value : Localizer["ReviewResultExam"].Value;
+            }
+            <h1>@Localizer["ReviewTitle", resultType]</h1>
+            <p>@Localizer["ReviewAttemptId"] <strong>#@Model.ResultId</strong></p>
             <div class="stats-grid">
                 <div class="stat-item">
-                    <span>Số câu đúng:</span>
+                    <span>@Localizer["ReviewCorrectAnswers"]</span>
                     <strong>@Model.Questions.Count(q => q.Answers.Any(a => a.IsCorrectAnswer && a.AnswerId == q.SelectedAnswerId)) / @Model.Questions.Count</strong>
                 </div>
                 <div class="stat-item">
-                    <span>Trạng thái:</span>
-                    <strong class="status-pass">Hoàn thành</strong>
+                    <span>@Localizer["ReviewStatusLabel"]</span>
+                    <strong class="status-pass">@Localizer["ReviewStatusCompleted"]</strong>
                 </div>
             </div>
 
@@ -24,22 +29,22 @@
                 @if (Model.IsSelfCreated)
                 {
                     <button type="button" onclick="handlePostTest('RETAKE', @Model.TestId)" class="btn-back" style="background: #3b82f6; color: white; border: none;">
-                        <i class="fas fa-redo"></i> Làm lại ngay
+                        <i class="fas fa-redo"></i> @Localizer["ReviewBtnRetake"]
                     </button>
                     <button type="button" onclick="handlePostTest('SAVE', @Model.TestId)" class="btn-print" style="background: #64748b; color: white; border: none;">
-                        <i class="fas fa-save"></i> Lưu bài thi
+                        <i class="fas fa-save"></i> @Localizer["ReviewBtnSave"]
                     </button>
                     <button type="button" onclick="handlePostTest('DELETE', @Model.TestId)" class="btn-print" style="background: #ef4444; color: white; border: none;">
-                        <i class="fas fa-trash-alt"></i> Xóa bài thi cá nhân
+                        <i class="fas fa-trash-alt"></i> @Localizer["ReviewBtnDeletePersonal"]
                     </button>
                 }
                 else
                 {
                     <a href="@Url.Action("Dashboard", "Student")" class="btn-back" style="background: #3b82f6; color: white; border: none; text-decoration: none; display: inline-flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-home"></i> Về trang chủ
+                        <i class="fas fa-home"></i> @Localizer["ReviewBtnHome"]
                     </a>
                     <button type="button" onclick="window.print()" class="btn-print" style="background: #64748b; color: white; border: none;">
-                        <i class="fas fa-print"></i> In đề thi
+                        <i class="fas fa-print"></i> @Localizer["ReviewBtnPrint"]
                     </button>
                 }
             </div>
@@ -52,7 +57,7 @@
             var q = Model.Questions[i];
             <section class="question-card">
                 <div class="question-title">
-                    <span class="q-number">Câu @(i + 1)</span>
+                    <span class="q-number">@Localizer["ReviewQuestionNumber", i + 1]</span>
                     <p>@q.Content</p>
                 </div>
 
@@ -80,7 +85,7 @@
                             <span class="answer-text">@ans.Content</span>
                             @if (isUserSelected)
                             {
-                                <span class="user-tag">Lựa chọn của bạn</span>
+                                <span class="user-tag">@Localizer["ReviewYourChoice"]</span>
                             }
                         </div>
                     }
@@ -92,10 +97,10 @@
         {
             <div style="display: flex; justify-content: center; gap: 15px; margin-top: 40px; padding-bottom: 20px;">
                 <button class="btn-print" style="background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer;" onclick="handlePostTest('DELETE', @Model.TestId)">
-                    <i class="fas fa-trash-alt"></i> Xóa vĩnh viễn bài & Câu hỏi
+                    <i class="fas fa-trash-alt"></i> @Localizer["ReviewBtnDeleteAll"]
                 </button>
                 <button class="btn-back" style="padding: 12px 24px; border-radius: 8px;" onclick="handlePostTest('SAVE', @Model.TestId)">
-                    <i class="fas fa-arrow-left"></i> Lưu & Về danh sách ôn tập
+                    <i class="fas fa-arrow-left"></i> @Localizer["ReviewBtnSaveAndReturn"]
                 </button>
             </div>
         }
@@ -109,7 +114,7 @@
         if (scoreElement) {
             const target = parseFloat(scoreElement.getAttribute("data-target"));
             let current = 0;
-            const increment = target / 50; // Tốc độ chạy
+            const increment = target / 50; 
 
             const updateScore = () => {
                 if (current < target) {
@@ -146,6 +151,20 @@
 {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        //CHÈN BIẾN LOCALIZER XUỐNG JAVASCRIPT
+        const swalTexts = {
+            saveSuccessTitle: '@Html.Raw(Localizer["SwalSaveSuccessTitle"].Value)',
+            saveSuccessText: '@Html.Raw(Localizer["SwalSaveSuccessText"].Value)',
+            deleteWarnTitle: '@Html.Raw(Localizer["SwalDeleteWarningTitle"].Value)',
+            deleteWarnText: '@Html.Raw(Localizer["SwalDeleteWarningText"].Value)',
+            btnConfirmDelete: '@Html.Raw(Localizer["SwalBtnConfirmDelete"].Value)',
+            btnCancel: '@Html.Raw(Localizer["SwalBtnCancel"].Value)',
+            deleteSuccessTitle: '@Html.Raw(Localizer["SwalDeleteSuccessTitle"].Value)',
+            deleteSuccessText: '@Html.Raw(Localizer["SwalDeleteSuccessText"].Value)',
+            deleteErrorTitle: '@Html.Raw(Localizer["SwalDeleteErrorTitle"].Value)',
+            deleteErrorText: '@Html.Raw(Localizer["SwalDeleteErrorText"].Value)'
+        };
+
         function handlePostTest(actionType, testId) {
             if (actionType === 'RETAKE') {
                 window.location.href = `/TestAttempt/GiaoDienLamBai?id=${testId}&mode=retake`;
@@ -155,8 +174,8 @@
             if (actionType === 'SAVE') {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Đã lưu bài thi!',
-                    text: 'Bạn có thể làm lại bài này bất cứ lúc nào trong danh sách ôn tập.',
+                    title: swalTexts.saveSuccessTitle,
+                    text: swalTexts.saveSuccessText,
                     timer: 2000,
                     showConfirmButton: false
                 }).then(() => {
@@ -167,14 +186,14 @@
 
             if (actionType === 'DELETE') {
                 Swal.fire({
-                    title: 'Cảnh báo nguy hiểm!',
-                    text: "Bạn đang xóa bài thi TỰ TẠO. Hành động này sẽ xóa sạch bài làm và XÓA LUÔN CÁC CÂU HỎI. Không thể khôi phục!",
+                    title: swalTexts.deleteWarnTitle,
+                    text: swalTexts.deleteWarnText,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#ef4444',
                     cancelButtonColor: '#64748b',
-                    confirmButtonText: 'Đồng ý, xóa hết!',
-                    cancelButtonText: 'Hủy'
+                    confirmButtonText: swalTexts.btnConfirmDelete,
+                    cancelButtonText: swalTexts.btnCancel
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch(`/TestAttempt/DeleteTestAndQuestions?testId=${testId}`, {
@@ -183,12 +202,12 @@
                         .then(res => res.json())
                         .then(data => {
                             if (data.success) {
-                                Swal.fire('Đã xóa!', 'Toàn bộ dữ liệu bài tự tạo đã bị xóa.', 'success')
+                                Swal.fire(swalTexts.deleteSuccessTitle, swalTexts.deleteSuccessText, 'success')
                                 .then(() => {
                                     window.location.href = '/Student/Dashboard';
                                 });
                             } else {
-                                Swal.fire('Lỗi!', 'Không thể xóa dữ liệu: ' + data.message, 'error');
+                                Swal.fire(swalTexts.deleteErrorTitle, swalTexts.deleteErrorText + data.message, 'error');
                             }
                         });
                     }

@@ -10,144 +10,252 @@ namespace WebNangCao_MVC_KiemThu
     [TestFixture]
     public class DangNhapDangKyTest
     {
+        // Đối tượng điều khiển trình duyệt (WebDriver) dùng để mô phỏng hành vi người dùng trên UI
         private IWebDriver _driver;
+
+        // URL gốc của hệ thống cần kiểm thử (chạy local)
         private const string BaseUrl = "https://localhost:7000";
 
         [SetUp]
         public void Setup()
         {
+            // Khởi tạo trình duyệt Chrome
             _driver = new ChromeDriver();
+
+            // Phóng to cửa sổ để tránh lỗi không click được element do responsive UI
             _driver.Manage().Window.Maximize();
+
+            // Thiết lập thời gian chờ ngầm định:
+            // Khi tìm element, Selenium sẽ chờ tối đa 10 giây trước khi ném lỗi
             _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
         }
 
-        // ==========================================
+        //
         // KHU VỰC 1: KIỂM THỬ LUỒNG CHUẨN (HAPPY PATH)
-        // Mục đích chung: Đảm bảo các chức năng cốt lõi nhất không bị hỏng trước khi test bảo mật.
-        // ==========================================
-        //1 và 2 là kịch bản đăng nhập sạch
+        // Mục tiêu:
+        // - Xác minh các chức năng cốt lõi hoạt động đúng theo thiết kế nghiệp vụ
+        // - Đây là các test nền tảng, nếu fail thì không cần kiểm thử sâu hơn
+        // 
+
         /// <summary>
-        /// KỊCH BẢN 1: Học viên đăng nhập và vào phòng thi hợp lệ.
-        /// - Vì sao/Mục đích: Đảm bảo chức năng quan trọng nhất của hệ thống (thi trực tuyến) đang hoạt động bình thường. 
-        /// Nếu test này fail, toàn bộ hệ thống coi như sập, không cần test tiếp các lỗi phức tạp khác.
-        /// - Dự đoán: Trình duyệt chuyển hướng thành công sang Dashboard và sau đó vào được URL làm bài thi.
-        /// - Kết quả thực tế (nếu Pass): Hệ thống hoạt động đúng thiết kế chuẩn.
+        /// KỊCH BẢN 1: Đăng nhập hợp lệ và truy cập chức năng làm bài thi
+        /// 
+        /// MỤC TIÊU KIỂM THỬ:
+        /// - Xác nhận luồng nghiệp vụ chính của hệ thống (End-to-End Flow)
+        /// - Bao gồm: Login → Dashboard → Truy cập phòng thi
+        /// 
+        /// PHÂN TÍCH KỸ THUẬT:
+        /// - Gửi request đăng nhập thông qua form HTML
+        /// - Hệ thống backend xác thực thông tin → tạo session/cookie
+        /// - Redirect về Dashboard nếu thành công
+        /// - Click nút "Bắt đầu làm bài" → điều hướng sang giao diện thi
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - URL chứa "/Student/Dashboard" sau khi login
+        /// - URL chứa "/TestAttempt/GiaoDienLamBai" sau khi bắt đầu thi
+        /// 
+        /// Ý NGHĨA:
+        /// - Đây là test quan trọng nhất (Critical Path)
+        /// - Nếu thất bại → hệ thống coi như không sử dụng được
         /// </summary>
         [Test]
         public void Test01_Student_LoginAndAccessExam()
         {
             _driver.Navigate().GoToUrl($"{BaseUrl}/Account?activeTab=login");
+
+            // Nhập email/tài khoản
             _driver.FindElement(By.Id("Login_UsernameOrEmail")).SendKeys("Nguyendinhduy257@gmail.com");
+
+            // Nhập mật khẩu
             _driver.FindElement(By.Id("Login_Password")).SendKeys("12345678");
+
+            // Submit form đăng nhập
             _driver.FindElement(By.CssSelector("#tab-content-login .btn-submit")).Click();
 
+            // Explicit wait: chờ đến khi URL chuyển sang Dashboard
             WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
             wait.Until(d => d.Url.Contains("/Student/Dashboard"));
 
+            // Tìm nút bắt đầu làm bài thông qua XPath (dựa vào class + text)
             var btnBatDau = _driver.FindElement(By.XPath("//a[contains(@class, 'btn-primary-action') and contains(., 'Bắt đầu làm bài')]"));
             btnBatDau.Click();
 
+            // Chờ điều hướng sang trang làm bài thi
             wait.Until(d => d.Url.Contains("/TestAttempt/GiaoDienLamBai"));
-            Assert.IsTrue(_driver.Url.Contains("/TestAttempt/GiaoDienLamBai"), "LỖI CHỨC NĂNG: Sinh viên không thể vào giao diện làm bài.");
+
+            // Kiểm tra kết quả cuối cùng
+            Assert.IsTrue(_driver.Url.Contains("/TestAttempt/GiaoDienLamBai"),
+                "LỖI CHỨC NĂNG: Không thể truy cập giao diện làm bài thi.");
         }
 
         /// <summary>
-        /// KỊCH BẢN 2: Đăng ký tài khoản Giảng viên hợp lệ.
-        /// - Vì sao/Mục đích: Yêu cầu nghiệp vụ cho phép người dùng tự chọn làm Student hoặc Instructor ở màn hình đăng ký.
-        /// Cần xác minh luồng chọn Role "Instructor" trên UI hoạt động đúng.
-        /// - Dự đoán: Đăng ký thành công và bị điều hướng sang trang /Instructor/Dashboard.
-        /// - Kết quả thực tế: Hoạt động đúng thiết kế.
+        /// KỊCH BẢN 2: Đăng ký tài khoản với Role = Instructor
+        /// 
+        /// MỤC TIÊU KIỂM THỬ:
+        /// - Xác minh hệ thống hỗ trợ đa vai trò (Role-based system)
+        /// - Kiểm tra việc chọn Role từ UI có được backend xử lý đúng hay không
+        /// 
+        /// PHÂN TÍCH KỸ THUẬT:
+        /// - Role được chọn thông qua JavaScript (không phải input trực tiếp)
+        /// - Hàm selectRole(...) sẽ gán giá trị vào input hidden
+        /// - Backend đọc giá trị này khi submit form
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - Tài khoản được tạo thành công
+        /// - Hệ thống tự động redirect sang "/Instructor/Dashboard"
+        /// 
+        /// RỦI RO:
+        /// - Nếu backend không validate Role → có thể bị giả mạo (test ở kịch bản 3)
         /// </summary>
         [Test]
         public void Test02_Instructor_RegisterSuccessfully()
         {
             _driver.Navigate().GoToUrl($"{BaseUrl}/Account?activeTab=register");
+
             _driver.FindElement(By.Id("Register_Name")).SendKeys("Giảng Viên Test");
             _driver.FindElement(By.Id("Register_Email")).SendKeys("gv_test_123@gmail.com");
             _driver.FindElement(By.Id("Register_Username")).SendKeys("gv_test_123");
             _driver.FindElement(By.Id("Register_Password")).SendKeys("123456");
             _driver.FindElement(By.Id("Register_ConfirmPassword")).SendKeys("123456");
 
-            // Chọn Role Giảng viên qua thao tác click UI (JS giả lập)
+            // Thực thi JavaScript để chọn Role Instructor (giả lập thao tác UI)
             IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
             js.ExecuteScript("selectRole('instructor', 'Giảng viên', 'briefcase')");
 
             _driver.FindElement(By.CssSelector("#tab-content-register .btn-submit")).Click();
 
             WebDriverWait wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
+
+            // Kiểm tra điều hướng thành công
             bool isRedirected = wait.Until(d => d.Url.Contains("/Instructor/Dashboard"));
-            Assert.IsTrue(isRedirected, "LỖI CHỨC NĂNG: Không thể đăng ký tài khoản Instructor dù nghiệp vụ cho phép.");
+
+            Assert.IsTrue(isRedirected,
+                "LỖI CHỨC NĂNG: Đăng ký Instructor thất bại hoặc không điều hướng đúng.");
         }
 
-        // ==========================================
-        // KHU VỰC 2: KIỂM THỬ BẢO MẬT & LOGIC (SECURITY)
-        // Mục đích chung: Tấn công vào các sơ hở trong tư duy lập trình Backend.
-        // ==========================================
+        // 
+        // KHU VỰC 2: KIỂM THỬ BẢO MẬT (SECURITY TESTING)
+        // Mục tiêu:
+        // - Phát hiện các lỗ hổng do backend tin tưởng dữ liệu từ client
+        // - Mô phỏng hành vi tấn công thực tế (hacker mindset)
+        // 
 
         /// <summary>
-        /// KỊCH BẢN 3: Tấn công leo thang đặc quyền (Privilege Escalation).
-        /// - Vì sao/Mục đích: Đánh giá xem Backend có tin tưởng mù quáng vào dữ liệu gửi từ Frontend hay không.
-        /// Ở đây, Role được gửi lên qua một thẻ <input type="hidden">. Kẻ xấu có thể dùng F12 (DevTools) để sửa thành 'admin'.
-        /// - Dự đoán (Expected): Backend phải kiểm tra lại biến Role. Nếu là 'admin', phải chặn lại hoặc tự động ép về 'student'.
-        /// - Kết quả thực tế (Actual): Dòng code `newUser.Role = model.Register.Role ?? "student";` trong Controller lấy trực tiếp giá trị bị thao túng. Kẻ tấn công tạo thành công tài khoản Admin.
+        /// KỊCH BẢN 3: Tấn công leo thang đặc quyền (Privilege Escalation)
+        /// 
+        /// MỤC TIÊU:
+        /// - Kiểm tra backend có validate Role hay không
+        /// 
+        /// NGUYÊN LÝ TẤN CÔNG:
+        /// - Role được lưu trong input hidden → có thể bị sửa bằng DevTools (F12)
+        /// - Hacker thay giá trị thành "admin" trước khi submit
+        /// 
+        /// VẤN ĐỀ BACKEND:
+        /// - Backend sử dụng trực tiếp giá trị từ client:
+        ///   newUser.Role = model.Register.Role ?? "student";
+        /// - Không có whitelist hoặc kiểm tra quyền
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - Backend phải từ chối hoặc override về role an toàn
+        /// 
+        /// HẬU QUẢ NẾU FAIL:
+        /// - Người dùng thường có thể tạo tài khoản Admin
+        /// - Toàn bộ hệ thống bị kiểm soát
         /// </summary>
         [Test]
         public void Test03_Attack_PrivilegeEscalation_Admin()
         {
             _driver.Navigate().GoToUrl(BaseUrl + "/Account/Index?activeTab=register");
+
             _driver.FindElement(By.Id("Register_Name")).SendKeys("Hacker Leo Quyền");
             _driver.FindElement(By.Id("Register_Email")).SendKeys($"hacker_{Guid.NewGuid()}@test.com");
             _driver.FindElement(By.Id("Register_Username")).SendKeys($"hacker_{Guid.NewGuid().ToString().Substring(0, 5)}");
             _driver.FindElement(By.Id("Register_Password")).SendKeys("123456");
             _driver.FindElement(By.Id("Register_ConfirmPassword")).SendKeys("123456");
 
-            // TẤN CÔNG: Ép giá trị role ẩn thành admin bằng Javascript (Mô phỏng F12 của Hacker)
+            // TẤN CÔNG: sửa trực tiếp DOM để thay đổi role
             IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
             js.ExecuteScript("document.getElementById('input-role-register').value = 'admin';");
 
             _driver.FindElement(By.CssSelector("#tab-content-register .btn-submit")).Click();
 
             Thread.Sleep(2000);
+
+            // Kiểm tra xem có bị chuyển vào khu vực Admin không
             bool isPrivilegeEscalated = _driver.Url.Contains("Admin");
 
             Assert.IsFalse(isPrivilegeEscalated,
-                " LỖI BẢO MẬT NGHIÊM TRỌNG (Privilege Escalation): " +
-                "Hệ thống đã cho phép Hacker tự phong làm Admin thông qua F12!");
+                "LỖI BẢO MẬT NGHIÊM TRỌNG: Cho phép leo thang đặc quyền thành Admin.");
         }
 
         /// <summary>
-        /// KỊCH BẢN 4: Thám tử vai trò - Rò rỉ thông tin (Information Disclosure).
-        /// - Vì sao/Mục đích: Hacker thường rà quét (Brute-force) để tìm kiếm các Email là Admin/Giáo viên nhằm mục tiêu hack sau này.
-        /// - Dự đoán (Expected): Dù sai mật khẩu hay sai Role, hệ thống chỉ nên báo 1 câu duy nhất: "Sai tài khoản hoặc mật khẩu".
-        /// - Kết quả thực tế (Actual): Controller báo "Tài khoản của bạn không thuộc vai trò này". Câu này vô tình TỐ CÁO với Hacker rằng Email này ĐÃ TỒN TẠI trên hệ thống và nó có chức vụ cao hơn Student.
+        /// KỊCH BẢN 4: Rò rỉ thông tin thông qua thông báo lỗi (Information Disclosure)
+        /// 
+        /// MỤC TIÊU:
+        /// - Kiểm tra hệ thống có vô tình tiết lộ thông tin nhạy cảm không
+        /// 
+        /// NGUYÊN LÝ:
+        /// - Khi đăng nhập sai Role, hệ thống trả về thông báo cụ thể:
+        ///   "Tài khoản không thuộc vai trò này"
+        /// 
+        /// VẤN ĐỀ:
+        /// - Hacker có thể suy ra:
+        ///   + Email tồn tại trong hệ thống
+        ///   + Vai trò thực tế của tài khoản
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - Chỉ hiển thị thông báo chung:
+        ///   "Sai tài khoản hoặc mật khẩu"
+        /// 
+        /// NGUY CƠ:
+        /// - Hỗ trợ brute-force và reconnaissance attack
         /// </summary>
         [Test]
         public void Test04_Attack_RoleSpoofing_InfoDisclosure()
         {
             _driver.Navigate().GoToUrl(BaseUrl + "/Account/Index?activeTab=login");
-            _driver.FindElement(By.Id("Login_UsernameOrEmail")).SendKeys("DuyGV@gmail.com"); // Giả sử đây là mail Admin
+
+            _driver.FindElement(By.Id("Login_UsernameOrEmail")).SendKeys("DuyGV@gmail.com");
             _driver.FindElement(By.Id("Login_Password")).SendKeys("12345678");
 
-            // Chọn sai Role (chọn Student thay vì Giáo Viên)
+            // Cố tình chọn sai Role
             IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
             js.ExecuteScript("selectRole('student', 'Học viên', 'user')");
+
             _driver.FindElement(By.CssSelector("#tab-content-login .btn-submit")).Click();
 
+            // Lấy nội dung thông báo lỗi
             var errorMsg = _driver.FindElement(By.ClassName("validation-summary")).Text;
+
             Assert.IsFalse(errorMsg.Contains("không thuộc vai trò này"),
-                " LỖI RÒ RỈ THÔNG TIN: Báo lỗi sai chức vụ đã giúp Hacker biết được Email có tồn tại trên DB.");
+                "LỖI RÒ RỈ THÔNG TIN: Thông báo lỗi tiết lộ sự tồn tại của tài khoản.");
         }
 
-        // ==========================================
-        // KHU VỰC 3: KIỂM THỬ VALIDATION VÀ DATA-DRIVEN
-        // Mục đích chung: Thử nghiệm các ranh giới dữ liệu (Boundary) và các ký tự đặc biệt.
-        // ==========================================
+        // 
+        // KHU VỰC 3: VALIDATION & DATA TESTING
+        // Mục tiêu:
+        // - Kiểm tra xử lý dữ liệu đầu vào
+        // - Phát hiện lỗi XSS, overflow, duplicate
+        //
 
         /// <summary>
-        /// KỊCH BẢN 5: Bơm mã độc XSS và Tràn bộ nhớ (Thiếu MaximumLength).
-        /// - Vì sao/Mục đích: FluentValidation hiện tại quá sơ sài, chỉ có NotEmpty(). Hệ thống chưa có cơ chế dọn dẹp mã độc.
-        /// - Dự đoán (Expected): Ký tự `<script>` phải bị chặn không cho lưu. Tên quá dài (500 chữ) phải báo lỗi đỏ trên form chứ không được sập Web.
-        /// - Kết quả thực tế (Actual): XSS lọt vào DB thành công, sẵn sàng tấn công Admin. Tên dài thì gây ra lỗi 500 (Server Exception) vì quá sức chứa của cột Varchar trong PostgreSQL.
+        /// KỊCH BẢN 5: Kiểm tra XSS và giới hạn độ dài dữ liệu
+        /// 
+        /// MỤC TIÊU:
+        /// - Phát hiện lỗ hổng XSS (Cross-Site Scripting)
+        /// - Kiểm tra thiếu ràng buộc độ dài (MaximumLength)
+        /// 
+        /// NGUYÊN LÝ:
+        /// - Inject mã độc vào input (script, img onerror)
+        /// - Gửi chuỗi quá dài để gây lỗi DB
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - Dữ liệu độc hại bị chặn
+        /// - Không xảy ra lỗi 500
+        /// 
+        /// NGUY CƠ:
+        /// - XSS → chiếm session Admin
+        /// - Overflow → crash hệ thống
         /// </summary>
         [TestCase("<script>alert('XSS')</script>", "xss1@test.com", "xss_user", "Mã độc XSS trong Tên")]
         [TestCase("Normal Name", "xss_email@test.com", "<img src=x onerror=alert(1)>", "Mã độc XSS trong Username")]
@@ -167,21 +275,38 @@ namespace WebNangCao_MVC_KiemThu
             _driver.FindElement(By.CssSelector("#tab-content-register .btn-submit")).Click();
             Thread.Sleep(1000);
 
-            // Bắt lỗi hệ thống sập
+            // Kiểm tra lỗi hệ thống
             bool isSystemCrashed = _driver.PageSource.Contains("Exception") || _driver.PageSource.Contains("500");
-            Assert.IsFalse(isSystemCrashed, $" CRASH DB [{description}]: Lỗi 500 Server do FluentValidator thiếu .MaximumLength().");
 
-            // Bắt lỗi lưu mã độc
+            Assert.IsFalse(isSystemCrashed,
+                $"CRASH DB [{description}]: Lỗi do thiếu giới hạn độ dài.");
+
+            // Kiểm tra việc lưu dữ liệu độc hại
             bool isRegisteredSuccessfully = _driver.Url.Contains("/Dashboard");
+
             Assert.IsFalse(isRegisteredSuccessfully,
-                $" LỖI BẢO MẬT XSS [{description}]: Dữ liệu chứa mã độc đã lọt qua Validator và lưu xuống DB.");
+                $"LỖI XSS [{description}]: Dữ liệu độc hại đã được lưu.");
         }
 
         /// <summary>
-        /// KỊCH BẢN 6: Lách luật chống trùng lặp dữ liệu (Duplicate Bypass).
-        /// - Vì sao/Mục đích: PostgreSQL mặc định là Case-Sensitive (Phân biệt chữ HOA và chữ thường). Nếu Controller dùng toán tử '==' để kiểm tra thì 'duy' khác 'DUY'.
-        /// - Dự đoán (Expected): Form sẽ hiển thị chữ đỏ "Email/Username đã tồn tại" khi người dùng cố tình viết hoa hoặc thêm dấu cách.
-        /// - Kết quả thực tế (Actual): Hệ thống bị lừa. Nó cho phép tạo tài khoản thành công, sinh ra một đống tài khoản Rác/Clone trong Database.
+        /// KỊCH BẢN 6: Lách kiểm tra trùng lặp dữ liệu
+        /// 
+        /// MỤC TIÊU:
+        /// - Kiểm tra logic chống duplicate (Email/Username)
+        /// 
+        /// NGUYÊN LÝ:
+        /// - PostgreSQL phân biệt chữ hoa/thường
+        /// - Chuỗi có thể chứa khoảng trắng ở đầu/cuối
+        /// 
+        /// VẤN ĐỀ:
+        /// - Nếu không dùng .Trim().ToLower() → bypass dễ dàng
+        /// 
+        /// KẾT QUẢ KỲ VỌNG:
+        /// - Hệ thống phát hiện trùng lặp và báo lỗi
+        /// 
+        /// NGUY CƠ:
+        /// - Sinh ra nhiều tài khoản clone
+        /// - Phá vỡ tính toàn vẹn dữ liệu
         /// </summary>
         [TestCase("DUY@gmail.com", "clone_user1", "Bypass bằng chữ HOA ở Email")]
         [TestCase("duy@gmail.com  ", "clone_user2", "Bypass bằng Khoảng Trắng ở Email")]
@@ -201,14 +326,18 @@ namespace WebNangCao_MVC_KiemThu
             Thread.Sleep(1000);
 
             bool isRedirectedToDashboard = _driver.Url.Contains("/Dashboard");
+
             Assert.IsFalse(isRedirectedToDashboard,
-                $"LỖI LOGIC [{description}]: DB PostgreSQL không hiểu chữ HOA/Thường giống nhau, sinh ra tài khoản Clone. Cần thêm hàm .Trim().ToLower() vào Backend!");
+                $"LỖI DUPLICATE [{description}]: Cho phép tạo tài khoản trùng lặp.");
         }
 
         [TearDown]
         public void Teardown()
         {
+            // Đóng toàn bộ trình duyệt
             _driver.Quit();
+
+            // Giải phóng tài nguyên WebDriver
             _driver.Dispose();
         }
     }

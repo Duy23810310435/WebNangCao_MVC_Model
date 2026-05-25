@@ -1,8 +1,10 @@
 ﻿@using WebNangCao_MVC_Model.ViewModels
 @model ExamCreateViewModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
 
 @{
-    ViewData["Title"] = "Tạo Bài Thi Mới";
+    ViewData["Title"] = Localizer["CreateExamTitle"];
 }
 
 <!DOCTYPE html>
@@ -332,7 +334,6 @@
 
 <div class="modal">
 
-    <!-- HEADER -->
     <div class="modal-header">
         <div class="header-left">
             <div class="header-icon">
@@ -341,8 +342,8 @@
                 </svg>
             </div>
             <div>
-                <div class="header-title">Tạo đề thi mới</div>
-                <div class="header-sub">Thiết lập thông tin và câu hỏi cho đề thi</div>
+                <div class="header-title">@Localizer["CreateExamTitle"]</div>
+                <div class="header-sub">@Localizer["CreateExamSub"]</div>
             </div>
         </div>
         <a href="@Url.Action("Exams")" class="close-btn">
@@ -352,25 +353,23 @@
         </a>
     </div>
 
-    <!-- BODY -->
     <form method="post" id="create-exam-form" class="modal-body">
 
         <div id="error-container"></div>
 
-        <div class="section-label">Thông tin cơ bản</div>
+        <div class="section-label">@Localizer["BasicInfoLabel"]</div>
 
-        <!-- Row 1: Tên Bài Thi + Lớp Học -->
         <div class="form-row">
             <div class="form-col">
-                <label for="exam-title" class="form-label">Tên đề thi <span class="required">*</span></label>
-                    <input asp-for="Title" class="form-input" id="exam-title" placeholder="VD: Kiểm tra giữa kỳ" required>
+                <label for="exam-title" class="form-label">@Localizer["ExamNameLabel"] <span class="required">*</span></label>
+                    <input asp-for="Title" class="form-input" id="exam-title" placeholder="@Localizer["ExamNamePlaceholder"]" required>
                     <span asp-validation-for="Title" class="validation-error"></span>
             </div>
             <div class="form-col">
-                <label for="exam-group" class="form-label">Chọn lớp học <span class="required">*</span></label>
+                <label for="exam-group" class="form-label">@Localizer["SelectClassLabel"] <span class="required">*</span></label>
                 <div class="select-wrap">
                     <select asp-for="IdGroup" class="form-input" id="exam-group" required>
-                        <option value="">-- Chọn lớp --</option>
+                        <option value="">@Localizer["SelectClassOption"]</option>
                         @if (ViewBag.Groups != null)
                         {
                             @foreach (var group in ViewBag.Groups)
@@ -384,23 +383,21 @@
             </div>
         </div>
 
-        <!-- Row 2: Thời gian bắt đầu + Thời gian kết thúc -->
         <div class="date-row">
             <div class="form-col">
-                <label for="exam-start" class="form-label">Thời gian bắt đầu <span class="required">*</span></label>
+                <label for="exam-start" class="form-label">@Localizer["StartTimeLabel"] <span class="required">*</span></label>
                 <input asp-for="StartTime" type="datetime-local" class="form-input" id="exam-start" required>
                 <span asp-validation-for="StartTime" class="validation-error"></span>
             </div>
             <div class="form-col">
-                <label for="exam-end" class="form-label">Thời gian kết thúc <span class="required">*</span></label>
+                <label for="exam-end" class="form-label">@Localizer["EndTimeLabel"] <span class="required">*</span></label>
                 <input asp-for="EndTime" type="datetime-local" class="form-input" id="exam-end" required>
                 <span asp-validation-for="EndTime" class="validation-error"></span>
             </div>
         </div>
 
-        <!-- Row 3: Thời lượng -->
         <div class="form-col full">
-            <label for="exam-duration" class="form-label">Thời lượng làm bài (phút) <span class="required">*</span></label>
+            <label for="exam-duration" class="form-label">@Localizer["DurationLabel"] <span class="required">*</span></label>
             <div class="input-icon-wrap">
                 <span class="icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -412,21 +409,19 @@
             <span asp-validation-for="Duration" class="validation-error"></span>
         </div>
 
-        <div class="section-label">Cài đặt thêm</div>
+        <div class="section-label">@Localizer["AdditionalSettingsLabel"]</div>
 
-        <!-- Active Toggle -->
         <div class="toggle-row">
             <div class="toggle-info">
-                <div class="toggle-name">Kích hoạt đề thi</div>
-                <div class="toggle-desc">Học sinh có thể bắt đầu làm bài thi</div>
+                <div class="toggle-name">@Localizer["ActivateExamLabel"]</div>
+                <div class="toggle-desc">@Localizer["ActivateExamDesc"]</div>
             </div>
             <div class="toggle" id="toggle-active" role="switch" aria-checked="false"></div>
             <input type="hidden" id="is-active-input" name="IsActive" value="false">
         </div>
 
-        <!-- Questions Section -->
         <div class="section-label">
-            <span>Câu hỏi (<span id="question-count" class="question-count">0</span>)</span>
+            <span>@Localizer["QuestionsLabel"] (<span id="question-count" class="question-count">0</span>)</span>
         </div>
 
         <div id="questions-container" style="display: flex; flex-direction: column; gap: 16px;"></div>
@@ -435,31 +430,62 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
             </svg>
-            Thêm Câu Hỏi
+            @Localizer["BtnAddQuestion"]
         </button>
 
     </form>
 
-    <!-- FOOTER -->
     <div class="modal-footer">
         <a href="@Url.Action("Exams")" class="btn btn-cancel">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
             </svg>
-            Hủy
+            @Localizer["BtnCancel"]
         </a>
         <button type="submit" form="create-exam-form" class="btn btn-submit" id="submit-btn">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
-            Tạo Đề Thi
+            @Localizer["BtnCreateExam"]
         </button>
     </div>
 
 </div>
 
 <script>
+    window.AppTranslations = {
+        RequireExamTitle: '@Html.Raw(Localizer["RequireExamTitle"].Value)',
+        RequireClass: '@Html.Raw(Localizer["RequireClass"].Value)',
+        RequireStartTime: '@Html.Raw(Localizer["RequireStartTime"].Value)',
+        RequireEndTime: '@Html.Raw(Localizer["RequireEndTime"].Value)',
+        RequireDuration: '@Html.Raw(Localizer["RequireDuration"].Value)',
+        RequireAtLeastOneQuestion: '@Html.Raw(Localizer["RequireAtLeastOneQuestion"].Value)',
+        RequireQuestionContent: '@Html.Raw(Localizer["RequireQuestionContent"].Value)',
+        RequireAllAnswers: '@Html.Raw(Localizer["RequireAllAnswers"].Value)',
+        QuestionNumLabel: '@Html.Raw(Localizer["QuestionNumLabel"].Value)',
+        BtnDelete: '@Html.Raw(Localizer["BtnDelete"].Value)',
+        QuestionContentLabel: '@Html.Raw(Localizer["QuestionContentLabel"].Value)',
+        QuestionContentPlaceholder: '@Html.Raw(Localizer["QuestionContentPlaceholder"].Value)',
+        DifficultyLevelLabel: '@Html.Raw(Localizer["DifficultyLevelLabel"].Value)',
+        CorrectAnswerLabel: '@Html.Raw(Localizer["CorrectAnswerLabel"].Value)',
+        AnswerA: '@Html.Raw(Localizer["AnswerA"].Value)',
+        AnswerB: '@Html.Raw(Localizer["AnswerB"].Value)',
+        AnswerC: '@Html.Raw(Localizer["AnswerC"].Value)',
+        AnswerD: '@Html.Raw(Localizer["AnswerD"].Value)',
+        AnswersListLabel: '@Html.Raw(Localizer["AnswersListLabel"].Value)',
+        EnterAnswerA: '@Html.Raw(Localizer["EnterAnswerA"].Value)',
+        EnterAnswerB: '@Html.Raw(Localizer["EnterAnswerB"].Value)',
+        EnterAnswerC: '@Html.Raw(Localizer["EnterAnswerC"].Value)',
+        EnterAnswerD: '@Html.Raw(Localizer["EnterAnswerD"].Value)',
+        LevelEasy: '@Html.Raw(Localizer["LevelEasy"].Value.Replace(":", ""))', 
+        LevelMedium: '@Html.Raw(Localizer["LevelMedium"].Value.Replace(":", ""))',
+        LevelHard: '@Html.Raw(Localizer["LevelHard"].Value.Replace(":", ""))'
+    };
+</script>
+
+<script>
     let questionIndex = 0;
+    const t = window.AppTranslations;
 
     document.addEventListener('DOMContentLoaded', function() {
         console.log('✓ DOM Loaded - Initializing form...');
@@ -479,13 +505,11 @@
             toggleActive.classList.toggle('on');
             isActiveInput.value = toggleActive.classList.contains('on') ? 'true' : 'false';
             toggleActive.setAttribute('aria-checked', toggleActive.classList.contains('on'));
-            console.log('Toggle changed to:', isActiveInput.value);
         });
 
         // Add question button
         addQuestionBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('✓ Adding question...');
             const card = createQuestionCard(questionIndex++);
             questionsContainer.appendChild(card);
             updateQuestionCount();
@@ -493,7 +517,6 @@
 
         // Form submission
         form.addEventListener('submit', (e) => {
-            console.log('✓ Form submit event triggered');
             
             // Validate basic fields
             const title = document.getElementById('exam-title').value.trim();
@@ -505,31 +528,26 @@
             const errorContainer = document.getElementById('error-container');
             errorContainer.innerHTML = '';
 
-            // Check required fields
+            // Check required fields (Dịch bằng JS)
             if (!title) {
                 e.preventDefault();
-                showError('Vui lòng nhập tên đề thi');
-                return;
+                showError(t.RequireExamTitle); return;
             }
             if (!group) {
                 e.preventDefault();
-                showError('Vui lòng chọn lớp học');
-                return;
+                showError(t.RequireClass); return;
             }
             if (!startTime) {
                 e.preventDefault();
-                showError('Vui lòng chọn thời gian bắt đầu');
-                return;
+                showError(t.RequireStartTime); return;
             }
             if (!endTime) {
                 e.preventDefault();
-                showError('Vui lòng chọn thời gian kết thúc');
-                return;
+                showError(t.RequireEndTime); return;
             }
             if (!duration || duration <= 0) {
                 e.preventDefault();
-                showError('Vui lòng nhập thời lượng hợp lệ');
-                return;
+                showError(t.RequireDuration); return;
             }
 
             // Collect questions data
@@ -538,7 +556,7 @@
 
             if (cards.length === 0) {
                 e.preventDefault();
-                showError('Vui lòng thêm ít nhất một câu hỏi');
+                showError(t.RequireAtLeastOneQuestion);
                 return;
             }
 
@@ -549,14 +567,14 @@
                     const correctAnswerIndex = parseInt(card.querySelector('.question-correct-answer').value);
                     
                     if (!content) {
-                        throw new Error(`Câu hỏi ${idx + 1}: Vui lòng nhập nội dung câu hỏi`);
+                        throw new Error(t.RequireQuestionContent.replace('{0}', idx + 1));
                     }
 
                     const answers = [];
                     card.querySelectorAll('.question-answer').forEach((input, ansIdx) => {
                         const ansText = input.value.trim();
                         if (!ansText) {
-                            throw new Error(`Câu hỏi ${idx + 1}: Vui lòng nhập tất cả đáp án`);
+                            throw new Error(t.RequireAllAnswers.replace('{0}', idx + 1));
                         }
                         answers.push({
                             text: ansText,
@@ -591,12 +609,6 @@
                     addHiddenInput(`Questions[${idx}].Answers[${ansIdx}].IsCorrect`, ans.isCorrect);
                 });
             });
-
-            console.log('✓ Form data prepared, submitting...');
-            console.log('✓ Questions count:', questions.length);
-            console.log('✓ Exam title:', title);
-            console.log('✓ Group ID:', group);
-            // Form will submit naturally
         });
 
         function showError(message) {
@@ -624,66 +636,65 @@
         card.className = 'question-card';
         card.innerHTML = `
             <div class="question-header">
-                <label class="form-label">Câu hỏi ${index + 1}</label>
-                <button type="button" class="btn btn-sm btn-remove" aria-label="Xóa câu hỏi ${index + 1}">
+                <label class="form-label">${t.QuestionNumLabel.replace('{0}', index + 1)}</label>
+                <button type="button" class="btn btn-sm btn-remove" aria-label="${t.BtnDelete}">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
-                    Xóa
+                    ${t.BtnDelete}
                 </button>
             </div>
 
             <div class="form-col full">
-                <label for="q-${index}-content" class="form-label">Nội dung câu hỏi <span class="required">*</span></label>
-                <textarea class="form-input question-content" id="q-${index}-content" name="Questions[${index}].Content" placeholder="Nhập nội dung câu hỏi..." required></textarea>
+                <label for="q-${index}-content" class="form-label">${t.QuestionContentLabel} <span class="required">*</span></label>
+                <textarea class="form-input question-content" id="q-${index}-content" name="Questions[${index}].Content" placeholder="${t.QuestionContentPlaceholder}" required></textarea>
             </div>
 
             <div class="form-row">
                 <div class="form-col">
-                    <label for="q-${index}-difficulty" class="form-label">Mức độ khó <span class="required">*</span></label>
+                    <label for="q-${index}-difficulty" class="form-label">${t.DifficultyLevelLabel} <span class="required">*</span></label>
                     <div class="select-wrap">
                         <select class="form-input question-difficulty" id="q-${index}-difficulty" name="Questions[${index}].Difficulty" required>
-                            <option value="Dễ">Dễ</option>
-                            <option value="Trung bình" selected>Trung bình</option>
-                            <option value="Khó">Khó</option>
+                            <option value="Dễ">${t.LevelEasy}</option>
+                            <option value="Trung bình" selected>${t.LevelMedium}</option>
+                            <option value="Khó">${t.LevelHard}</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-col">
-                    <label for="q-${index}-correct" class="form-label">Đáp án đúng <span class="required">*</span></label>
+                    <label for="q-${index}-correct" class="form-label">${t.CorrectAnswerLabel} <span class="required">*</span></label>
                     <div class="select-wrap">
                         <select class="form-input question-correct-answer" id="q-${index}-correct" name="Questions[${index}].CorrectAnswerIndex" required>
-                            <option value="0">Đáp án A</option>
-                            <option value="1">Đáp án B</option>
-                            <option value="2">Đáp án C</option>
-                            <option value="3">Đáp án D</option>
+                            <option value="0">${t.AnswerA}</option>
+                            <option value="1">${t.AnswerB}</option>
+                            <option value="2">${t.AnswerC}</option>
+                            <option value="3">${t.AnswerD}</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <label class="form-label" style="margin-top: 8px;">Các đáp án <span class="required">*</span></label>
+            <label class="form-label" style="margin-top: 8px;">${t.AnswersListLabel} <span class="required">*</span></label>
             <div class="answers-grid">
                 <div>
                     <label for="q-${index}-ans-0" class="answer-label">A</label>
-                    <input type="text" class="form-input question-answer" id="q-${index}-ans-0" name="Questions[${index}].Answers[0].Text" placeholder="Nhập đáp án A" required>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-0" name="Questions[${index}].Answers[0].Text" placeholder="${t.EnterAnswerA}" required>
                 </div>
                 <div>
                     <label for="q-${index}-ans-1" class="answer-label">B</label>
-                    <input type="text" class="form-input question-answer" id="q-${index}-ans-1" name="Questions[${index}].Answers[1].Text" placeholder="Nhập đáp án B" required>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-1" name="Questions[${index}].Answers[1].Text" placeholder="${t.EnterAnswerB}" required>
                 </div>
                 <div>
                     <label for="q-${index}-ans-2" class="answer-label">C</label>
-                    <input type="text" class="form-input question-answer" id="q-${index}-ans-2" name="Questions[${index}].Answers[2].Text" placeholder="Nhập đáp án C" required>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-2" name="Questions[${index}].Answers[2].Text" placeholder="${t.EnterAnswerC}" required>
                 </div>
                 <div>
                     <label for="q-${index}-ans-3" class="answer-label">D</label>
-                    <input type="text" class="form-input question-answer" id="q-${index}-ans-3" name="Questions[${index}].Answers[3].Text" placeholder="Nhập đáp án D" required>
+                    <input type="text" class="form-input question-answer" id="q-${index}-ans-3" name="Questions[${index}].Answers[3].Text" placeholder="${t.EnterAnswerD}" required>
                 </div>
             </div>
         `;
 
-        // Add remove button handler
         card.querySelector('.btn-remove').addEventListener('click', (e) => {
             e.preventDefault();
             card.remove();
@@ -701,7 +712,7 @@
         const cards = container.querySelectorAll('.question-card');
         cards.forEach((card, idx) => {
             const label = card.querySelector('label.form-label');
-            label.textContent = `Câu hỏi ${idx + 1}`;
+            label.textContent = t.QuestionNumLabel.replace('{0}', idx + 1);
         });
     }
 </script>

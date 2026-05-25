@@ -1,6 +1,6 @@
 ﻿@model WebNangCao_MVC_Model.Models.AuthViewModels
 @{
-    ViewData["Title"] = "Đăng nhập / Đăng ký";
+    ViewData["Title"] = Localizer["AuthTitle"];
     Layout = null;
 }
 
@@ -9,38 +9,37 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - EduTest</title>
+    <title>@Localizer["AuthTitle"] - EduTest</title>
     <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
 </head>
 <body>
 
     <div class="auth-container">
-        <!--Toggle cho Role của User-->
         <div class="role-wrapper">
             <div class="role-dropdown" id="roleDropdown" onclick="toggleRoleList()">
                 <div class="role-selected">
                     <div class="role-info">
                         <i data-lucide="user" id="current-role-icon" class="role-icon"></i>
-                        <span id="current-role-text">Học viên</span>
+                        <span id="current-role-text">@Localizer["RoleStudent"]</span>
                     </div>
                     <i data-lucide="chevron-down" class="role-arrow"></i>
                 </div>
 
                 <ul class="role-options" id="roleOptions">
-                    <li onclick="selectRole('student', 'Học viên', 'user')">
+                    <li onclick="selectRole('student', '@Localizer["RoleStudent"]', 'user')">
                         <i data-lucide="user" class="opt-icon"></i>
-                        <span>Học viên</span>
+                        <span>@Localizer["RoleStudent"]</span>
                         <i data-lucide="check" class="check-icon" id="check-student"></i>
                     </li>
 
-                    <li onclick="selectRole('instructor', 'Giảng viên', 'briefcase')">
+                    <li onclick="selectRole('instructor', '@Localizer["RoleInstructor"]', 'briefcase')">
                         <i data-lucide="briefcase" class="opt-icon"></i>
-                        <span>Giảng viên</span>
+                        <span>@Localizer["RoleInstructor"]</span>
                         <i data-lucide="check" class="check-icon hidden" id="check-instructor"></i>
                     </li>
-                    <li onclick="selectRole('admin', 'Quản trị viên', 'shield')">
+                    <li onclick="selectRole('admin', '@Localizer["RoleAdmin"]', 'shield')">
                         <i data-lucide="shield" class="opt-icon"></i>
-                        <span>Quản trị viên</span>
+                        <span>@Localizer["RoleAdmin"]</span>
                         <i data-lucide="check" class="check-icon hidden" id="check-admin"></i>
                     </li>
                 </ul>
@@ -52,60 +51,61 @@
                 <i data-lucide="graduation-cap" class="big-icon"></i>
             </div>
             <h1>EduTest</h1>
-            <p>Hệ thống đánh giá năng lực trực tuyến</p>
+            <p>@Localizer["SystemDescription"]</p>
         </div>
+        
         <div class="tabs">
             <button type="button" id="btn-tab-login" class="tab-btn @(Model.ActiveTab == "login" ? "active" : "")" onclick="switchTab('login')">
-                <i data-lucide="log-in" class="tab-icon"></i> Đăng nhập
+                <i data-lucide="log-in" class="tab-icon"></i> @Localizer["LoginTab"]
             </button>
 
             <button type="button" id="btn-tab-register" class="tab-btn @(Model.ActiveTab == "register" ? "active" : "")" onclick="switchTab('register')">
-                <i data-lucide="user-plus" class="tab-icon"></i> Đăng ký
+                <i data-lucide="user-plus" class="tab-icon"></i> @Localizer["RegisterTab"]
             </button>
         </div>
 
         <div id="tab-content-login" class="@(Model.ActiveTab == "login" ? "" : "hidden")">
-            <form asp-controller="Account" asp-action="Login" method="post">
+            <form asp-controller="Account" asp-action="Login" method="post" novalidate>
                 <input type="hidden" name="Role" id="input-role-login" value="student" />
                 @if (!ViewData.ModelState.IsValid && Model.ActiveTab == "login")
                 {
                     <div class="validation-summary">@Html.ValidationSummary(true)
-                        Vi phạm xác thực tài khoản
+                        @Localizer["AuthError"]
                     </div>
                 }
 
                 <div class="form-group">
-                    <label class="form-label">Tài khoản / Email</label>
+                    <label class="form-label">@Localizer["UsernameOrEmail"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="user" class="input-icon"></i>
-                        <input asp-for="Login.UsernameOrEmail" class="form-input" placeholder="Nhập email..." />
+                        <input asp-for="Login.UsernameOrEmail" class="form-input" placeholder="@Localizer["PlaceholderEmail"]" />
                     </div>
                     <span asp-validation-for="Login.UsernameOrEmail" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Mật khẩu</label>
+                    <label class="form-label">@Localizer["Password"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="lock" class="input-icon"></i>
-                        <input asp-for="Login.Password" type="password" class="form-input" placeholder="Nhập mật khẩu..." />
+                        <input asp-for="Login.Password" type="password" class="form-input" placeholder="@Localizer["PlaceholderPassword"]" />
                     </div>
                     <span asp-validation-for="Login.Password" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn-submit">Đăng nhập ngay</button>
+                <button type="submit" class="btn-submit">@Localizer["BtnLogin"]</button>
             </form>
         </div>
 
         <div id="tab-content-register" class="@(Model.ActiveTab == "register" ? "" : "hidden")">
-            <form asp-controller="Account" asp-action="Register" method="post">
+            <form asp-controller="Account" asp-action="Register" method="post" novalidate>
                 <input type="hidden" asp-for="Register.Role" id="input-role-register" value="student" />
                 @if (!ViewData.ModelState.IsValid && Model.ActiveTab == "register")
                 {
-                    <div class="validation-summary"><span class="text-danger">Vui lòng kiểm tra lại thông tin</span></div>
+                    <div class="validation-summary"><span class="text-danger">@Localizer["RegisterError"]</span></div>
                 }
 
                 <div class="form-group">
-                    <label class="form-label">Họ và tên</label>
+                    <label class="form-label">@Localizer["FullName"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="contact" class="input-icon"></i>
                         <input asp-for="Register.Name" class="form-input" placeholder="Nguyễn Văn A" />
@@ -114,7 +114,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Email</label>
+                    <label class="form-label">@Localizer["Email"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="mail" class="input-icon"></i>
                         <input asp-for="Register.Email" class="form-input" placeholder="email@example.com" />
@@ -123,25 +123,25 @@
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Tên đăng nhập</label>
+                    <label class="form-label">@Localizer["Username"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="user" class="input-icon"></i>
-                        <input asp-for="Register.Username" class="form-input" />
+                        <input asp-for="Register.Username" class="form-input" placeholder="DuyCooking257" />
                     </div>
-                    <span asp-validation-for="Register.Username" class="text-danger"></span>
+                    <span asp-validation-for="Register.Username" class="text-danger" ></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Mật khẩu</label>
+                    <label class="form-label">@Localizer["Password"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="lock" class="input-icon"></i>
-                        <input asp-for="Register.Password" type="password" class="form-input" />
+                        <input asp-for="Register.Password" type="password" class="form-input" placeholder="@Localizer["PlaceholderPassword"]" />
                     </div>
                     <span asp-validation-for="Register.Password" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Xác nhận mật khẩu</label>
+                    <label class="form-label">@Localizer["ConfirmPassword"]</label>
                     <div class="input-wrapper">
                         <i data-lucide="shield-check" class="input-icon"></i>
                         <input asp-for="Register.ConfirmPassword" type="password" class="form-input" />
@@ -149,13 +149,9 @@
                     <span asp-validation-for="Register.ConfirmPassword" class="text-danger"></span>
                 </div>
 
-                <button type="submit" class="btn-submit">Tạo tài khoản</button>
+                <button type="submit" class="btn-submit">@Localizer["BtnRegister"]</button>
             </form>
         </div>
-        <h3 style="color: red;">
-    Tài khoản đang đăng nhập: @User.Identity.Name <br />
-    Quyền hạn (Role) hiện tại là: @User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value
-</h3>
     </div>
 
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -163,5 +159,6 @@
     <script>
         lucide.createIcons();
     </script>
+   
 </body>
 </html>

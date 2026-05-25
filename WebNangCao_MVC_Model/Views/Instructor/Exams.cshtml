@@ -1,8 +1,10 @@
 ﻿@using WebNangCao_MVC_Model.ViewModels
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<WebNangCao_MVC_Model.SharedResource> Localizer
 @model List<ExamManagementViewModel>
 
 @{
-    ViewData["Title"] = "Quản Lý Bài Thi";
+    ViewData["Title"] = Localizer["ManageExamsTitle"];
 }
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
@@ -1151,12 +1153,11 @@
 </style>
 
 <div class="exam-container">
-    <!-- Top Bar -->
     <div class="top-bar">
         <div class="top-bar-content">
             <div class="breadcrumb-section">
                 <a href="@Url.Action("Dashboard", "Instructor")" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                    <i class="bi bi-arrow-left"></i> Dashboard
+                    <i class="bi bi-arrow-left"></i> @Localizer["Dashboard"]
                 </a>
                 <div class="breadcrumb-divider"></div>
                 <div class="page-title-section">
@@ -1164,23 +1165,22 @@
                         <i class="bi bi-shield"></i>
                     </div>
                     <div class="page-title-text">
-                        <h1>Kiểm soát đề thi</h1>
-                        <p>@Model.Count đề thi</p>
+                        <h1>@Localizer["ExamControl"]</h1>
+                        <p>@Localizer["ExamsCount", Model.Count]</p>
                     </div>
                 </div>
             </div>
             <div class="top-bar-actions">
                 <button class="btn btn-outline" onclick="exportReport()">
-                    <i class="bi bi-download"></i> Xuất báo cáo
+                    <i class="bi bi-download"></i> @Localizer["BtnExportReport"]
                 </button>
                 <a href="@Url.Action("CreateExam")" class="btn btn-primary">
-                    <i class="bi bi-plus"></i> Tạo đề thi mới
+                    <i class="bi bi-plus"></i> @Localizer["BtnCreateNewExam"]
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Summary Bar -->
     <div class="summary-bar">
         <div class="summary-content">
             @{
@@ -1191,59 +1191,55 @@
             }
             <div class="stat-item active">
                 <strong>@activeCount</strong>
-                <span>Đang diễn ra</span>
+                <span>@Localizer["StatusOngoing"]</span>
             </div>
             <div class="stat-item scheduled">
                 <strong>@scheduledCount</strong>
-                <span>Đã lên lịch</span>
+                <span>@Localizer["StatusScheduled"]</span>
             </div>
             <div class="stat-item paused">
                 <strong>@pausedCount</strong>
-                <span>Tạm dừng</span>
+                <span>@Localizer["StatusPaused"]</span>
             </div>
             <div class="stat-item completed">
                 <strong>@completedCount</strong>
-                <span>Hoàn thành</span>
+                <span>@Localizer["StatusCompleted"]</span>
             </div>
             <div style="margin-left: auto; display: flex; align-items: center; gap: 0.375rem; font-size: 0.75rem; color: #9ca3af;">
                 <i class="bi bi-clock-history"></i>
-                Cập nhật lúc @DateTime.Now.ToString("HH:mm")
+                @Localizer["UpdatedAt", DateTime.Now.ToString("HH:mm")]
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Left: Exam List -->
         <div class="exam-list-sidebar">
-            <!-- Filters -->
             <div class="filter-panel">
                 <div class="search-input-wrapper">
                     <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm đề thi, lớp..." onkeyup="filterExams()">
+                    <input type="text" id="searchInput" placeholder="@Localizer["SearchExamPlaceholder"]" onkeyup="filterExams()">
                 </div>
                 <div class="filter-row">
                     <select id="statusFilter" onchange="filterExams()">
-                        <option value="">Tất cả trạng thái</option>
-                        <option value="active">Đang diễn ra</option>
-                        <option value="scheduled">Đã lên lịch</option>
-                        <option value="paused">Tạm dừng</option>
-                        <option value="completed">Hoàn thành</option>
-                        <option value="draft">Nháp</option>
+                        <option value="">@Localizer["StatusAll"]</option>
+                        <option value="active">@Localizer["StatusOngoing"]</option>
+                        <option value="scheduled">@Localizer["StatusScheduled"]</option>
+                        <option value="paused">@Localizer["StatusPaused"]</option>
+                        <option value="completed">@Localizer["StatusCompleted"]</option>
+                        <option value="draft">@Localizer["StatusDraft"]</option>
                     </select>
                 </div>
                 <div class="filter-count">
-                    <span id="examCount">@Model.Count</span> / @Model.Count đề thi
+                    <span id="examCount">@Model.Count</span> / @Localizer["ExamsCount", Model.Count]
                 </div>
             </div>
 
-            <!-- Exam Cards -->
             <div class="exam-cards" id="examList">
                 @if (!Model.Any())
                 {
                     <div class="empty-state">
                         <div class="empty-state-icon"><i class="bi bi-file-earmark-text"></i></div>
-                        <p class="empty-state-text">Không có đề thi nào</p>
+                        <p class="empty-state-text">@Localizer["EmptyExamsTitle"]</p>
                     </div>
                 }
                 else
@@ -1267,19 +1263,19 @@
                                     @switch(status)
                                     {
                                         case "active":
-                                            <span>Đang diễn ra</span>
+                                            <span>@Localizer["StatusOngoing"]</span>
                                             break;
                                         case "scheduled":
-                                            <span>Đã lên lịch</span>
+                                            <span>@Localizer["StatusScheduled"]</span>
                                             break;
                                         case "paused":
-                                            <span>Tạm dừng</span>
+                                            <span>@Localizer["StatusPaused"]</span>
                                             break;
                                         case "completed":
-                                            <span>Hoàn thành</span>
+                                            <span>@Localizer["StatusCompleted"]</span>
                                             break;
                                         case "draft":
-                                            <span>Nháp</span>
+                                            <span>@Localizer["StatusDraft"]</span>
                                             break;
                                     }
                                 </div>
@@ -1288,21 +1284,21 @@
                             <div class="exam-card-meta">
                                 <div class="exam-card-meta-item">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span>@exam.TotalQuestions câu</span>
+                                    <span>@Localizer["CardQuestions", exam.TotalQuestions]</span>
                                 </div>
                                 <div class="exam-card-meta-item">
                                     <i class="bi bi-clock"></i>
-                                    <span>@exam.Duration phút</span>
+                                    <span>@Localizer["CardDuration", exam.Duration]</span>
                                 </div>
                                 <div class="exam-card-meta-item">
                                     <i class="bi bi-people"></i>
-                                    <span>@exam.TotalStudents HS</span>
+                                    <span>@Localizer["CardStudents", exam.TotalStudents]</span>
                                 </div>
                             </div>
 
                             <div class="exam-card-progress">
                                 <div class="progress-label">
-                                    <span class="progress-label-left">Đã nộp</span>
+                                    <span class="progress-label-left">@Localizer["CardSubmitted"]</span>
                                     <span class="progress-label-right">@exam.CompletedCount/@exam.TotalStudents</span>
                                 </div>
                                 <div class="progress-bar">
@@ -1314,12 +1310,12 @@
                                 @if (exam.AverageScore.HasValue)
                                 {
                                     <span class="exam-card-score">
-                                        <i class="bi bi-star-fill"></i> Điểm TB: @exam.AverageScore?.ToString("F1")
+                                        <i class="bi bi-star-fill"></i> @Localizer["CardAvgScore", exam.AverageScore?.ToString("F1")]
                                     </span>
                                 }
                                 else
                                 {
-                                    <span class="exam-card-score-empty">Chưa có điểm TB</span>
+                                    <span class="exam-card-score-empty">@Localizer["CardNoAvgScore"]</span>
                                 }
                                 <div class="status-dot @status"></div>
                             </div>
@@ -1329,9 +1325,7 @@
             </div>
         </div>
 
-        <!-- Right: Detail Panel -->
         <div class="detail-panel" id="detailPanel" style="display: none;">
-            <!-- Exam Header -->
             <div class="detail-header">
                 <div class="detail-header-content">
                     <div class="detail-header-info">
@@ -1341,7 +1335,7 @@
                         <div class="detail-header-text">
                             <div class="detail-header-title-row">
                                 <h2 id="detailTitle">-</h2>
-                                <div id="detailBadge" class="exam-badge active">Đang diễn ra</div>
+                                <div id="detailBadge" class="exam-badge active">-</div>
                             </div>
                             <p class="detail-description" id="detailDescription">-</p>
                             <div class="detail-header-meta">
@@ -1355,11 +1349,11 @@
                                 </div>
                                 <div class="detail-header-meta-item">
                                     <i class="bi bi-file-earmark-text"></i>
-                                    <span id="detailQuestions">- câu hỏi</span>
+                                    <span id="detailQuestions">-</span>
                                 </div>
                                 <div class="detail-header-meta-item">
                                     <i class="bi bi-clock"></i>
-                                    <span id="detailDuration">- phút</span>
+                                    <span id="detailDuration">-</span>
                                 </div>
                                 <div class="detail-header-meta-item">
                                     <i class="bi bi-calendar"></i>
@@ -1370,10 +1364,10 @@
                     </div>
                     <div class="detail-header-actions">
                         <button class="btn btn-outline btn-sm" onclick="viewExam()">
-                            <i class="bi bi-eye"></i> Xem đề
+                            <i class="bi bi-eye"></i> @Localizer["BtnViewExam"]
                         </button>
                         <button class="btn btn-outline btn-sm" onclick="editExam()">
-                            <i class="bi bi-pencil"></i> Chỉnh sửa
+                            <i class="bi bi-pencil"></i> @Localizer["BtnEditExam"]
                         </button>
                         <button class="btn btn-ghost btn-sm" onclick="deleteExam()" style="color: #ef4444;">
                             <i class="bi bi-trash"></i>
@@ -1382,89 +1376,86 @@
                 </div>
             </div>
 
-            <!-- Tabs -->
             <div class="tabs-container">
                 <div class="tabs-list">
                     <button class="tab-trigger active" onclick="switchTab('control')">
-                        <i class="bi bi-toggles"></i> Điều khiển
+                        <i class="bi bi-toggles"></i> @Localizer["TabControl"]
                     </button>
                     <button class="tab-trigger" onclick="switchTab('submissions')">
-                        <i class="bi bi-check-circle"></i> Bài nộp
+                        <i class="bi bi-check-circle"></i> @Localizer["TabSubmissions"]
                         <span style="margin-left: 0.25rem; background: #dbeafe; color: #2563eb; font-size: 0.7rem; padding: 0.125rem 0.375rem; border-radius: 9999px;" id="submissionCount">0</span>
                     </button>
                     <button class="tab-trigger" onclick="switchTab('stats')">
-                        <i class="bi bi-bar-chart"></i> Thống kê
+                        <i class="bi bi-bar-chart"></i> @Localizer["TabStats"]
                     </button>
                 </div>
             </div>
 
-            <!-- Tab Content: Control -->
             <div id="controlTab" class="tabs-content active">
                 <div class="control-grid">
                     <div class="control-main">
                         <div class="control-section-title">
-                            <span><i class="bi bi-activity"></i> Bảng điều khiển trạng thái</span>
+                            <span><i class="bi bi-activity"></i> @Localizer["CtrlPanelTitle"]</span>
                             <button class="btn btn-ghost" style="font-size: 0.875rem; gap: 0.25rem;">
-                                <i class="bi bi-arrow-clockwise"></i> Làm mới
+                                <i class="bi bi-arrow-clockwise"></i> @Localizer["BtnRefresh"]
                             </button>
                         </div>
 
                         <div id="statusDisplay" class="status-display active">
                             <div class="status-display-text">
                                 <span class="pulse-dot" id="statusDot"></span>
-                                <span id="statusText">Đề thi đang diễn ra</span>
+                                <span id="statusText">-</span>
                             </div>
                             <p id="statusInfo" style="font-size: 0.75rem; color: #16a34a; margin-top: 0.25rem;">-</p>
                         </div>
 
                         <div>
-                            <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">Hành động điều khiển:</p>
+                            <p style="font-size: 0.75rem; color: #6b7280; margin-bottom: 0.75rem;">@Localizer["CtrlActionLabel"]</p>
                             <div class="control-buttons">
                                 <button class="control-btn activate" onclick="changeStatus('activate')" id="btnActivate">
-                                    <i class="bi bi-play-fill"></i> Kích hoạt
+                                    <i class="bi bi-play-fill"></i> @Localizer["BtnActivate"]
                                 </button>
                                 <button class="control-btn pause" onclick="changeStatus('pause')" id="btnPause" disabled>
-                                    <i class="bi bi-pause-fill"></i> Tạm dừng
+                                    <i class="bi bi-pause-fill"></i> @Localizer["BtnPause"]
                                 </button>
                                 <button class="control-btn end" onclick="changeStatus('end')" id="btnEnd">
-                                    <i class="bi bi-stop-fill"></i> Kết thúc
+                                    <i class="bi bi-stop-fill"></i> @Localizer["BtnEnd"]
                                 </button>
                                 <button class="control-btn schedule" onclick="changeStatus('schedule')" id="btnSchedule">
-                                    <i class="bi bi-calendar-event"></i> Lên lịch
+                                    <i class="bi bi-calendar-event"></i> @Localizer["BtnSchedule"]
                                 </button>
                             </div>
                         </div>
 
                         <div class="progress-section" id="progressSection" style="display: none;">
-                            <p style="font-size: 0.75rem; font-weight: 500; color: #4b5563; margin-bottom: 0.75rem;">Tiến độ thời gian thực</p>
+                            <p style="font-size: 0.75rem; font-weight: 500; color: #4b5563; margin-bottom: 0.75rem;">@Localizer["ProgressRealtime"]</p>
                             <div class="progress-stats">
                                 <div class="progress-stat">
                                     <div class="progress-stat-value" id="statSubmitted">0</div>
-                                    <p class="progress-stat-label">Đã nộp</p>
+                                    <p class="progress-stat-label">@Localizer["ProgSubmitted"]</p>
                                 </div>
                                 <div class="progress-stat">
                                     <div class="progress-stat-value" id="statPending" style="color: #f59e0b;">0</div>
-                                    <p class="progress-stat-label">Chưa nộp</p>
+                                    <p class="progress-stat-label">@Localizer["ProgPending"]</p>
                                 </div>
                                 <div class="progress-stat">
                                     <div class="progress-stat-value" id="statTotal" style="color: #16a34a;">0</div>
-                                    <p class="progress-stat-label">Tổng cộng</p>
+                                    <p class="progress-stat-label">@Localizer["ProgTotal"]</p>
                                 </div>
                             </div>
                             <div class="progress-bar" style="margin-bottom: 0.5rem;">
                                 <div class="progress-bar-fill" id="progressFill"></div>
                             </div>
                             <p style="font-size: 0.75rem; text-align: right; color: #6b7280;">
-                                <span id="progressPercent">0</span>% hoàn thành
+                                <span id="progressPercent">0</span>% @Localizer["ProgPercent"]
                             </p>
                         </div>
                     </div>
 
-                    <!-- Settings Panel -->
                     <div>
                         <div class="settings-panel">
                             <div class="control-section-title" style="border-bottom: none;">
-                                <span><i class="bi bi-sliders"></i> Cài đặt đề thi</span>
+                                <span><i class="bi bi-sliders"></i> @Localizer["SettingTitle"]</span>
                             </div>
                             <div class="settings-group">
                                 <div class="setting-item">
@@ -1473,8 +1464,8 @@
                                             <i class="bi bi-arrow-left-right"></i>
                                         </div>
                                         <div class="setting-text">
-                                            <p>Xáo trộn câu hỏi</p>
-                                            <p>Ngẫu nhiên thứ tự</p>
+                                            <p>@Localizer["SetShuffleQ"]</p>
+                                            <p>@Localizer["SetShuffleQDesc"]</p>
                                         </div>
                                     </div>
                                     <div class="toggle-switch" onclick="toggleSetting(this)">
@@ -1487,8 +1478,8 @@
                                             <i class="bi bi-arrow-repeat"></i>
                                         </div>
                                         <div class="setting-text">
-                                            <p>Xáo trộn đáp án</p>
-                                            <p>Ngẫu nhiên A,B,C,D</p>
+                                            <p>@Localizer["SetShuffleA"]</p>
+                                            <p>@Localizer["SetShuffleADesc"]</p>
                                         </div>
                                     </div>
                                     <div class="toggle-switch" onclick="toggleSetting(this)">
@@ -1501,8 +1492,8 @@
                                             <i class="bi bi-eye"></i>
                                         </div>
                                         <div class="setting-text">
-                                            <p>Hiện kết quả sau nộp</p>
-                                            <p>Thí sinh xem điểm</p>
+                                            <p>@Localizer["SetShowResult"]</p>
+                                            <p>@Localizer["SetShowResultDesc"]</p>
                                         </div>
                                     </div>
                                     <div class="toggle-switch" onclick="toggleSetting(this)">
@@ -1515,8 +1506,8 @@
                                             <i class="bi bi-book"></i>
                                         </div>
                                         <div class="setting-text">
-                                            <p>Cho phép xem lại</p>
-                                            <p>Xem đáp án sau</p>
+                                            <p>@Localizer["SetReview"]</p>
+                                            <p>@Localizer["SetReviewDesc"]</p>
                                         </div>
                                     </div>
                                     <div class="toggle-switch" onclick="toggleSetting(this)">
@@ -1529,8 +1520,8 @@
                                             <i class="bi bi-shield"></i>
                                         </div>
                                         <div class="setting-text">
-                                            <p>Chế độ nghiêm ngặt</p>
-                                            <p>Chống copy, tab</p>
+                                            <p>@Localizer["SetStrict"]</p>
+                                            <p>@Localizer["SetStrictDesc"]</p>
                                         </div>
                                     </div>
                                     <div class="toggle-switch" onclick="toggleSetting(this)">
@@ -1542,12 +1533,12 @@
 
                         <div class="difficulty-breakdown" style="margin-top: 1rem;">
                             <div class="control-section-title" style="border-bottom: none;">
-                                <span><i class="bi bi-bullseye"></i> Phân bổ độ khó</span>
+                                <span><i class="bi bi-bullseye"></i> @Localizer["DiffTitle"]</span>
                             </div>
                             <div class="difficulty-item">
                                 <div class="difficulty-label">
-                                    <span class="difficulty-label-left" style="color: #16a34a;">Dễ</span>
-                                    <span class="difficulty-label-right"><span id="easyCount">0</span> câu (0%)</span>
+                                    <span class="difficulty-label-left" style="color: #16a34a;">@Localizer["DiffEasy"]</span>
+                                    <span class="difficulty-label-right"><span id="easyCount">0</span> @Localizer["DiffCount"] (0%)</span>
                                 </div>
                                 <div class="difficulty-bar">
                                     <div class="difficulty-bar-fill easy" id="easyBar" style="width: 0%"></div>
@@ -1555,8 +1546,8 @@
                             </div>
                             <div class="difficulty-item">
                                 <div class="difficulty-label">
-                                    <span class="difficulty-label-left" style="color: #2563eb;">Trung bình</span>
-                                    <span class="difficulty-label-right"><span id="mediumCount">0</span> câu (0%)</span>
+                                    <span class="difficulty-label-left" style="color: #2563eb;">@Localizer["DiffMedium"]</span>
+                                    <span class="difficulty-label-right"><span id="mediumCount">0</span> @Localizer["DiffCount"] (0%)</span>
                                 </div>
                                 <div class="difficulty-bar">
                                     <div class="difficulty-bar-fill medium" id="mediumBar" style="width: 0%"></div>
@@ -1564,8 +1555,8 @@
                             </div>
                             <div class="difficulty-item">
                                 <div class="difficulty-label">
-                                    <span class="difficulty-label-left" style="color: #dc2626;">Khó</span>
-                                    <span class="difficulty-label-right"><span id="hardCount">0</span> câu (0%)</span>
+                                    <span class="difficulty-label-left" style="color: #dc2626;">@Localizer["DiffHard"]</span>
+                                    <span class="difficulty-label-right"><span id="hardCount">0</span> @Localizer["DiffCount"] (0%)</span>
                                 </div>
                                 <div class="difficulty-bar">
                                     <div class="difficulty-bar-fill hard" id="hardBar" style="width: 0%"></div>
@@ -1576,36 +1567,35 @@
                 </div>
             </div>
 
-            <!-- Tab Content: Submissions -->
             <div id="submissionsTab" class="tabs-content">
                 <div style="display: none;" class="empty-state">
                     <div class="empty-state-icon"><i class="bi bi-check-circle"></i></div>
-                    <p class="empty-state-text">Chưa có bài nộp nào</p>
+                    <p class="empty-state-text">@Localizer["SubEmpty"]</p>
                 </div>
 
                 <div id="submissionsContent" style="display: none;">
                     <div class="submissions-header">
-                        <h3 style="font-weight: 600; color: #111827;">Danh sách bài nộp</h3>
+                        <h3 style="font-weight: 600; color: #111827;">@Localizer["SubListTitle"]</h3>
                         <div class="submissions-search">
                             <div style="position: relative; flex: 1;">
                                 <i class="bi bi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 0.875rem;"></i>
-                                <input type="text" id="submissionSearch" placeholder="Tìm học sinh..." style="padding-left: 2rem; width: 100%;">
+                                <input type="text" id="submissionSearch" placeholder="@Localizer["SubSearchPlaceholder"]" style="padding-left: 2rem; width: 100%;">
                             </div>
                             <button class="btn btn-outline btn-sm" onclick="exportExcel()">
-                                <i class="bi bi-download"></i> Xuất Excel
+                                <i class="bi bi-download"></i> @Localizer["BtnExportExcel"]
                             </button>
                         </div>
                     </div>
                     <table class="submissions-table">
                         <thead>
                             <tr>
-                                <th>Học sinh</th>
-                                <th>Mã HS</th>
-                                <th>Nộp lúc</th>
-                                <th>Thời gian</th>
-                                <th style="text-align: right;">Đúng/Tổng</th>
-                                <th style="text-align: right;">Điểm số</th>
-                                <th style="text-align: center;">Kết quả</th>
+                                <th>@Localizer["ColStudent"]</th>
+                                <th>@Localizer["ColStudentId"]</th>
+                                <th>@Localizer["ColSubmitTime"]</th>
+                                <th>@Localizer["ColDuration"]</th>
+                                <th style="text-align: right;">@Localizer["ColCorrectTotal"]</th>
+                                <th style="text-align: right;">@Localizer["ColScore"]</th>
+                                <th style="text-align: center;">@Localizer["ColResult"]</th>
                             </tr>
                         </thead>
                         <tbody id="submissionsBody">
@@ -1614,28 +1604,25 @@
                 </div>
             </div>
 
-            <!-- Tab Content: Stats -->
             <div id="statsTab" class="tabs-content">
                 <div style="display: none;" class="empty-state">
                     <div class="empty-state-icon"><i class="bi bi-bar-chart"></i></div>
-                    <p class="empty-state-text">Chưa có dữ liệu thống kê</p>
+                    <p class="empty-state-text">@Localizer["StatsEmpty"]</p>
                 </div>
                 <div id="statsContent" style="display: none;">
-                    <p style="color: #6b7280; text-align: center;">Thống kê chi tiết sẽ được hiển thị tại đây</p>
+                    <p style="color: #6b7280; text-align: center;">@Localizer["StatsDetailMsg"]</p>
                 </div>
             </div>
         </div>
 
-        <!-- No Exam Selected -->
         <div id="noExamSelected" class="detail-panel no-exam-state">
             <div class="no-exam-state-content">
                 <div class="no-exam-state-icon"><i class="bi bi-file-earmark-text"></i></div>
-                <p class="no-exam-state-text">Chọn một đề thi để xem chi tiết</p>
+                <p class="no-exam-state-text">@Localizer["DetailSelectExam"]</p>
             </div>
         </div>
     </div>
 
-    <!-- Confirm Modal -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal">
             <div class="modal-header">
@@ -1643,22 +1630,48 @@
                     <i class="bi bi-exclamation-triangle"></i>
                 </div>
                 <div>
-                    <h3 class="modal-title">Xác nhận thao tác</h3>
+                    <h3 class="modal-title">@Localizer["ConfirmActionTitle"]</h3>
                     <p class="modal-message" id="modalMessage">-</p>
                 </div>
             </div>
             <div class="modal-actions">
-                <button class="btn btn-outline" style="flex: 1;" onclick="closeConfirm()">Hủy</button>
-                <button class="btn btn-primary" style="flex: 1;" id="confirmBtn" onclick="confirmAction()">Xác nhận</button>
+                <button class="btn btn-outline" style="flex: 1;" onclick="closeConfirm()">@Localizer["BtnCancel"]</button>
+                <button class="btn btn-primary" style="flex: 1;" id="confirmBtn" onclick="confirmAction()">@Localizer["BtnConfirm"]</button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    window.AppTranslations = {
+        DetailQuestionsLabel: '@Html.Raw(Localizer["DetailQuestionsLabel"].Value)',
+        DetailDurationLabel: '@Html.Raw(Localizer["DetailDurationLabel"].Value)',
+        DetailCreatedLabel: '@Html.Raw(Localizer["DetailCreatedLabel"].Value)',
+        JsStatusActive: '@Html.Raw(Localizer["JsStatusActive"].Value)',
+        JsStatusActiveInfo: '@Html.Raw(Localizer["JsStatusActiveInfo"].Value)',
+        JsStatusScheduled: '@Html.Raw(Localizer["JsStatusScheduled"].Value)',
+        JsStatusScheduledInfo: '@Html.Raw(Localizer["JsStatusScheduledInfo"].Value)',
+        JsStatusPaused: '@Html.Raw(Localizer["JsStatusPaused"].Value)',
+        JsStatusPausedInfo: '@Html.Raw(Localizer["JsStatusPausedInfo"].Value)',
+        JsStatusCompleted: '@Html.Raw(Localizer["JsStatusCompleted"].Value)',
+        JsStatusCompletedInfo: '@Html.Raw(Localizer["JsStatusCompletedInfo"].Value)',
+        JsStatusDraft: '@Html.Raw(Localizer["JsStatusDraft"].Value)',
+        JsStatusDraftInfo: '@Html.Raw(Localizer["JsStatusDraftInfo"].Value)',
+        JsConfirmActivate: '@Html.Raw(Localizer["JsConfirmActivate"].Value)',
+        JsConfirmPause: '@Html.Raw(Localizer["JsConfirmPause"].Value)',
+        JsConfirmEnd: '@Html.Raw(Localizer["JsConfirmEnd"].Value)',
+        JsConfirmSchedule: '@Html.Raw(Localizer["JsConfirmSchedule"].Value)',
+        JsConfirmDelete: '@Html.Raw(Localizer["JsConfirmDelete"].Value)',
+        JsAlertExportReport: '@Html.Raw(Localizer["JsAlertExportReport"].Value)',
+        JsAlertExportExcel: '@Html.Raw(Localizer["JsAlertExportExcel"].Value)'
+    };
+</script>
+
+<script>
     let selectedExamId = null;
     let selectedExamData = {};
     let pendingAction = null;
+    const t = window.AppTranslations;
 
     // Select exam
     function selectExam(id, title, groupName, status, duration, totalQuestions, totalStudents, completedCount, avgScore, startTime, endTime) {
@@ -1674,9 +1687,9 @@
         document.getElementById('detailTitle').textContent = title;
         document.getElementById('detailSubject').textContent = groupName;
         document.getElementById('detailClass').textContent = groupName;
-        document.getElementById('detailQuestions').textContent = totalQuestions + ' câu hỏi';
-        document.getElementById('detailDuration').textContent = duration + ' phút';
-        document.getElementById('detailCreated').textContent = 'Tạo ngày ' + startTime;
+        document.getElementById('detailQuestions').textContent = totalQuestions + ' ' + t.DetailQuestionsLabel;
+        document.getElementById('detailDuration').textContent = duration + ' ' + t.DetailDurationLabel;
+        document.getElementById('detailCreated').textContent = t.DetailCreatedLabel.replace('{0}', startTime);
 
         // Update status
         updateStatusDisplay(status);
@@ -1709,32 +1722,32 @@
 
         switch(status) {
             case 'active':
-                statusText.textContent = 'Đề thi đang diễn ra';
-                statusInfo.textContent = selectedExamData.completedCount + '/' + selectedExamData.totalStudents + ' học sinh đã nộp bài';
+                statusText.textContent = t.JsStatusActive;
+                statusInfo.textContent = t.JsStatusActiveInfo.replace('{0}', selectedExamData.completedCount).replace('{1}', selectedExamData.totalStudents);
                 statusInfo.style.color = '#16a34a';
                 progressSection.style.display = 'block';
                 break;
             case 'scheduled':
-                statusText.textContent = 'Đề thi đã được lên lịch';
-                statusInfo.textContent = 'Bắt đầu lúc: ' + selectedExamData.startTime;
+                statusText.textContent = t.JsStatusScheduled;
+                statusInfo.textContent = t.JsStatusScheduledInfo.replace('{0}', selectedExamData.startTime);
                 statusInfo.style.color = '#2563eb';
                 progressSection.style.display = 'none';
                 break;
             case 'paused':
-                statusText.textContent = 'Đề thi đang tạm dừng';
-                statusInfo.textContent = 'Thí sinh không thể nộp bài';
+                statusText.textContent = t.JsStatusPaused;
+                statusInfo.textContent = t.JsStatusPausedInfo;
                 statusInfo.style.color = '#d97706';
                 progressSection.style.display = 'block';
                 break;
             case 'completed':
-                statusText.textContent = 'Đề thi đã kết thúc';
-                statusInfo.textContent = 'Tất cả thí sinh đã hoàn thành';
+                statusText.textContent = t.JsStatusCompleted;
+                statusInfo.textContent = t.JsStatusCompletedInfo;
                 statusInfo.style.color = '#6b7280';
                 progressSection.style.display = 'none';
                 break;
             case 'draft':
-                statusText.textContent = 'Đề thi đang ở chế độ nháp';
-                statusInfo.textContent = 'Chưa được kích hoạt';
+                statusText.textContent = t.JsStatusDraft;
+                statusInfo.textContent = t.JsStatusDraftInfo;
                 statusInfo.style.color = '#a855f7';
                 progressSection.style.display = 'none';
                 break;
@@ -1751,10 +1764,10 @@
 
     function changeStatus(action) {
         const messages = {
-            activate: 'Kích hoạt đề thi? Học sinh sẽ có thể bắt đầu làm bài.',
-            pause: 'Tạm dừng đề thi? Học sinh đang làm sẽ bị gián đoạn.',
-            end: 'Kết thúc đề thi? Hành động này không thể hoàn tác.',
-            schedule: 'Lên lịch đề thi cho lần sau?'
+            activate: t.JsConfirmActivate,
+            pause: t.JsConfirmPause,
+            end: t.JsConfirmEnd,
+            schedule: t.JsConfirmSchedule
         };
 
         document.getElementById('modalMessage').textContent = messages[action] || '';
@@ -1834,7 +1847,7 @@
     }
 
     function deleteExam() {
-        if (selectedExamId && confirm('Bạn chắc chắn muốn xóa đề thi này?')) {
+        if (selectedExamId && confirm(t.JsConfirmDelete)) {
             fetch(`/Instructor/DeleteExam?id=${selectedExamId}`, { method: 'POST' })
                 .then(r => r.text())
                 .then(() => window.location.reload());
@@ -1846,10 +1859,10 @@
     }
 
     function exportReport() {
-        alert('Xuất báo cáo');
+        alert(t.JsAlertExportReport);
     }
 
     function exportExcel() {
-        alert('Xuất Excel');
+        alert(t.JsAlertExportExcel);
     }
 </script>

@@ -12,6 +12,11 @@ namespace WebNangCao_MVC_Model.Models
         public bool IsActive { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        // ---> BỔ SUNG CHO ADMIN: Vẽ biểu đồ "Đề thi mới trong tuần"
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow; 
+
+        // ---> BỔ SUNG CHO ADMIN: Điểm chuẩn để biết Học sinh đỗ hay trượt
+        public double PassingScore { get; set; } = 5.0;
         public int Duration { get; set; }
         [Column("GroupId")]
         public int? IdGroup { get; set; }
