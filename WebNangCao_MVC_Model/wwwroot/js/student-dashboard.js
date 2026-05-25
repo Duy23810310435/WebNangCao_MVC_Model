@@ -286,7 +286,19 @@
             method: 'POST',
             body: formData
         })
-            .then(response => response.json())
+            // .then(response => response.json())
+            .then(response => {
+                //  Kiểm tra Content-Type trước khi parse JSON
+                const contentType = response.headers.get('content-type');
+
+                if (!contentType || !contentType.includes('application/json')) {
+                    // Server trả về HTML → không phải JSON
+                    throw new Error(`Server trả về HTTP ${response.status}. Có thể session hết hạn hoặc server bị lỗi.`);
+                }
+
+                return response.json();
+            })
+
             .then(data => {
                 if (data.success) {
                     // Đọc file thành công: Chuyển hướng thẳng sang giao diện phân loại câu hỏi

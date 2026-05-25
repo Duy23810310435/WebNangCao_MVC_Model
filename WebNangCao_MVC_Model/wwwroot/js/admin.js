@@ -141,11 +141,11 @@ if (btnQuickBackup) btnQuickBackup.addEventListener('click', openBackupTab);
 const btnExecuteBackup = document.getElementById('btn-execute-backup');
 if (btnExecuteBackup) {
     btnExecuteBackup.addEventListener('click', () => {
-        const isConfirmed = confirm(t.MsgConfirmBackup); // 🚨 Đã Localize
+        const isConfirmed = confirm(t.MsgConfirmBackup); //  Đã Localize
         
         if (isConfirmed) {
             const originalText = btnExecuteBackup.innerHTML;
-            btnExecuteBackup.innerHTML = t.MsgExporting; // 🚨 Đã Localize
+            btnExecuteBackup.innerHTML = t.MsgExporting; //  Đã Localize
             btnExecuteBackup.disabled = true;
 
             window.location.href = '/api/Admin/BackupData';

@@ -144,7 +144,8 @@ namespace WebNangCao_MVC_Model.Controllers
             var model = new StudentDashboardViewModel
             {
                 TotalExams = rawExams.Count,
-                CompletedExams = userResults.Count,
+                //CompletedExams = userResults.Count,
+                CompletedExams = examListVM.Count(e => e.Status == "Đã hoàn thành"),
                 UpcomingExams = examListVM.Count(e => e.Status == "Sắp tới"),
                 AverageScore = userResults.Any() ? Math.Round(userResults.Average(r => r.Score), 1) : 0,
                 Exams = examListVM.OrderBy(e => e.StartTime).ToList(),

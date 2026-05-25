@@ -360,9 +360,24 @@ namespace WebNangCao_MVC_Model.Controllers
         [HttpPost("api/Admin/CheckDbConnection")]
         public async Task<IActionResult> CheckDbConnection([FromBody] DatabaseConfigDto model)
         {
+            //validate trước khi check kết nối đến Server PostGreSQL
+            if (string.IsNullOrWhiteSpace(model.Host) ||
+                string.IsNullOrWhiteSpace(model.DatabaseName) ||
+                string.IsNullOrWhiteSpace(model.DatabaseUser) ||
+                string.IsNullOrWhiteSpace(model.Password))
+            {
+                return BadRequest(new { success = false, message = "Vui lòng điền đầy đủ thông tin kết nối!" });
+            }
             // Lấy Password tự động từ form (model.Password) thay vì tự gõ tay!
-            string testConnString = $"Host={model.Host};Port={model.Port};Database={model.DatabaseName};Username={model.DatabaseUser};Password={model.Password}";
-            
+            //string testConnString = $"Host={model.Host};Port={model.Port};Database={model.DatabaseName};Username={model.DatabaseUser};Password={model.Password}";
+            // Fix - thêm SSL Mode và Error Detail, tránh bị lỗi SCRAM-SHA-256
+            string testConnString = $"Host={model.Host};Port={model.Port};" +
+                                    $"Database={model.DatabaseName};" +
+                                    $"Username={model.DatabaseUser};" +
+                                    $"Password={model.Password};" +
+                                    $"SSL Mode=Disable;" +
+                                    $"Include Error Detail=true";
+
             try 
             {
                 using var connection = new Npgsql.NpgsqlConnection(testConnString);
